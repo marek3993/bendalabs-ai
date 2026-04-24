@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const siteAuditSchema = z.object({
-  score: z.number().int().min(1).max(10),
+const siteAuditShape = {
+  score: z.number().finite(),
   is_good_fit: z.boolean(),
   site_type: z.string().min(2).max(120),
   recommended_ai_type: z.array(z.string().min(2).max(60)).min(1).max(4),
@@ -20,7 +20,13 @@ export const siteAuditSchema = z.object({
     .min(3)
     .max(3),
   summary: z.string().min(20).max(500),
+};
+
+export const rawSiteAuditSchema = z.object(siteAuditShape);
+
+export const siteAuditSchema = rawSiteAuditSchema.extend({
+  score: z.number().int().min(1).max(10),
 });
 
+export type RawSiteAudit = z.infer<typeof rawSiteAuditSchema>;
 export type SiteAudit = z.infer<typeof siteAuditSchema>;
-

@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { siteAuditSchema, type SiteAudit } from "@/lib/site-audit/schema";
+import { normalizeAuditResult } from "@/lib/site-audit/normalize";
+import { rawSiteAuditSchema, type SiteAudit } from "@/lib/site-audit/schema";
 
 let openaiClient: OpenAI | null = null;
 
@@ -34,6 +35,8 @@ export async function generateSiteAudit(siteSummary: string): Promise<SiteAudit>
           "Vystup musi byt v slovencine, konkretny, prakticky a oprety len o dodany summary webu.",
           "Posudzuj najma sirku ponuky, pocet rozhodovacich vetiev, formulare, kalkulacky, filtraciu, kontaktne flowy, pravdepodobne miesta kde sa ludia stracaju a priestor na upsell alebo cross-sell.",
           "recommended_ai_type vyberaj najma z: navigator, recommender, lead qualifier, upsell assistant, alebo ich kombinacie.",
+          "Score je fit_score pre vhodnost AI vrstvy na stupnici 1 az 10, kde 1 je najslabsi fit a 10 najsilnejsi fit.",
+          "Slaby alebo nevhodny fit nikdy nesmie dostat vysoke score.",
           "Ak web nie je vhodny, povedz to jasne a konkretne.",
           "example_user_flows vrat presne 3.",
           "summary nech je 1 kratky odsek do 2 viet.",
@@ -44,7 +47,7 @@ export async function generateSiteAudit(siteSummary: string): Promise<SiteAudit>
         content: siteSummary,
       },
     ],
-    response_format: zodResponseFormat(siteAuditSchema, "site_audit"),
+    response_format: zodResponseFormat(rawSiteAuditSchema, "site_audit"),
   });
 
   const audit = response.choices[0]?.message.parsed;
@@ -53,6 +56,5 @@ export async function generateSiteAudit(siteSummary: string): Promise<SiteAudit>
     throw new Error("Model vratil prazdny audit.");
   }
 
-  return siteAuditSchema.parse(audit);
+  return normalizeAuditResult(audit);
 }
-

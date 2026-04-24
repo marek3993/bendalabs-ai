@@ -1,6 +1,7 @@
 "use client";
 
 import { startTransition, useEffect, useState } from "react";
+import { getFitLabelFromScore } from "@/lib/site-audit/normalize";
 import type { SiteAudit } from "@/lib/site-audit/schema";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
@@ -50,6 +51,7 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
   const [error, setError] = useState("");
   const [audit, setAudit] = useState<SiteAudit | null>(null);
   const [loadingIndex, setLoadingIndex] = useState(0);
+  const fitLabel = audit ? getFitLabelFromScore(audit.score) : null;
 
   useEffect(() => {
     if (status !== "loading") {
@@ -249,9 +251,7 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
                     </div>
                   </div>
                   <div className="rounded-[22px] border border-black/10 bg-black/[0.03] px-5 py-4 text-sm leading-6 text-neutral-700">
-                    <div className="font-medium text-neutral-950">
-                      {audit.is_good_fit ? "Dobry fit" : "Slabsi fit"}
-                    </div>
+                    <div className="font-medium text-neutral-950">{fitLabel}</div>
                     <div className="mt-1">{audit.site_type}</div>
                   </div>
                 </div>
