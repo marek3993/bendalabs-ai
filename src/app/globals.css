@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f6f3;
+  --foreground: #111111;
+  --muted: #5f5f58;
+  --muted-2: #83837b;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-2: rgba(255, 255, 255, 0.92);
+  --surface-3: rgba(245, 245, 242, 0.95);
+  --border: rgba(17, 17, 17, 0.08);
+  --border-strong: rgba(17, 17, 17, 0.16);
+  --grid: rgba(17, 17, 17, 0.05);
+  --grid-strong: rgba(17, 17, 17, 0.08);
+  --glow: rgba(17, 17, 17, 0.08);
+  --shadow: 0 24px 80px rgba(17, 17, 17, 0.08);
+  --font-display: "SF Pro Display", "Segoe UI Variable Display", "Helvetica Neue", sans-serif;
+  --font-body: "Segoe UI Variable Text", "Helvetica Neue", sans-serif;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-body);
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(17, 17, 17, 0.06), transparent 26%),
+    radial-gradient(circle at 82% 16%, rgba(17, 17, 17, 0.035), transparent 18%),
+    linear-gradient(180deg, #fbfbf9 0%, #f7f7f4 44%, #f3f3ef 100%);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(17, 17, 17, 0.12);
+  color: #111111;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(17, 17, 17, 0.36);
+}
+
+.site-shell {
+  position: relative;
+  overflow-x: clip;
+}
+
+.site-shell::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(50% - 1px),
+      rgba(17, 17, 17, 0.02) 50%,
+      transparent calc(50% + 1px)
+    ),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 100% 100%, 56px 56px, 56px 56px;
+  mask-image: radial-gradient(circle at center, black 54%, transparent 100%);
+  opacity: 0.62;
+}
+
+.glass-panel {
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 249, 246, 0.9)),
+    var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.grid-surface {
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.section-divider {
+  border-top: 1px solid rgba(17, 17, 17, 0.07);
+}
+
+.section-surface-white {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.5));
+}
+
+.section-surface-soft {
+  background: linear-gradient(180deg, rgba(246, 246, 243, 0.86), rgba(241, 241, 237, 0.74));
+}
+
+.section-surface-tint {
+  background: linear-gradient(180deg, rgba(240, 240, 236, 0.92), rgba(235, 235, 231, 0.78));
+}
+
+.scanlines::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(17, 17, 17, 0.02) 44%,
+    rgba(17, 17, 17, 0.05) 50%,
+    transparent 56%
+  );
+  transform: translateY(-100%);
+  animation: scanSweep 8s linear infinite;
+  opacity: 0.55;
+}
+
+.noise-mask::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(17, 17, 17, 0.03) 0, transparent 24%),
+    radial-gradient(circle at 80% 62%, rgba(17, 17, 17, 0.018) 0, transparent 24%);
+  opacity: 0.65;
+}
+
+.network-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(17, 17, 17, 0.18), transparent);
+  filter: blur(0.2px);
+}
+
+.network-node {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.72);
+  box-shadow:
+    0 0 0 8px rgba(17, 17, 17, 0.03),
+    0 0 24px rgba(17, 17, 17, 0.12);
+  animation: pulseNode 4.8s ease-in-out infinite;
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  transition:
+    opacity 700ms cubic-bezier(0.21, 1, 0.21, 1),
+    transform 700ms cubic-bezier(0.21, 1, 0.21, 1);
+}
+
+[data-reveal][data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+[data-card-active="true"] {
+  border-color: var(--border-strong);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 242, 0.96)),
+    var(--surface-2);
+  box-shadow:
+    0 24px 70px rgba(17, 17, 17, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.section-progress-dot {
+  position: relative;
+}
+
+.section-progress-dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 18px rgba(17, 17, 17, 0.16);
+  opacity: 0;
+}
+
+.section-progress-dot[data-active="true"]::before {
+  opacity: 1;
+}
+
+.hero-orbit {
+  animation: orbitFloat 12s ease-in-out infinite;
+}
+
+.hero-orbit-slow {
+  animation: orbitFloatSlow 18s ease-in-out infinite;
+}
+
+@keyframes scanSweep {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes pulseNode {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes orbitFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes orbitFloatSlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .site-shell::before {
+    background-size: 100% 100%, 32px 32px, 32px 32px;
+    opacity: 0.42;
+  }
+}
