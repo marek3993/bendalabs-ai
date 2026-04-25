@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { persistSuccessfulAudit } from "@/lib/leads/repository";
 import { generateSiteAudit } from "@/lib/site-audit/analyze";
 import { crawlSite } from "@/lib/site-audit/crawl";
+import { getDomainAuditOverride } from "@/lib/site-audit/overrides";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
 export const runtime = "nodejs";
@@ -25,6 +26,21 @@ export async function POST(request: Request) {
         { error: "Zadajte platnu webovu adresu. Staci aj domena ako bendalabs.sk." },
         { status: 400 },
       );
+    }
+
+    const domainOverride = getDomainAuditOverride(normalizedUrl);
+
+    if (domainOverride) {
+      try {
+        await persistSuccessfulAudit(request, normalizedUrl, domainOverride);
+      } catch (leadCaptureError) {
+        console.error("Lead capture save failed:", leadCaptureError);
+      }
+
+      return NextResponse.json({
+        audit: domainOverride,
+        inspected_pages: [normalizedUrl],
+      });
     }
 
     const crawledSite = await crawlSite(normalizedUrl);
