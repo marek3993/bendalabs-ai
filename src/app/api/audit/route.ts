@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { persistSuccessfulAudit } from "@/lib/leads/repository";
 import { generateSiteAudit } from "@/lib/site-audit/analyze";
 import { crawlSite } from "@/lib/site-audit/crawl";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
@@ -28,6 +29,12 @@ export async function POST(request: Request) {
 
     const crawledSite = await crawlSite(normalizedUrl);
     const audit = await generateSiteAudit(crawledSite.siteSummary);
+
+    try {
+      await persistSuccessfulAudit(request, crawledSite.normalizedUrl, audit);
+    } catch (leadCaptureError) {
+      console.error("Lead capture save failed:", leadCaptureError);
+    }
 
     return NextResponse.json({
       audit,
