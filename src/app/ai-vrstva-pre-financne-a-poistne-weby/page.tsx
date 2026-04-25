@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ const sections = [
     label: "Co robi AI vrstva",
     title: "AI vrstva nepredava. Preradi cloveka do spravneho flowu skor, ako sa pomyli.",
     description:
-      "Vrstva cita intent navstevnika vo vlastnych slovach, rozpozna hlavny use-case a posle ho do konkretneho dalsieho kroku. Nie do vseobecnej sekcie. Do kalkulacky, formulara, produktovej vetvy alebo kontaktu, ktory dava zmysel pre dany dopyt.",
+      "Vrstva cita intent navstevnika vo vlastnych slovach, rozpozna hlavny zamer a posle ho do konkretneho dalsieho kroku. Nie do vseobecnej sekcie. Do kalkulacky, formulara, produktovej vetvy alebo kontaktu, ktory dava zmysel pre dany dopyt.",
     surface: "white" as const,
     cards: [
       {
@@ -48,7 +49,7 @@ const sections = [
       },
       {
         title: "Menej odpadu pred formularom",
-        text: "AI vrstva odfiltruje slepe odbočky a posuva navstevnika len do formulara, kde ma realnu sancu dokoncit dopyt.",
+        text: "AI vrstva odfiltruje slepe odbocky a posuva navstevnika len do formulara, kde ma realnu sancu dokoncit dopyt.",
       },
       {
         title: "Odporucanie suvisiacich produktov",
@@ -96,13 +97,24 @@ export default function FinanceAndInsurancePage() {
   return (
     <ServicePageTemplate
       eyebrow="AI vrstva pre financne a poistne weby"
-      title="AI vrstva pre finančné a poistné weby"
-      subtitle="Dostane viac ľudí do správnej kalkulačky, zníži odpad pred formulárom a zvýši počet dokončených dopytov."
+      title="AI vrstva pre financne a poistne weby"
+      subtitle="Dostane viac ludi do spravnej kalkulacky, znizi odpad pred formularom a zvysi pocet dokoncenych dopytov."
       heroChips={[
         "Hypoteky a refinancovanie",
         "PZP a havarijne poistenie",
         "Investovanie, sporenie, kontakt",
       ]}
+      heroAddon={
+        <AuditBot
+          proposalTargetId="cta"
+          badge="AI audit webu"
+          title="Zadajte URL a hned uvidite, kde sa na financnom alebo poistnom webe lame cesta ku dopytu."
+          description="Audit preveri homepage aj klucove produktove vetvy a ukaze, kde by AI vrstva vedela rychlejsie dostat navstevnika do spravnej kalkulacky, formulara alebo kontaktu."
+          proposalTitle="Chcete audit a konkretny navrh AI vrstvy pre vas financny alebo poistny web?"
+          proposalDescription="Po audite sa vieme pozriet na miesta, kde dnes ludia netrafia spravny flow, odpadaju pred formularom alebo koncia vo vseobecnej sekcii bez dopytu."
+          proposalButtonLabel="Prejst na CTA"
+        />
+      }
       sections={sections}
       ctaTitle="Ak mate financny alebo poistny web, pozriem sa, kde dnes stracate dopyty."
       ctaText="Poslite URL, hlavne produktove vetvy a miesto, kde sa vam dnes lomi konverzia. Vratim sa s konkretnym nazorom, ci tam AI vrstva vie realne zlepsit vykon."

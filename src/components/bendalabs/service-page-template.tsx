@@ -23,6 +23,7 @@ type ServicePageTemplateProps = {
   subtitle: string;
   eyebrow: string;
   heroChips: ReadonlyArray<string>;
+  heroAddon?: ReactNode;
   sections: ReadonlyArray<ServicePageSection>;
   ctaTitle: string;
   ctaText: string;
@@ -100,6 +101,7 @@ export default function ServicePageTemplate({
   subtitle,
   eyebrow,
   heroChips,
+  heroAddon,
   sections,
   ctaTitle,
   ctaText,
@@ -165,6 +167,8 @@ export default function ServicePageTemplate({
               </Link>
             </div>
           </div>
+
+          {heroAddon ? <div className="mt-10">{heroAddon}</div> : null}
         </section>
 
         {sections.map((section) => (

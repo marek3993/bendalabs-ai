@@ -12,7 +12,16 @@ const loadingSteps = [
 ];
 
 type AuditBotProps = {
-  onRequestProposal: () => void;
+  onRequestProposal?: () => void;
+  proposalTargetId?: string;
+  badge?: string;
+  title?: string;
+  description?: string;
+  submitLabel?: string;
+  loadingLabel?: string;
+  proposalTitle?: string;
+  proposalDescription?: string;
+  proposalButtonLabel?: string;
 };
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -45,7 +54,18 @@ function ResultCard({
   );
 }
 
-export default function AuditBot({ onRequestProposal }: AuditBotProps) {
+export default function AuditBot({
+  onRequestProposal,
+  proposalTargetId,
+  badge = "AI audit bot",
+  title = "Zadajte URL a hned uvidite, kde by AI vrstva vedela zmenit sposob pouzivania webu.",
+  description = "Audit nacita homepage, prejde relevantne podstranky a vyhodnoti, kde by AI vrstva vedela zjednodusit navigaciu, odporucanie, lead flow a dalsi krok pouzivatela.",
+  submitLabel = "Analyzovat web",
+  loadingLabel = "Analyzujem web",
+  proposalTitle = "Chcete plny audit a konkretny navrh pre vas web?",
+  proposalDescription = "Poslite web a pripravim konkretny navrh AI vrstvy, prioritne miesta zasahu a realisticku prvu fazu nasadenia.",
+  proposalButtonLabel = "Poziadat o konkretny navrh",
+}: AuditBotProps) {
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -135,6 +155,20 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
     }
   };
 
+  const handleRequestProposal = () => {
+    if (onRequestProposal) {
+      onRequestProposal();
+      return;
+    }
+
+    if (proposalTargetId) {
+      document.getElementById(proposalTargetId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <div className="glass-panel scanlines noise-mask relative overflow-hidden rounded-[36px] p-6 sm:p-10 lg:p-12">
       <div className="pointer-events-none absolute inset-0">
@@ -143,19 +177,18 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
         <div className="absolute inset-x-16 bottom-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
       </div>
 
-      <div className="relative z-10">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-neutral-600">
-            AI audit bot
+        <div className="relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-neutral-600">
+              {badge}
+            </div>
+            <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
+              {title}
+            </h3>
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-neutral-600">
+              {description}
+            </p>
           </div>
-          <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
-            Zadajte URL a hned uvidite, kde by AI vrstva vedela zmenit sposob pouzivania webu.
-          </h3>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-neutral-600">
-            Audit nacita homepage, prejde relevantne podstranky a vyhodnoti, kde by AI vrstva
-            vedela zjednodusit navigaciu, odporucanie, lead flow a dalsi krok pouzivatela.
-          </p>
-        </div>
 
         <form
           onSubmit={handleSubmit}
@@ -179,7 +212,7 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
             disabled={status === "loading"}
             className="rounded-[20px] border border-black bg-black px-6 py-4 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {status === "loading" ? "Analyzujem web" : "Analyzovat web"}
+            {status === "loading" ? loadingLabel : submitLabel}
           </button>
         </form>
 
@@ -320,20 +353,19 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
               <div className="max-w-2xl">
                 <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">Dalsi krok</div>
                 <div className="mt-3 text-2xl font-semibold tracking-[-0.04em]">
-                  Chcete plny audit a konkretny navrh pre vas web?
+                  {proposalTitle}
                 </div>
                 <p className="mt-3 text-sm leading-6 text-white/70">
-                  Poslite web a pripravim konkretny navrh AI vrstvy, prioritne miesta zasahu a
-                  realisticku prvu fazu nasadenia.
+                  {proposalDescription}
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={onRequestProposal}
+                onClick={handleRequestProposal}
                 className="mt-6 rounded-[20px] border border-white bg-white px-6 py-4 text-sm font-medium text-black hover:bg-neutral-200 sm:mt-0"
               >
-                Poziadat o konkretny navrh
+                {proposalButtonLabel}
               </button>
             </div>
           </div>

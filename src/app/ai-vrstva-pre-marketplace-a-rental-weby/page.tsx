@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
 
 export const metadata: Metadata = {
@@ -22,37 +23,37 @@ const sections = [
       },
       {
         title: "Filtre nepracuju s intentom",
-        text: "Pouzivatel nevie, ci potrebuje vapku, brusku alebo kompletny set. Vie len, ze chce cez vikend vyriesit terasu alebo plot.",
+        text: "Pouzivatel nevie, ci potrebuje konkretny produkt, sluzbu alebo cely set. Vie len, co chce spravit a v akom case.",
       },
       {
         title: "Menu nepozna konkretnu situaciu",
-        text: "Klasicka navigacia nepovie, co je najlepsi dalsi krok pre dany use-case, termin, rozpocet alebo sposob pouzitia.",
+        text: "Klasicka navigacia nepovie, co je najlepsi dalsi krok pre dany problem, termin, rozpocet alebo sposob pouzitia.",
       },
       {
         title: "Rezervacia je prilis daleko",
-        text: "Kazdy nadbytocny klik medzi prvou potrebou a rezervaciou zvysuje sancu, ze clovek odide alebo zavola konkurencii.",
+        text: "Kazdy nadbytocny klik medzi prvou potrebou a rezervaciou zvysuje sancu, ze clovek odide alebo skonci bez akcie.",
       },
     ],
   },
   {
-    id: "rentulo",
-    label: "Rentulo use-case",
-    title: "Rentulo typ use-casu je presne miesto, kde AI vrstva dava zmysel.",
+    id: "intent",
+    label: "Ako sa hlada",
+    title: "Pouzivatel nepride s nazvom produktu. Pride s ulohou, problemom alebo situaciou.",
     description:
-      "Pouzivatel nepride s tym, ze chce konkretny model stroja. Napise, ze potrebuje na vikend vycistit zamkovu dlazbu, zbrusit stary plot alebo odvrtat jadro. To je vstup, s ktorym ma web pracovat.",
+      "AI vrstva z textu pochopi intent a prelozi ho na spravny produkt, ponuku alebo dalsi krok. Nemusi cakat, kym clovek trafi internu strukturu katalogu alebo pozna spravne nazvy kategorii.",
     surface: "white" as const,
     cards: [
       {
         title: "Uloha namiesto produktu",
-        text: "Web si zoberie vetu vo vlastnych slovach a prelozi ju na konkretny typ produktu, sluzby alebo rezervacneho flowu.",
+        text: "Navstevnik napise, co chce vyriesit, a web to prelozi na konkretny typ produktu, sluzby alebo rezervacneho flowu.",
       },
       {
         title: "Spravna ponuka na prvy pokus",
-        text: "AI odporuci spravny produkt alebo ponuku bez toho, aby navstevnik musel rucne prechadzat viac kategorii a technickych parametrov.",
+        text: "AI odporuci spravny produkt alebo ponuku bez toho, aby navstevnik musel rucne prechadzat viac kategorii, filtrov a technickych parametrov.",
       },
       {
         title: "Dalsi krok bez bludenia",
-        text: "Ak dopyt nie je pripraveny na rezervaciu, vrstva posle cloveka na relevantny detail, porovnanie alebo kontakt. Nie spat na zoznam.",
+        text: "Ak dopyt este nie je pripraveny na rezervaciu, vrstva posle cloveka na relevantny detail, porovnanie, formular alebo kontakt. Nie spat na zoznam.",
       },
       {
         title: "Menej prazdnych navstev",
@@ -63,16 +64,16 @@ const sections = [
   {
     id: "co-robi",
     label: "Co robi AI vrstva",
-    title: "AI vrstva skrati rozhodovanie aj cestu k objednavke.",
+    title: "AI vrstva chape intent, nie len klucove slova.",
     description:
-      "Vrstva priradi intent ku konkretnej casti webu a odporuci spravny produkt, ponuku alebo dalsi krok. Pracuje s ulohou navstevnika, nie len s taxonomiou katalogu.",
+      "Vrstva priradi intent ku konkretnej casti webu a odporuci spravny produkt, sluzbu, rental flow alebo dalsi krok. Pomaha hlavne tam, kde vacsi katalog a viac vetiev vytvara zbytocny chaos uz na zaciatku navstevy.",
     surface: "tint" as const,
     bullets: [
       "Rozpozna, ci clovek hlada produkt, rezervaciu, doplnkovu sluzbu alebo len potrebuje pomoct s vyberom.",
-      "Odporuci spravny produkt alebo ponuku aj vtedy, ked navstevnik nepozna presny nazov kategorie.",
-      "Posle cloveka rovno na dalsi krok, ktory zvysuje sancu na rezervaciu alebo objednavku.",
-      "Vie navrhnut aj suvisiacu ponuku, ak dava zmysel pre dany use-case alebo termin pouzitia.",
-      "Znizi pocet navstevnikov, ktori sa stratia medzi kategoriami a filtrami bez akcie.",
+      "Pomaha najst spravny produkt, sluzbu alebo rental flow aj vtedy, ked navstevnik nepozna presny nazov kategorie.",
+      "Znizuje chaos pri vacsom katalogu, kde menu a filtre nestacia na rychle rozhodnutie.",
+      "Posle cloveka rovno na dalsi krok, ktory zvysuje sancu na dopyt, rezervaciu alebo objednavku.",
+      "Vie odporucit aj suvisiacu ponuku, ak dava zmysel pre konkretnu situaciu alebo termin pouzitia.",
     ],
   },
   {
@@ -95,17 +96,28 @@ const sections = [
 export default function MarketplaceAndRentalPage() {
   return (
     <ServicePageTemplate
-      eyebrow="AI vrstva pre marketplace a rental weby"
+      eyebrow="MARKETPLACE A RENTAL"
       title="AI vrstva pre marketplace a rental weby"
-      subtitle="Návštevník nemusí hľadať cez menu a kategórie. Napíše, čo chce urobiť, a web ho tam dovedie."
+      subtitle="Pouzivatel casto nepride s presnym nazvom produktu alebo sluzby. Pride s ulohou, problemom alebo situaciou. AI vrstva z jeho zadania pochopi intent a navedie ho na spravny produkt, ponuku alebo dalsi krok."
       heroChips={[
         "Vela kategorii a filtrov",
         "Intent podla ulohy",
         "Kratsia cesta k rezervacii",
       ]}
+      heroAddon={
+        <AuditBot
+          proposalTargetId="cta"
+          badge="AI audit webu"
+          title="Zadajte URL a hned uvidite, kde sa na marketplace alebo rental webe predlzuje cesta k rezervacii."
+          description="Audit preveri homepage aj klucove podstranky a ukaze, kde by AI vrstva vedela lepsie priradit intent k produktu, ponuke alebo dalsiemu kroku."
+          proposalTitle="Chcete audit a konkretny navrh AI vrstvy pre vas marketplace alebo rental web?"
+          proposalDescription="Po audite sa vieme pozriet na miesta, kde dnes navstevnik hlada prilis dlho, netrafi spravnu ponuku alebo odpadne pred rezervaciou."
+          proposalButtonLabel="Prejst na CTA"
+        />
+      }
       sections={sections}
       ctaTitle="Ak mate marketplace alebo rental web, pozriem sa, kde sa dnes zbytocne predlzuje cesta k rezervacii."
-      ctaText="Poslite URL, hlavne use-casy a vetvy, kde musia ludia najviac hladat. Vratim sa s konkretnym nazorom, ci AI vrstva vie skracovat cestu k objednavke uz v prvej faze."
+      ctaText="Poslite URL, hlavne vetvy katalogu a miesto, kde dnes ludia najcastejsie bludia alebo odpadaju. Vratim sa s konkretnym nazorom, ci AI vrstva vie skracovat cestu k dopytu, rezervacii alebo objednavke uz v prvej faze."
       ctaButtonLabel="Poslat marketplace alebo rental web"
       ctaMailSubject="AI vrstva pre marketplace alebo rental web"
     />
