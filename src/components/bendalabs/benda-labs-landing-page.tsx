@@ -98,14 +98,19 @@ const journeySteps = [
 
 const pricing = [
   {
-    name: "Jednoduchsia implementacia",
-    price: "1 500 EUR",
-    text: "Jednorazovo zahrna nasadenie AI vrstvy, prvu logiku rozhodovania a spustenie produkcneho riesenia.",
+    name: "Jednoduchšia implementácia",
+    price: "1 500 € jednorazovo",
+    text: "Pre jednoduchšie weby alebo jednu hlavnú rozhodovaciu vrstvu.",
   },
   {
-    name: "Zlozitejsia implementacia",
-    price: "2 500 EUR",
-    text: "Jednorazovo pre vacsie weby s viacerymi vetvami, ponukami, produktovymi cestami a viacerymi miestami, kde sa lame konverzia.",
+    name: "Zložitejšia implementácia",
+    price: "2 500 € jednorazovo",
+    text: "Pre väčšie weby s viacerými vetvami, ponukami a miestami, kde sa láme konverzia.",
+  },
+  {
+    name: "Mesačné doladenie",
+    price: "190 € / mesiac",
+    text: "Optimalizácia podľa dát a reálneho správania návštevníkov. Úpravy pri zmene webu, obsahu alebo rozhodovacích ciest. 1 väčšia zmena mesačne v rámci nasadenej AI vrstvy.",
   },
 ];
 
@@ -580,16 +585,16 @@ export default function BendaLabsLandingPage() {
 
               <div data-reveal className="glass-panel rounded-[30px] p-6">
                 <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                  Mesacne doladenie
+                  AI computing power
                 </div>
                 <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-                  190 EUR
+                  odhad 10 až 100 €
                   <span className="text-lg text-neutral-500"> / mesiac</span>
                 </div>
                 <div className="mt-5 space-y-3 text-sm leading-7 text-neutral-600">
-                  <div>Optimalizacia podla dat a realnych interakcii pouzivatelov.</div>
-                  <div>Upravy pri zmene webu, obsahu alebo rozhodovacich ciest.</div>
-                  <div>1 vacsia zmena mesacne v ramci nasadenej AI vrstvy.</div>
+                  <div>Podľa reálneho používania, návštevnosti a náročnosti nasadenia.</div>
+                  <div>Spotreba ide priamo cez vlastný OpenAI Developer Platform účet klienta.</div>
+                  <div>BendaLabs zabezpečuje implementáciu, napojenie, logiku a priebežné doladenie.</div>
                 </div>
               </div>
             </div>
