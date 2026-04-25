@@ -22,6 +22,181 @@ type RecentAuditQuery = {
   limit?: number;
 };
 
+type SnapshotAuditRecord = {
+  created_at: string;
+  fit_score: number;
+};
+
+type RecentAuditListItem = Pick<
+  AuditRecord,
+  | "id"
+  | "created_at"
+  | "input_url"
+  | "normalized_domain"
+  | "fit_score"
+  | "is_good_fit"
+  | "site_type"
+  | "recommended_ai_type"
+  | "summary"
+  | "referrer"
+>;
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === "object" ? (value as Record<string, unknown>) : {};
+}
+
+function safeText(value: unknown, fallback = "") {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  return fallback;
+}
+
+function safeNullableText(value: unknown) {
+  return typeof value === "string" ? value : null;
+}
+
+function safeNumber(value: unknown, fallback = 0) {
+  const parsed =
+    typeof value === "number" ? value : typeof value === "string" ? Number(value) : Number.NaN;
+
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function safeBoolean(value: unknown, fallback = false) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (value === "true") {
+    return true;
+  }
+
+  if (value === "false") {
+    return false;
+  }
+
+  return fallback;
+}
+
+function safeArray<T>(value: unknown, mapItem?: (item: unknown, index: number) => T) {
+  if (!Array.isArray(value)) {
+    return [] as T[];
+  }
+
+  if (!mapItem) {
+    return value as T[];
+  }
+
+  return value.map((item, index) => mapItem(item, index));
+}
+
+function safeStringArray(value: unknown) {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(trimmed);
+
+      if (Array.isArray(parsed)) {
+        return safeStringArray(parsed);
+      }
+    } catch {}
+
+    return [trimmed];
+  }
+
+  return safeArray(value)
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeExampleUserFlowRecord(value: unknown): AuditRecord["example_user_flows"][number] {
+  const record = asRecord(value);
+
+  return {
+    user_intent: safeText(record.user_intent),
+    ai_action: safeText(record.ai_action),
+    business_value: safeText(record.business_value),
+  };
+}
+
+function normalizeSnapshotAuditRecord(value: unknown): SnapshotAuditRecord {
+  const record = asRecord(value);
+
+  return {
+    created_at: safeText(record.created_at),
+    fit_score: safeNumber(record.fit_score),
+  };
+}
+
+export function normalizeAuditRecord(value: unknown): AuditRecord {
+  const record = asRecord(value);
+
+  return {
+    id: safeText(record.id),
+    created_at: safeText(record.created_at),
+    input_url: safeText(record.input_url),
+    normalized_domain: safeText(record.normalized_domain),
+    fit_score: safeNumber(record.fit_score),
+    is_good_fit: safeBoolean(record.is_good_fit),
+    site_type: safeText(record.site_type),
+    recommended_ai_type: safeStringArray(record.recommended_ai_type),
+    summary: safeText(record.summary),
+    friction_points: safeStringArray(record.friction_points),
+    upsell_opportunities: safeStringArray(record.upsell_opportunities),
+    phase_one_plan: safeStringArray(record.phase_one_plan),
+    example_user_flows: safeArray(record.example_user_flows, normalizeExampleUserFlowRecord),
+    user_agent: safeNullableText(record.user_agent),
+    ip_hash: safeNullableText(record.ip_hash),
+    referrer: safeNullableText(record.referrer),
+  };
+}
+
+export function normalizeLeadRollupRecord(value: unknown): LeadRollup {
+  const record = asRecord(value);
+
+  return {
+    normalized_domain: safeText(record.normalized_domain),
+    audit_count: safeNumber(record.audit_count),
+    last_seen: safeText(record.last_seen),
+    last_fit_score: safeNumber(record.last_fit_score),
+    last_site_type: safeText(record.last_site_type),
+    last_summary: safeText(record.last_summary),
+    last_recommended_ai_type: safeStringArray(record.last_recommended_ai_type),
+    is_high_fit: safeBoolean(record.is_high_fit),
+    is_hot_lead: safeBoolean(record.is_hot_lead),
+    is_returning_interest: safeBoolean(record.is_returning_interest),
+  };
+}
+
+export function normalizeRecentAuditRecord(value: unknown): RecentAuditListItem {
+  const audit = normalizeAuditRecord(value);
+
+  return {
+    id: audit.id,
+    created_at: audit.created_at,
+    input_url: audit.input_url,
+    normalized_domain: audit.normalized_domain,
+    fit_score: audit.fit_score,
+    is_good_fit: audit.is_good_fit,
+    site_type: audit.site_type,
+    recommended_ai_type: audit.recommended_ai_type,
+    summary: audit.summary,
+    referrer: audit.referrer ?? "",
+  };
+}
+
 function sanitizeSearchQuery(query: string) {
   return query.trim().replace(/\*/g, "").replace(/\s+/g, " ");
 }
@@ -87,8 +262,8 @@ async function insertAudit(payload: AuditInsert) {
     }),
   });
 
-  const rows = (await response.json()) as AuditRecord[];
-  return rows[0] ?? null;
+  const rows = safeArray(await response.json());
+  return rows[0] ? normalizeAuditRecord(rows[0]) : null;
 }
 
 export async function getDomainLeadSnapshot(
@@ -112,14 +287,12 @@ export async function getDomainLeadSnapshot(
     },
   });
 
-  const audits = (await response.json()) as Array<{
-    created_at: string;
-    fit_score: number;
-  }>;
+  const audits = safeArray(await response.json(), normalizeSnapshotAuditRecord);
   const auditCount = parseCountHeader(response.headers.get("content-range"));
   const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const recentCount = audits.filter((audit) => {
-    return new Date(audit.created_at).getTime() >= sevenDaysAgo;
+    const createdAt = Date.parse(audit.created_at);
+    return Number.isFinite(createdAt) && createdAt >= sevenDaysAgo;
   }).length;
 
   return {
@@ -186,16 +359,9 @@ export async function getLeadRollups({
   const response = await supabaseRestFetch("audit_lead_rollups", {
     searchParams,
   });
-  const leads = (await response.json()) as Array<
-    LeadRollup & { last_recommended_ai_type: string[] | null | undefined }
-  >;
+  const leads = safeArray(await response.json(), normalizeLeadRollupRecord);
 
-  return leads
-    .map((lead) => ({
-      ...lead,
-      last_recommended_ai_type: lead.last_recommended_ai_type ?? [],
-    }))
-    .filter((lead) => matchesLeadStatus(lead, status));
+  return leads.filter((lead) => matchesLeadStatus(lead, status));
 }
 
 export async function getRecentAudits({ query, limit = 25 }: RecentAuditQuery = {}) {
@@ -220,19 +386,5 @@ export async function getRecentAudits({ query, limit = 25 }: RecentAuditQuery = 
     searchParams,
   });
 
-  return (await response.json()) as Array<
-    Pick<
-      AuditRecord,
-      | "id"
-      | "created_at"
-      | "input_url"
-      | "normalized_domain"
-      | "fit_score"
-      | "is_good_fit"
-      | "site_type"
-      | "recommended_ai_type"
-      | "summary"
-      | "referrer"
-    >
-  >;
+  return safeArray(await response.json(), normalizeRecentAuditRecord);
 }

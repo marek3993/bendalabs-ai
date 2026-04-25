@@ -32,11 +32,101 @@ function normalizeSort(value: string): LeadSort {
   return "last-seen";
 }
 
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("sk-SK", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+const dateTimeFormatter = new Intl.DateTimeFormat("sk-SK", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+function safeArray<T>(value: T[] | null | undefined) {
+  return Array.isArray(value) ? value.filter((item): item is NonNullable<T> => item != null) : [];
+}
+
+function safeText(value: string | null | undefined, fallback = "") {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function formatDateTime(value: string | null | undefined) {
+  if (!value) {
+    return "-";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return dateTimeFormatter.format(date);
+}
+
+function getSafeHref(value: string | null | undefined) {
+  const href = safeText(value);
+
+  if (!href) {
+    return null;
+  }
+
+  try {
+    return new URL(href).toString();
+  } catch {
+    return null;
+  }
+}
+
+function formatScore(value: number | null | undefined) {
+  return Number.isFinite(value) ? `${value}/10` : "-";
+}
+
+function getReferrerText(value: string | null | undefined) {
+  return safeText(value, "Direct / nezname");
+}
+
+function getDomainText(value: string | null | undefined) {
+  return safeText(value, "-");
+}
+
+function getSiteTypeText(value: string | null | undefined) {
+  return safeText(value, "-");
+}
+
+function getAuditUrlText(value: string | null | undefined) {
+  return safeText(value, "-");
+}
+
+function DateTimeValue({ value }: { value: string | null | undefined }) {
+  return <>{formatDateTime(value)}</>;
+}
+
+function EmptyDash({ value }: { value: string | null | undefined }) {
+  return <>{safeText(value, "-")}</>;
+}
+
+function formatLeadCount(value: number | null | undefined) {
+  return Number.isFinite(value) ? value : 0;
+}
+
+function getRecommendedTypes(value: string[] | null | undefined) {
+  return safeArray(value);
+}
+
+function getHighFit(value: boolean | null | undefined) {
+  return value ?? false;
+}
+
+function getHotLead(value: boolean | null | undefined) {
+  return value ?? false;
+}
+
+function getReturningInterest(value: boolean | null | undefined) {
+  return value ?? false;
+}
+
+function getRecentAuditKey(value: string | null | undefined, fallback: string) {
+  return safeText(value, fallback);
+}
+
+function formatTrackedDomainsCount(value: number | null | undefined) {
+  return Number.isFinite(value) ? value : 0;
 }
 
 function LeadBadge({
@@ -167,6 +257,17 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
     getLeadRollups({ query, sort, status }),
     getRecentAudits({ query, limit: 25 }),
   ]);
+  const leadItems = safeArray(leads);
+  const recentAuditItems = safeArray(recentAudits);
+  const leadRows = leadItems.filter((lead): lead is NonNullable<(typeof leadItems)[number]> => lead != null);
+  const recentAuditRows = recentAuditItems.filter(
+    (audit): audit is NonNullable<(typeof recentAuditItems)[number]> => audit != null,
+  );
+  const trackedDomainsCount = formatTrackedDomainsCount(leadRows.length);
+  const hotLeadCount = leadRows.filter((lead) => getHotLead(lead?.is_hot_lead)).length;
+  const returningInterestCount = leadRows.filter((lead) =>
+    getReturningInterest(lead?.is_returning_interest),
+  ).length;
 
   return (
     <main className="min-h-screen px-4 py-6 sm:px-6 sm:py-10">
@@ -235,19 +336,19 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
           <div className="glass-panel rounded-[28px] p-6">
             <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Tracked domains</div>
             <div className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-              {leads.length}
+              {trackedDomainsCount}
             </div>
           </div>
           <div className="glass-panel rounded-[28px] p-6">
             <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Hot leads</div>
             <div className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-              {leads.filter((lead) => lead.is_hot_lead).length}
+              {hotLeadCount}
             </div>
           </div>
           <div className="glass-panel rounded-[28px] p-6">
             <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Returning interest</div>
             <div className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-              {leads.filter((lead) => lead.is_returning_interest).length}
+              {returningInterestCount}
             </div>
           </div>
         </div>
@@ -269,34 +370,48 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
                 </tr>
               </thead>
               <tbody>
-                {leads.map((lead) => (
-                  <tr key={lead.normalized_domain} className="border-t border-black/6 align-top">
+                {leadRows.map((lead, index) => (
+                  <tr
+                    key={getRecentAuditKey(lead?.normalized_domain, `lead-${index}`)}
+                    className="border-t border-black/6 align-top"
+                  >
                     <td className="px-6 py-5">
-                      <div className="font-medium text-neutral-950">{lead.normalized_domain}</div>
+                      <div className="font-medium text-neutral-950">
+                        <EmptyDash value={lead?.normalized_domain} />
+                      </div>
                       <div className="mt-1 max-w-md text-xs leading-5 text-neutral-500">
-                        {lead.last_summary}
+                        <EmptyDash value={lead?.last_summary} />
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-neutral-800">{lead.audit_count}</td>
-                    <td className="px-6 py-5 text-neutral-800">{lead.last_fit_score}/10</td>
+                    <td className="px-6 py-5 text-neutral-800">{formatLeadCount(lead?.audit_count)}</td>
+                    <td className="px-6 py-5 text-neutral-800">{formatScore(lead?.last_fit_score)}</td>
                     <td className="px-6 py-5">
                       <div className="flex flex-wrap gap-2">
-                        {(lead.last_recommended_ai_type ?? []).map((item) => (
-                          <LeadBadge key={`${lead.normalized_domain}-${item}`}>{item}</LeadBadge>
+                        {getRecommendedTypes(lead?.last_recommended_ai_type).map((item, itemIndex) => (
+                          <LeadBadge
+                            key={`${getDomainText(lead?.normalized_domain)}-${item || `type-${itemIndex}`}`}
+                          >
+                            {safeText(item, "-")}
+                          </LeadBadge>
                         ))}
+                        {getRecommendedTypes(lead?.last_recommended_ai_type).length === 0 ? (
+                          <span className="text-neutral-500">-</span>
+                        ) : null}
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <StatusPills
-                        isHotLead={lead.is_hot_lead}
-                        isHighFit={lead.is_high_fit}
-                        isReturningInterest={lead.is_returning_interest}
+                        isHotLead={getHotLead(lead?.is_hot_lead)}
+                        isHighFit={getHighFit(lead?.is_high_fit)}
+                        isReturningInterest={getReturningInterest(lead?.is_returning_interest)}
                       />
                     </td>
-                    <td className="px-6 py-5 text-neutral-800">{formatDateTime(lead.last_seen)}</td>
+                    <td className="px-6 py-5 text-neutral-800">
+                      <DateTimeValue value={lead?.last_seen} />
+                    </td>
                   </tr>
                 ))}
-                {leads.length === 0 ? (
+                {leadRows.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-10 text-center text-neutral-500">
                       Zatial ziadne leady pre zvoleny filter.
@@ -325,35 +440,58 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
                 </tr>
               </thead>
               <tbody>
-                {recentAudits.map((audit) => (
-                  <tr key={audit.id} className="border-t border-black/6 align-top">
-                    <td className="px-6 py-5 text-neutral-800">{formatDateTime(audit.created_at)}</td>
-                    <td className="px-6 py-5">
-                      <div className="font-medium text-neutral-950">{audit.normalized_domain}</div>
-                      <div className="mt-1">
-                        <StatusPills
-                          isHotLead={false}
-                          isHighFit={audit.fit_score >= 8}
-                          isReturningInterest={false}
-                        />
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <a
-                        href={audit.input_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-neutral-900 underline decoration-black/20 underline-offset-4"
-                      >
-                        {audit.input_url}
-                      </a>
-                    </td>
-                    <td className="px-6 py-5 text-neutral-800">{audit.fit_score}/10</td>
-                    <td className="px-6 py-5 text-neutral-800">{audit.site_type}</td>
-                    <td className="px-6 py-5 text-neutral-500">{audit.referrer || "Direct / nezname"}</td>
-                  </tr>
-                ))}
-                {recentAudits.length === 0 ? (
+                {recentAuditRows.map((audit, index) => {
+                  const auditHref = getSafeHref(audit.input_url);
+                  const currentAuditFitScore = audit.fit_score ?? 0;
+                  const isHighFit = currentAuditFitScore >= 8;
+
+                  return (
+                    <tr
+                      key={getRecentAuditKey(audit.id, `audit-${index}`)}
+                      className="border-t border-black/6 align-top"
+                    >
+                      <td className="px-6 py-5 text-neutral-800">
+                        <DateTimeValue value={audit.created_at} />
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="font-medium text-neutral-950">
+                          <EmptyDash value={audit.normalized_domain} />
+                        </div>
+                        <div className="mt-1">
+                          <StatusPills
+                            isHotLead={false}
+                            isHighFit={isHighFit}
+                            isReturningInterest={false}
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        {auditHref ? (
+                          <a
+                            href={auditHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-neutral-900 underline decoration-black/20 underline-offset-4"
+                          >
+                            {getAuditUrlText(audit.input_url)}
+                          </a>
+                        ) : (
+                          <span className="text-neutral-500">{getAuditUrlText(audit.input_url)}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        {formatScore(currentAuditFitScore)}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        {getSiteTypeText(audit.site_type)}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-500">
+                        {getReferrerText(audit.referrer)}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {recentAuditRows.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-10 text-center text-neutral-500">
                       Zatial nebol ulozeny ziaden audit.
