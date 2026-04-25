@@ -374,7 +374,11 @@ export default function BendaLabsLandingPage() {
           </div>
         </section>
 
-        <section id="audit" data-section className="section-divider section-surface-soft">
+        <section
+          id="audit"
+          data-section
+          className="section-divider section-surface-soft scroll-mt-24"
+        >
           <div className="mx-auto max-w-7xl px-6 py-8 sm:py-10">
             <div data-reveal className="mx-auto max-w-6xl">
               <AuditBot onRequestProposal={() => scrollToSection("kontakt")} />
