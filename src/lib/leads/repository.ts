@@ -186,9 +186,16 @@ export async function getLeadRollups({
   const response = await supabaseRestFetch("audit_lead_rollups", {
     searchParams,
   });
-  const leads = (await response.json()) as LeadRollup[];
+  const leads = (await response.json()) as Array<
+    LeadRollup & { last_recommended_ai_type: string[] | null | undefined }
+  >;
 
-  return leads.filter((lead) => matchesLeadStatus(lead, status));
+  return leads
+    .map((lead) => ({
+      ...lead,
+      last_recommended_ai_type: lead.last_recommended_ai_type ?? [],
+    }))
+    .filter((lead) => matchesLeadStatus(lead, status));
 }
 
 export async function getRecentAudits({ query, limit = 25 }: RecentAuditQuery = {}) {

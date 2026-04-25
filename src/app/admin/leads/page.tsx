@@ -281,7 +281,7 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
                     <td className="px-6 py-5 text-neutral-800">{lead.last_fit_score}/10</td>
                     <td className="px-6 py-5">
                       <div className="flex flex-wrap gap-2">
-                        {lead.last_recommended_ai_type.map((item) => (
+                        {(lead.last_recommended_ai_type ?? []).map((item) => (
                           <LeadBadge key={`${lead.normalized_domain}-${item}`}>{item}</LeadBadge>
                         ))}
                       </div>
