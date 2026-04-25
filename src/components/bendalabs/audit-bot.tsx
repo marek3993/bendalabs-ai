@@ -96,7 +96,7 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
     if (!normalized) {
       setStatus("error");
       setAudit(null);
-      setError("Zadajte platnu webovu adresu. Staci aj domena ako finportal.sk.");
+      setError("Zadajte platnu webovu adresu. Staci aj domena ako bendalabs.sk.");
       return;
     }
 
@@ -171,7 +171,7 @@ export default function AuditBot({ onRequestProposal }: AuditBotProps) {
             value={url}
             onChange={(event) => setUrl(event.target.value)}
             onBlur={normalizeFieldValue}
-            placeholder="napr. finportal.sk alebo https://finportal.sk"
+            placeholder="napr. bendalabs.sk alebo https://bendalabs.sk"
             className="min-h-14 rounded-[20px] border border-black/10 bg-white px-5 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
           />
           <button

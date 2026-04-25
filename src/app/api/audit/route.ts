@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     if (!normalizedUrl) {
       return NextResponse.json(
-        { error: "Zadajte platnu webovu adresu. Staci aj domena ako finportal.sk." },
+        { error: "Zadajte platnu webovu adresu. Staci aj domena ako bendalabs.sk." },
         { status: 400 },
       );
     }

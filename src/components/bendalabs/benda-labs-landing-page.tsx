@@ -629,8 +629,8 @@ export default function BendaLabsLandingPage() {
                     <a href="tel:+421944388123" className="block hover:text-white">
                       0944 388 123
                     </a>
-                    <a href="mailto:bendamarekk@gmail.com" className="block hover:text-white">
-                      bendamarekk@gmail.com
+                    <a href="mailto:hello@bendalabs.sk" className="block hover:text-white">
+                      hello@bendalabs.sk
                     </a>
                   </div>
 
@@ -638,7 +638,7 @@ export default function BendaLabsLandingPage() {
                     type="button"
                     onClick={() =>
                       window.open(
-                        "mailto:bendamarekk@gmail.com?subject=AI%20audit%20webu&body=Ahoj,%20posielam%20URL%20na%20audit:%20",
+                        "mailto:hello@bendalabs.sk?subject=AI%20audit%20webu&body=Ahoj,%20posielam%20URL%20na%20audit:%20",
                         "_self",
                       )
                     }
