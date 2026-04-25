@@ -570,6 +570,71 @@ export default function BendaLabsLandingPage() {
               </h2>
             </div>
 
+            <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1fr_0.88fr]" data-tier-count={3}>
+              <div data-reveal className="glass-panel rounded-[30px] p-6">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Implementácia</div>
+                <p className="mt-4 text-sm leading-7 text-neutral-600">
+                  Vyberáte si jednu z dvoch úrovní nasadenia podľa komplexity webu a počtu rozhodovacích miest.
+                </p>
+
+                <div className="mt-6 space-y-4">
+                  <div className="rounded-[24px] border border-black/8 bg-white/70 p-5 shadow-[0_12px_30px_rgba(17,17,17,0.04)]">
+                    <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Varianta 1</div>
+                    <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
+                      Jednoduchšia implementácia
+                    </h3>
+                    <div className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+                      1 500 € <span className="text-lg text-neutral-500">jednorazovo</span>
+                    </div>
+                    <p className="mt-4 text-sm leading-7 text-neutral-600">
+                      Pre jednoduchšie weby alebo jednu hlavnú rozhodovaciu vrstvu.
+                    </p>
+                  </div>
+
+                  <div className="rounded-[24px] border border-black/8 bg-black/[0.02] p-5">
+                    <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Varianta 2</div>
+                    <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
+                      Zložitejšia implementácia
+                    </h3>
+                    <div className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+                      2 500 € <span className="text-lg text-neutral-500">jednorazovo</span>
+                    </div>
+                    <p className="mt-4 text-sm leading-7 text-neutral-600">
+                      Pre väčšie weby s viacerými vetvami, ponukami a miestami, kde sa láme konverzia.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div data-reveal className="glass-panel rounded-[30px] p-6">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Mesačné doladenie</div>
+                <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
+                  190 € <span className="text-lg text-neutral-500">/ mesiac</span>
+                </div>
+                <div className="mt-5 space-y-3 text-sm leading-7 text-neutral-600">
+                  <div>Optimalizácia podľa dát a reálneho správania návštevníkov.</div>
+                  <div>Úpravy pri zmene webu, obsahu alebo rozhodovacích ciest.</div>
+                  <div>1 väčšia mesačná zmena v rámci nasadenej AI vrstvy.</div>
+                </div>
+              </div>
+
+              <div data-reveal className="glass-panel rounded-[30px] p-6">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
+                  AI computing power
+                </div>
+                <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
+                  odhad 10 až 100 €
+                  <span className="text-lg text-neutral-500"> / mesiac</span>
+                </div>
+                <div className="mt-5 space-y-3 text-sm leading-7 text-neutral-600">
+                  <div>Podľa reálneho používania, návštevnosti a náročnosti nasadenia.</div>
+                  <div>Spotreba ide priamo cez vlastný OpenAI Developer Platform účet klienta.</div>
+                  <div>BendaLabs zabezpečuje implementáciu, napojenie, logiku a priebežné doladenie.</div>
+                </div>
+              </div>
+            </div>
+
+              {pricing.length === 4 && (
             <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1fr_0.88fr]">
               {pricing.map((tier) => (
                 <div key={tier.name} data-reveal className="glass-panel rounded-[30px] p-6">
@@ -598,6 +663,7 @@ export default function BendaLabsLandingPage() {
                 </div>
               </div>
             </div>
+              )}
           </div>
         </section>
 
