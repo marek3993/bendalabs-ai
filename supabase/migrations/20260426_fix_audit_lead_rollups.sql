@@ -1,33 +1,4 @@
-create extension if not exists pgcrypto;
-
-create table if not exists public.site_audits (
-  id uuid primary key default gen_random_uuid(),
-  created_at timestamptz not null default timezone('utc', now()),
-  input_url text not null,
-  normalized_domain text not null,
-  fit_score smallint not null check (fit_score between 1 and 10),
-  is_good_fit boolean not null,
-  site_type text not null,
-  recommended_ai_type text[] not null default '{}',
-  summary text not null,
-  friction_points text[] not null default '{}',
-  upsell_opportunities text[] not null default '{}',
-  phase_one_plan text[] not null default '{}',
-  example_user_flows jsonb not null default '[]'::jsonb,
-  user_agent text,
-  ip_hash text,
-  referrer text
-);
-
-create index if not exists site_audits_created_at_idx
-  on public.site_audits (created_at desc);
-
-create index if not exists site_audits_normalized_domain_idx
-  on public.site_audits (normalized_domain, created_at desc);
-
-drop view if exists public.audit_lead_rollups;
-
-create view public.audit_lead_rollups as
+create or replace view public.audit_lead_rollups as
 with ranked_audits as (
   select
     id,
