@@ -53,19 +53,8 @@ const contactRequestSchema = z
       .string()
       .trim()
       .min(1, "invalid_website")
-      .transform((value, context) => {
-        const normalized = normalizeWebsiteUrl(value);
-
-        if (!normalized) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "invalid_website",
-          });
-          return z.NEVER;
-        }
-
-        return normalized;
-      }),
+      .refine((value) => Boolean(normalizeWebsiteUrl(value)), "invalid_website")
+      .transform((value) => normalizeWebsiteUrl(value) as string),
     message: z
       .string()
       .trim()

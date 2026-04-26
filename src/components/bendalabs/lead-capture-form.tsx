@@ -28,6 +28,8 @@ type FormState = {
   message: string;
 };
 
+type FieldErrors = Partial<Record<ContactRequestField, string>>;
+
 const initialFormState: FormState = {
   name: "",
   email: "",
@@ -49,7 +51,32 @@ export default function LeadCaptureForm({
     website: initialWebsite,
   });
   const [status, setStatus] = useState<SubmitStatus>("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [submitError, setSubmitError] = useState("");
+
+  const getMappedErrors = (errors: Partial<Record<ContactRequestField, string>>) => {
+    const nextFieldErrors: FieldErrors = {};
+    let nextSubmitError = "";
+
+    for (const field of ["name", "email", "website", "message", "source"] as const) {
+      const code = errors[field];
+
+      if (!code) {
+        continue;
+      }
+
+      const message = copy.validation[code as keyof typeof copy.validation] ?? code;
+
+      if (field === "source") {
+        nextSubmitError = message;
+        continue;
+      }
+
+      nextFieldErrors[field] = message;
+    }
+
+    return { nextFieldErrors, nextSubmitError };
+  };
 
   const setFieldValue = (field: keyof FormState, value: string) => {
     setFormState((current) => ({
@@ -57,22 +84,26 @@ export default function LeadCaptureForm({
       [field]: value,
     }));
 
+    setFieldErrors((current) => {
+      if (!current[field]) {
+        return current;
+      }
+
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+
     if (status === "error") {
       setStatus("idle");
-      setErrorMessage("");
+      setSubmitError("");
     }
-  };
-
-  const getFieldErrorMessage = (field: ContactRequestField) => {
-    if (field === "source") {
-      return copy.validation.invalid_source;
-    }
-
-    return copy.fields[field];
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setFieldErrors({});
+    setSubmitError("");
 
     const submission = parseContactRequestSubmission({
       locale,
@@ -82,20 +113,16 @@ export default function LeadCaptureForm({
     });
 
     if (!submission.success) {
-      const fieldErrors = getContactRequestFieldErrors(submission.error);
-      const firstField =
-        (["name", "email", "website", "message", "source"] as const).find(
-          (field) => fieldErrors[field],
-        ) ?? "message";
-      const fieldCode = fieldErrors[firstField];
-
+      const { nextFieldErrors, nextSubmitError } = getMappedErrors(
+        getContactRequestFieldErrors(submission.error),
+      );
       setStatus("error");
-      setErrorMessage(fieldCode ? copy.validation[fieldCode] : getFieldErrorMessage(firstField));
+      setFieldErrors(nextFieldErrors);
+      setSubmitError(nextSubmitError);
       return;
     }
 
     setStatus("submitting");
-    setErrorMessage("");
 
     try {
       const response = await fetch("/api/contact-requests", {
@@ -111,29 +138,21 @@ export default function LeadCaptureForm({
       };
 
       if (!response.ok) {
-        const firstField =
-          (["name", "email", "website", "message", "source"] as const).find(
-            (field) => payload.fieldErrors?.[field],
-          ) ?? null;
+        const { nextFieldErrors, nextSubmitError } = getMappedErrors(payload.fieldErrors ?? {});
 
-        if (firstField) {
-          const fieldCode = payload.fieldErrors?.[firstField];
-
-          if (
-            fieldCode === "invalid_name" ||
-            fieldCode === "invalid_email" ||
-            fieldCode === "invalid_website" ||
-            fieldCode === "invalid_message" ||
-            fieldCode === "invalid_source"
-          ) {
-            throw new Error(copy.validation[fieldCode]);
-          }
+        if (Object.keys(nextFieldErrors).length > 0 || nextSubmitError) {
+          setStatus("error");
+          setFieldErrors(nextFieldErrors);
+          setSubmitError(nextSubmitError);
+          return;
         }
 
         throw new Error(payload.error || copy.genericErrorMessage);
       }
 
       setStatus("success");
+      setFieldErrors({});
+      setSubmitError("");
       setFormState({
         ...initialFormState,
         website: submission.data.website,
@@ -141,7 +160,7 @@ export default function LeadCaptureForm({
       trackGoogleAdsConversion();
     } catch (requestError) {
       setStatus("error");
-      setErrorMessage(
+      setSubmitError(
         requestError instanceof Error && requestError.message
           ? requestError.message
           : copy.genericErrorMessage,
@@ -163,7 +182,7 @@ export default function LeadCaptureForm({
           <div className="mt-1 text-sm leading-6 text-emerald-800">{variantCopy.successMessage}</div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
+        <form noValidate onSubmit={handleSubmit} className="mt-6 grid gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="grid gap-2 text-sm text-neutral-700">
               <span>{copy.fields.name}</span>
@@ -173,9 +192,11 @@ export default function LeadCaptureForm({
                 autoComplete="name"
                 value={formState.name}
                 onChange={(event) => setFieldValue("name", event.target.value)}
+                aria-invalid={fieldErrors.name ? "true" : "false"}
                 className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
                 placeholder={copy.placeholders.name}
               />
+              {fieldErrors.name ? <span className="text-sm text-amber-900">{fieldErrors.name}</span> : null}
             </label>
             <label className="grid gap-2 text-sm text-neutral-700">
               <span>{copy.fields.email}</span>
@@ -185,9 +206,11 @@ export default function LeadCaptureForm({
                 autoComplete="email"
                 value={formState.email}
                 onChange={(event) => setFieldValue("email", event.target.value)}
+                aria-invalid={fieldErrors.email ? "true" : "false"}
                 className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
                 placeholder={copy.placeholders.email}
               />
+              {fieldErrors.email ? <span className="text-sm text-amber-900">{fieldErrors.email}</span> : null}
             </label>
           </div>
 
@@ -200,9 +223,13 @@ export default function LeadCaptureForm({
               autoComplete="url"
               value={formState.website}
               onChange={(event) => setFieldValue("website", event.target.value)}
+              aria-invalid={fieldErrors.website ? "true" : "false"}
               className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
               placeholder={copy.placeholders.website}
             />
+            {fieldErrors.website ? (
+              <span className="text-sm text-amber-900">{fieldErrors.website}</span>
+            ) : null}
           </label>
 
           <label className="grid gap-2 text-sm text-neutral-700">
@@ -212,14 +239,18 @@ export default function LeadCaptureForm({
               rows={4}
               value={formState.message}
               onChange={(event) => setFieldValue("message", event.target.value)}
+              aria-invalid={fieldErrors.message ? "true" : "false"}
               className="rounded-[18px] border border-black/10 bg-white px-4 py-3 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
               placeholder={copy.placeholders.message}
             />
+            {fieldErrors.message ? (
+              <span className="text-sm text-amber-900">{fieldErrors.message}</span>
+            ) : null}
           </label>
 
-          {status === "error" ? (
+          {submitError ? (
             <div className="rounded-[18px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              {errorMessage}
+              {submitError}
             </div>
           ) : null}
 
