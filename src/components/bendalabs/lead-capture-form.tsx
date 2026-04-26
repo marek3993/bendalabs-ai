@@ -19,7 +19,7 @@ type LeadCaptureFormProps = {
   variant: "audit" | "contact";
 };
 
-type SubmitStatus = "idle" | "submitting" | "success" | "error";
+type SubmitStatus = "idle" | "submitting" | "success";
 
 type FormState = {
   name: string;
@@ -103,7 +103,7 @@ export default function LeadCaptureForm({
     debugReason?: string,
     debugDetails?: unknown,
   ) => {
-    setStatus("error");
+    setStatus("idle");
     setFieldErrors(nextFieldErrors);
     setSubmitError(nextSubmitError);
     focusFirstFieldError(nextFieldErrors);
@@ -144,14 +144,18 @@ export default function LeadCaptureForm({
       return next;
     });
 
-    if (status === "error") {
-      setStatus("idle");
+    if (submitError) {
       setSubmitError("");
     }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (status === "submitting") {
+      logSubmitDebug("submit ignored because request is already in flight");
+      return;
+    }
+
     setFieldErrors({});
     setSubmitError("");
     logSubmitDebug("onSubmit start", {
