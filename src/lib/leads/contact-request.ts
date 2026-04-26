@@ -6,9 +6,13 @@ import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
 export type ContactRequestField = "name" | "email" | "website" | "message" | "source";
 export type ContactRequestErrorCode =
+  | "required_name"
   | "invalid_name"
+  | "required_email"
   | "invalid_email"
+  | "required_website"
   | "invalid_website"
+  | "required_message"
   | "invalid_message"
   | "invalid_source";
 
@@ -41,23 +45,24 @@ const contactRequestSchema = z
     name: z
       .string()
       .trim()
-      .min(2, "invalid_name")
+      .min(1, "required_name")
       .max(120, "invalid_name"),
     email: z
       .string()
       .trim()
-      .min(1, "invalid_email")
+      .min(1, "required_email")
       .email("invalid_email")
       .max(180, "invalid_email"),
     website: z
       .string()
       .trim()
-      .min(1, "invalid_website")
+      .min(1, "required_website")
       .refine((value) => Boolean(normalizeWebsiteUrl(value)), "invalid_website")
       .transform((value) => normalizeWebsiteUrl(value) as string),
     message: z
       .string()
       .trim()
+      .min(1, "required_message")
       .min(10, "invalid_message")
       .max(4000, "invalid_message"),
     source: z.string().trim(),

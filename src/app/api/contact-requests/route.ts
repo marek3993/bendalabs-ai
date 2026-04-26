@@ -9,6 +9,8 @@ import { isLeadStorageConfigured } from "@/lib/leads/supabase";
 
 export const runtime = "nodejs";
 
+const isDev = process.env.NODE_ENV !== "production";
+
 function normalizeLocale(input: unknown): SiteLocale {
   return input === "cs" ? "cs" : "sk";
 }
@@ -33,19 +35,40 @@ function getLocalizedMessage(
   return messages[locale][key];
 }
 
-function getErrorMessage(error: unknown, locale: SiteLocale) {
-  if (error instanceof Error && error.message) {
-    return error.message;
+function logContactRequestError(error: unknown, locale: SiteLocale) {
+  console.error("Contact request submission failed.", {
+    locale,
+    error,
+  });
+}
+
+function getErrorPayload(error: unknown, locale: SiteLocale) {
+  const payload: { error: string; details?: string } = {
+    error: getLocalizedMessage(locale, "generic"),
+  };
+
+  if (isDev && error instanceof Error && error.message) {
+    payload.details = error.message;
   }
 
-  return getLocalizedMessage(locale, "generic");
+  return payload;
 }
 
 export async function POST(request: Request) {
   let locale: SiteLocale = "sk";
 
   try {
-    const body = (await request.json()) as Record<string, unknown> | null;
+    let body: Record<string, unknown> | null = null;
+
+    try {
+      body = (await request.json()) as Record<string, unknown> | null;
+    } catch {
+      return NextResponse.json(
+        { error: getLocalizedMessage(locale, "invalid") },
+        { status: 400 },
+      );
+    }
+
     locale = normalizeLocale(body?.locale);
     const submission = parseContactRequestSubmission(body);
 
@@ -77,8 +100,10 @@ export async function POST(request: Request) {
       contactRequest: savedRequest,
     });
   } catch (error) {
+    logContactRequestError(error, locale);
+
     return NextResponse.json(
-      { error: getErrorMessage(error, locale) },
+      getErrorPayload(error, locale),
       { status: 500 },
     );
   }

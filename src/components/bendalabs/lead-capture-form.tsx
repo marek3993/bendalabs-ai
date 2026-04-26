@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { getLeadFormCopy } from "@/lib/bendalabs/lead-form-content";
 import {
   getContactRequestFieldErrors,
@@ -37,6 +37,9 @@ const initialFormState: FormState = {
   message: "",
 };
 
+const isDev = process.env.NODE_ENV !== "production";
+const fieldOrder = ["name", "email", "website", "message"] as const;
+
 export default function LeadCaptureForm({
   locale,
   source,
@@ -53,6 +56,9 @@ export default function LeadCaptureForm({
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState("");
+  const fieldRefs = useRef<
+    Partial<Record<keyof FormState, HTMLInputElement | HTMLTextAreaElement | null>>
+  >({});
 
   const getMappedErrors = (errors: Partial<Record<ContactRequestField, string>>) => {
     const nextFieldErrors: FieldErrors = {};
@@ -76,6 +82,55 @@ export default function LeadCaptureForm({
     }
 
     return { nextFieldErrors, nextSubmitError };
+  };
+
+  const logSubmitDebug = (reason: string, details?: unknown) => {
+    if (!isDev) {
+      return;
+    }
+
+    console.info("[LeadCaptureForm]", reason, details);
+  };
+
+  const focusFirstFieldError = (errors: FieldErrors) => {
+    const firstField = fieldOrder.find((field) => errors[field]);
+
+    if (!firstField) {
+      return;
+    }
+
+    fieldRefs.current[firstField]?.focus();
+  };
+
+  const applySubmitErrors = (
+    nextFieldErrors: FieldErrors,
+    nextSubmitError = "",
+    debugReason?: string,
+    debugDetails?: unknown,
+  ) => {
+    setStatus("error");
+    setFieldErrors(nextFieldErrors);
+    setSubmitError(nextSubmitError);
+    focusFirstFieldError(nextFieldErrors);
+
+    if (debugReason) {
+      logSubmitDebug(debugReason, debugDetails);
+    }
+  };
+
+  const parseResponsePayload = async (response: Response) => {
+    const contentType = response.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      return (await response.json()) as {
+        error?: string;
+        details?: string;
+        fieldErrors?: Partial<Record<ContactRequestField, string>>;
+      };
+    }
+
+    const text = await response.text();
+    return { error: text || undefined };
   };
 
   const setFieldValue = (field: keyof FormState, value: string) => {
@@ -116,9 +171,12 @@ export default function LeadCaptureForm({
       const { nextFieldErrors, nextSubmitError } = getMappedErrors(
         getContactRequestFieldErrors(submission.error),
       );
-      setStatus("error");
-      setFieldErrors(nextFieldErrors);
-      setSubmitError(nextSubmitError);
+      applySubmitErrors(
+        nextFieldErrors,
+        nextSubmitError,
+        "submit blocked by client validation",
+        submission.error.flatten(),
+      );
       return;
     }
 
@@ -132,22 +190,23 @@ export default function LeadCaptureForm({
         },
         body: JSON.stringify(submission.data),
       });
-      const payload = (await response.json()) as {
-        error?: string;
-        fieldErrors?: Partial<Record<ContactRequestField, string>>;
-      };
+      const payload = await parseResponsePayload(response);
 
       if (!response.ok) {
         const { nextFieldErrors, nextSubmitError } = getMappedErrors(payload.fieldErrors ?? {});
+        const fallbackSubmitError =
+          nextSubmitError || payload.error || payload.details || copy.genericErrorMessage;
 
-        if (Object.keys(nextFieldErrors).length > 0 || nextSubmitError) {
-          setStatus("error");
-          setFieldErrors(nextFieldErrors);
-          setSubmitError(nextSubmitError);
-          return;
-        }
-
-        throw new Error(payload.error || copy.genericErrorMessage);
+        applySubmitErrors(
+          nextFieldErrors,
+          fallbackSubmitError,
+          "submit rejected by backend",
+          {
+            status: response.status,
+            payload,
+          },
+        );
+        return;
       }
 
       setStatus("success");
@@ -159,11 +218,13 @@ export default function LeadCaptureForm({
       });
       trackGoogleAdsConversion();
     } catch (requestError) {
-      setStatus("error");
-      setSubmitError(
+      applySubmitErrors(
+        {},
         requestError instanceof Error && requestError.message
           ? requestError.message
           : copy.genericErrorMessage,
+        "submit request failed",
+        requestError,
       );
     }
   };
@@ -187,6 +248,9 @@ export default function LeadCaptureForm({
             <label className="grid gap-2 text-sm text-neutral-700">
               <span>{copy.fields.name}</span>
               <input
+                ref={(element) => {
+                  fieldRefs.current.name = element;
+                }}
                 type="text"
                 name="name"
                 autoComplete="name"
@@ -201,6 +265,9 @@ export default function LeadCaptureForm({
             <label className="grid gap-2 text-sm text-neutral-700">
               <span>{copy.fields.email}</span>
               <input
+                ref={(element) => {
+                  fieldRefs.current.email = element;
+                }}
                 type="email"
                 name="email"
                 autoComplete="email"
@@ -217,6 +284,9 @@ export default function LeadCaptureForm({
           <label className="grid gap-2 text-sm text-neutral-700">
             <span>{copy.fields.website}</span>
             <input
+              ref={(element) => {
+                fieldRefs.current.website = element;
+              }}
               type="text"
               name="website"
               inputMode="url"
@@ -235,6 +305,9 @@ export default function LeadCaptureForm({
           <label className="grid gap-2 text-sm text-neutral-700">
             <span>{copy.fields.message}</span>
             <textarea
+              ref={(element) => {
+                fieldRefs.current.message = element;
+              }}
               name="message"
               rows={4}
               value={formState.message}
@@ -249,7 +322,10 @@ export default function LeadCaptureForm({
           </label>
 
           {submitError ? (
-            <div className="rounded-[18px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <div
+              aria-live="polite"
+              className="rounded-[18px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+            >
               {submitError}
             </div>
           ) : null}
