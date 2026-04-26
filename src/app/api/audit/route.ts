@@ -3,6 +3,13 @@ import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import { persistSuccessfulAudit } from "@/lib/leads/repository";
 import { generateSiteAudit } from "@/lib/site-audit/analyze";
 import { crawlSite } from "@/lib/site-audit/crawl";
+import {
+  getBendaLabsSuggestion,
+  getGenericAuditErrorMessage,
+  getInvalidUrlMessage,
+  getUrlLoadFailedMessage,
+  isAuditLoadFailure,
+} from "@/lib/site-audit/error";
 import { getDomainAuditOverride } from "@/lib/site-audit/overrides";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
@@ -13,40 +20,19 @@ function normalizeLocale(input: unknown): SiteLocale {
   return input === "cs" ? "cs" : "sk";
 }
 
-function getLocalizedMessage(locale: SiteLocale, key: "generic" | "invalidUrl") {
-  const messages = {
-    sk: {
-      generic: "Nepodarilo sa spracovat audit webu.",
-      invalidUrl: "Zadajte platnu webovu adresu. Staci aj domena ako bendalabs.sk.",
-    },
-    cs: {
-      generic: "Nepodarilo se zpracovat audit webu.",
-      invalidUrl: "Zadejte platnou webovou adresu. Staci i domena jako bendalabs.cz.",
-    },
-  } as const;
-
-  return messages[locale][key];
-}
-
-function getErrorMessage(error: unknown, locale: SiteLocale) {
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return getLocalizedMessage(locale, "generic");
-}
-
 export async function POST(request: Request) {
   let locale: SiteLocale = "sk";
+  let inputUrl = "";
 
   try {
     const body = (await request.json()) as { url?: string; locale?: string } | null;
     locale = normalizeLocale(body?.locale);
-    const normalizedUrl = normalizeWebsiteUrl(body?.url ?? "");
+    inputUrl = body?.url ?? "";
+    const normalizedUrl = normalizeWebsiteUrl(inputUrl);
 
     if (!normalizedUrl) {
       return NextResponse.json(
-        { error: getLocalizedMessage(locale, "invalidUrl") },
+        { error: getInvalidUrlMessage(locale) },
         { status: 400 },
       );
     }
@@ -80,11 +66,23 @@ export async function POST(request: Request) {
       inspected_pages: crawledSite.pages.map((page) => page.url),
     });
   } catch (error) {
-    const message = getErrorMessage(error, locale);
-    const status = /URL|nacit|html|vyprsal|vyprsel|prazdny|prazdne/i.test(message)
-      ? 422
-      : 500;
+    console.error("Audit request failed:", error);
 
-    return NextResponse.json({ error: message }, { status });
+    if (isAuditLoadFailure(error)) {
+      const suggestion = getBendaLabsSuggestion(inputUrl, locale);
+
+      return NextResponse.json(
+        {
+          error: getUrlLoadFailedMessage(locale),
+          suggestion,
+        },
+        { status: 422 },
+      );
+    }
+
+    return NextResponse.json(
+      { error: getGenericAuditErrorMessage(locale) },
+      { status: 500 },
+    );
   }
 }

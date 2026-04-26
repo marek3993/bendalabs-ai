@@ -4,6 +4,10 @@ import { startTransition, useEffect, useMemo, useState } from "react";
 import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
 import { getAuditBotCopy, type SiteLocale } from "@/lib/bendalabs/site-content";
 import { getNormalizedDomainFromUrl } from "@/lib/leads/domain-utils";
+import {
+  getGenericAuditErrorMessage,
+  type AuditErrorSuggestion,
+} from "@/lib/site-audit/error";
 import { getFitLabelKeyFromScore } from "@/lib/site-audit/normalize";
 import type { SiteAudit } from "@/lib/site-audit/schema";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
@@ -21,6 +25,12 @@ type AuditBotProps = {
 };
 
 type Status = "idle" | "loading" | "success" | "error";
+
+type AuditApiResponse = {
+  audit?: SiteAudit;
+  error?: string;
+  suggestion?: AuditErrorSuggestion | null;
+};
 
 function ResultList({ items }: { items: string[] }) {
   return (
@@ -90,6 +100,7 @@ export default function AuditBot({
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [errorSuggestion, setErrorSuggestion] = useState<AuditErrorSuggestion | null>(null);
   const [audit, setAudit] = useState<SiteAudit | null>(null);
   const [loadingIndex, setLoadingIndex] = useState(0);
   const [auditedUrl, setAuditedUrl] = useState("");
@@ -127,25 +138,16 @@ export default function AuditBot({
     if (status === "error") {
       setStatus("idle");
       setError("");
+      setErrorSuggestion(null);
     }
 
     return normalized;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const normalized = normalizeFieldValue();
-
-    if (!normalized) {
-      setStatus("error");
-      setAudit(null);
-      setError(copy.invalidUrlMessage);
-      return;
-    }
-
+  const runAudit = async (normalized: string) => {
     setStatus("loading");
     setError("");
+    setErrorSuggestion(null);
     setAudit(null);
     setAuditedUrl("");
     setShowProposalForm(false);
@@ -159,23 +161,61 @@ export default function AuditBot({
         },
         body: JSON.stringify({ url: normalized, locale }),
       });
+      let payload: AuditApiResponse | null = null;
 
-      const payload = (await response.json()) as { audit?: SiteAudit; error?: string };
-
-      if (!response.ok || !payload.audit) {
-        throw new Error(payload.error || copy.genericErrorMessage);
+      try {
+        payload = (await response.json()) as AuditApiResponse;
+      } catch {
+        payload = null;
       }
 
+      if (!response.ok || !payload?.audit) {
+        setStatus("error");
+        setAudit(null);
+        setError(payload?.error || getGenericAuditErrorMessage(locale));
+        setErrorSuggestion(payload?.suggestion ?? null);
+        return;
+      }
+
+      const auditResult = payload.audit;
+
       startTransition(() => {
-        setAudit(payload.audit ?? null);
+        setAudit(auditResult);
         setAuditedUrl(normalized);
         setStatus("success");
+        setErrorSuggestion(null);
       });
-    } catch (requestError) {
+    } catch {
       setStatus("error");
       setAudit(null);
-      setError(requestError instanceof Error ? requestError.message : copy.genericErrorMessage);
+      setError(getGenericAuditErrorMessage(locale));
+      setErrorSuggestion(null);
     }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const normalized = normalizeFieldValue();
+
+    if (!normalized) {
+      setStatus("error");
+      setAudit(null);
+      setError(copy.invalidUrlMessage);
+      setErrorSuggestion(null);
+      return;
+    }
+
+    await runAudit(normalized);
+  };
+
+  const handleSuggestionClick = async () => {
+    if (!errorSuggestion) {
+      return;
+    }
+
+    setUrl(errorSuggestion.url);
+    await runAudit(errorSuggestion.url);
   };
 
   const handleRequestProposal = () => {
@@ -280,7 +320,19 @@ export default function AuditBot({
 
         {status === "error" ? (
           <div className="mx-auto mt-6 max-w-4xl rounded-[24px] border border-black/10 bg-white/78 p-5 text-sm leading-6 text-neutral-700">
-            {error}
+            <p>{error}</p>
+            {errorSuggestion ? (
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <span className="text-neutral-950">{errorSuggestion.message}</span>
+                <button
+                  type="button"
+                  onClick={handleSuggestionClick}
+                  className="rounded-full border border-black/12 bg-black/[0.04] px-4 py-2 text-sm font-medium text-neutral-950 hover:bg-black/[0.08]"
+                >
+                  {errorSuggestion.actionLabel}
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
