@@ -1,15 +1,15 @@
 "use client";
 
 import { startTransition, useEffect, useMemo, useState } from "react";
+import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
 import { getAuditBotCopy, type SiteLocale } from "@/lib/bendalabs/site-content";
+import { getNormalizedDomainFromUrl } from "@/lib/leads/domain-utils";
 import { getFitLabelKeyFromScore } from "@/lib/site-audit/normalize";
 import type { SiteAudit } from "@/lib/site-audit/schema";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
 type AuditBotProps = {
   locale?: SiteLocale;
-  onRequestProposal?: () => void;
-  proposalTargetId?: string;
   badge?: string;
   title?: string;
   description?: string;
@@ -52,8 +52,6 @@ function ResultCard({
 
 export default function AuditBot({
   locale = "sk",
-  onRequestProposal,
-  proposalTargetId,
   badge,
   title,
   description,
@@ -94,7 +92,10 @@ export default function AuditBot({
   const [error, setError] = useState("");
   const [audit, setAudit] = useState<SiteAudit | null>(null);
   const [loadingIndex, setLoadingIndex] = useState(0);
+  const [auditedUrl, setAuditedUrl] = useState("");
+  const [showProposalForm, setShowProposalForm] = useState(false);
   const fitLabel = audit ? copy.fitLabels[getFitLabelKeyFromScore(audit.score)] : null;
+  const linkedAuditDomain = auditedUrl ? getNormalizedDomainFromUrl(auditedUrl) : null;
 
   useEffect(() => {
     if (status !== "loading") {
@@ -146,6 +147,8 @@ export default function AuditBot({
     setStatus("loading");
     setError("");
     setAudit(null);
+    setAuditedUrl("");
+    setShowProposalForm(false);
     setLoadingIndex(0);
 
     try {
@@ -165,6 +168,7 @@ export default function AuditBot({
 
       startTransition(() => {
         setAudit(payload.audit ?? null);
+        setAuditedUrl(normalized);
         setStatus("success");
       });
     } catch (requestError) {
@@ -175,17 +179,7 @@ export default function AuditBot({
   };
 
   const handleRequestProposal = () => {
-    if (onRequestProposal) {
-      onRequestProposal();
-      return;
-    }
-
-    if (proposalTargetId) {
-      document.getElementById(proposalTargetId)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    setShowProposalForm(true);
   };
 
   return (
@@ -387,6 +381,16 @@ export default function AuditBot({
                 {copy.proposalButtonLabel}
               </button>
             </div>
+
+            {showProposalForm ? (
+              <LeadCaptureForm
+                locale={locale}
+                source="audit_result"
+                variant="audit"
+                initialWebsite={auditedUrl}
+                linkedAuditDomain={linkedAuditDomain}
+              />
+            ) : null}
           </div>
         ) : null}
       </div>

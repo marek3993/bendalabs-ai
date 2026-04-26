@@ -60,3 +60,31 @@ export type DomainLeadSnapshot = {
   isHighFit: boolean;
   isReturningInterest: boolean;
 };
+
+export type ContactRequestSource = "audit_result" | "contact_section";
+
+export type ContactRequestInsert = {
+  name: string;
+  email: string;
+  website: string;
+  message: string;
+  source: ContactRequestSource;
+  normalizedDomain: string;
+  linkedAuditDomain: string | null;
+  userAgent: string | null;
+  referrer: string | null;
+};
+
+export type ContactRequestRecord = {
+  id: string;
+  created_at: string;
+  name: string;
+  email: string;
+  website: string;
+  message: string;
+  source: ContactRequestSource;
+  normalized_domain: string;
+  linked_audit_domain: string | null;
+  user_agent: string | null;
+  referrer: string | null;
+};

@@ -1,5 +1,5 @@
 import { isAdminAuthenticated, isAdminProtectionConfigured } from "@/lib/leads/auth";
-import { getLeadRollups, getRecentAudits } from "@/lib/leads/repository";
+import { getLeadRollups, getRecentAudits, getRecentContactRequests } from "@/lib/leads/repository";
 import { isLeadStorageConfigured } from "@/lib/leads/supabase";
 import type { LeadSort, LeadStatusFilter } from "@/lib/leads/types";
 
@@ -90,6 +90,18 @@ function getSiteTypeText(value: string | null | undefined) {
 }
 
 function getAuditUrlText(value: string | null | undefined) {
+  return safeText(value, "-");
+}
+
+function getLeadSourceText(value: string | null | undefined) {
+  if (value === "audit_result") {
+    return "Po audite";
+  }
+
+  if (value === "contact_section") {
+    return "Kontakt sekcia";
+  }
+
   return safeText(value, "-");
 }
 
@@ -224,8 +236,8 @@ function SetupCard() {
           Lead dashboard este nie je pripraveny
         </h1>
         <p className="mt-4 text-sm leading-6 text-neutral-600">
-          Doplň `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` a SQL migraciu zo suboru
-          `supabase/migrations/20260425_audit_leads.sql`.
+          Doplň `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` a spusti SQL migracie v priecinku
+          `supabase/migrations`.
         </p>
       </div>
     </main>
@@ -253,15 +265,21 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
     return <SetupCard />;
   }
 
-  const [leads, recentAudits] = await Promise.all([
+  const [leads, recentAudits, recentContactRequests] = await Promise.all([
     getLeadRollups({ query, sort, status }),
     getRecentAudits({ query, limit: 25 }),
+    getRecentContactRequests({ query, limit: 25 }),
   ]);
   const leadItems = safeArray(leads);
   const recentAuditItems = safeArray(recentAudits);
+  const recentContactRequestItems = safeArray(recentContactRequests);
   const leadRows = leadItems.filter((lead): lead is NonNullable<(typeof leadItems)[number]> => lead != null);
   const recentAuditRows = recentAuditItems.filter(
     (audit): audit is NonNullable<(typeof recentAuditItems)[number]> => audit != null,
+  );
+  const recentContactRequestRows = recentContactRequestItems.filter(
+    (contactRequest): contactRequest is NonNullable<(typeof recentContactRequestItems)[number]> =>
+      contactRequest != null,
   );
   const trackedDomainsCount = formatTrackedDomainsCount(leadRows.length);
   const hotLeadCount = leadRows.filter((lead) => getHotLead(lead?.is_hot_lead)).length;
@@ -495,6 +513,91 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
                   <tr>
                     <td colSpan={6} className="px-6 py-10 text-center text-neutral-500">
                       Zatial nebol ulozeny ziaden audit.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="glass-panel overflow-hidden rounded-[32px]">
+          <div className="border-b border-black/8 px-6 py-5">
+            <h2 className="text-xl font-semibold tracking-[-0.03em] text-neutral-950">
+              Posledne formularove leady
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead className="bg-black/[0.03] text-neutral-500">
+                <tr>
+                  <th className="px-6 py-4 font-medium">Cas</th>
+                  <th className="px-6 py-4 font-medium">Meno</th>
+                  <th className="px-6 py-4 font-medium">Email</th>
+                  <th className="px-6 py-4 font-medium">Web</th>
+                  <th className="px-6 py-4 font-medium">Message</th>
+                  <th className="px-6 py-4 font-medium">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentContactRequestRows.map((contactRequest, index) => {
+                  const contactRequestHref = getSafeHref(contactRequest.website);
+
+                  return (
+                    <tr
+                      key={getRecentAuditKey(contactRequest.id, `contact-request-${index}`)}
+                      className="border-t border-black/6 align-top"
+                    >
+                      <td className="px-6 py-5 text-neutral-800">
+                        <DateTimeValue value={contactRequest.created_at} />
+                      </td>
+                      <td className="px-6 py-5 text-neutral-950">
+                        <EmptyDash value={contactRequest.name} />
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        <a
+                          href={`mailto:${contactRequest.email}`}
+                          className="underline decoration-black/20 underline-offset-4"
+                        >
+                          <EmptyDash value={contactRequest.email} />
+                        </a>
+                      </td>
+                      <td className="px-6 py-5">
+                        {contactRequestHref ? (
+                          <a
+                            href={contactRequestHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-neutral-900 underline decoration-black/20 underline-offset-4"
+                          >
+                            {getAuditUrlText(contactRequest.website)}
+                          </a>
+                        ) : (
+                          <span className="text-neutral-500">
+                            {getAuditUrlText(contactRequest.website)}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        <div className="max-w-xl whitespace-pre-line leading-6">
+                          <EmptyDash value={contactRequest.message} />
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 text-neutral-500">
+                        <div>{getLeadSourceText(contactRequest.source)}</div>
+                        {contactRequest.linked_audit_domain ? (
+                          <div className="mt-1 text-xs text-neutral-400">
+                            Audit domain: {contactRequest.linked_audit_domain}
+                          </div>
+                        ) : null}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {recentContactRequestRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-10 text-center text-neutral-500">
+                      Zatial nebol odoslany ziaden formularovy lead.
                     </td>
                   </tr>
                 ) : null}

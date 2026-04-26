@@ -21,7 +21,6 @@ export default function CzechAuditPage() {
       heroAddon={
         <AuditBot
           locale="cs"
-          proposalTargetId="cta"
           badge={content.auditBot.badge}
           title={content.auditBot.title}
           description={content.auditBot.description}

@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sk">
-      <body>
+      <body data-google-ads-conversion-send-to={process.env.GOOGLE_ADS_CONVERSION_SEND_TO ?? ""}>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-18119067266"

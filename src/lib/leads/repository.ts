@@ -5,6 +5,8 @@ import { isLeadStorageConfigured, parseCountHeader, supabaseRestFetch } from "@/
 import type {
   AuditInsert,
   AuditRecord,
+  ContactRequestInsert,
+  ContactRequestRecord,
   DomainLeadSnapshot,
   LeadRollup,
   LeadSort,
@@ -38,6 +40,20 @@ type RecentAuditListItem = Pick<
   | "site_type"
   | "recommended_ai_type"
   | "summary"
+  | "referrer"
+>;
+
+type RecentContactRequestListItem = Pick<
+  ContactRequestRecord,
+  | "id"
+  | "created_at"
+  | "name"
+  | "email"
+  | "website"
+  | "message"
+  | "source"
+  | "normalized_domain"
+  | "linked_audit_domain"
   | "referrer"
 >;
 
@@ -197,6 +213,28 @@ export function normalizeRecentAuditRecord(value: unknown): RecentAuditListItem 
   };
 }
 
+export function normalizeContactRequestRecord(value: unknown): ContactRequestRecord {
+  const record = asRecord(value);
+
+  return {
+    id: safeText(record.id),
+    created_at: safeText(record.created_at),
+    name: safeText(record.name),
+    email: safeText(record.email),
+    website: safeText(record.website),
+    message: safeText(record.message),
+    source: safeText(record.source) as ContactRequestRecord["source"],
+    normalized_domain: safeText(record.normalized_domain),
+    linked_audit_domain: safeNullableText(record.linked_audit_domain),
+    user_agent: safeNullableText(record.user_agent),
+    referrer: safeNullableText(record.referrer),
+  };
+}
+
+export function normalizeRecentContactRequestRecord(value: unknown): RecentContactRequestListItem {
+  return normalizeContactRequestRecord(value);
+}
+
 function sanitizeSearchQuery(query: string) {
   return query.trim().replace(/\*/g, "").replace(/\s+/g, " ");
 }
@@ -264,6 +302,29 @@ async function insertAudit(payload: AuditInsert) {
 
   const rows = safeArray(await response.json());
   return rows[0] ? normalizeAuditRecord(rows[0]) : null;
+}
+
+async function insertContactRequest(payload: ContactRequestInsert) {
+  const response = await supabaseRestFetch("contact_requests", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      name: payload.name,
+      email: payload.email,
+      website: payload.website,
+      message: payload.message,
+      source: payload.source,
+      normalized_domain: payload.normalizedDomain,
+      linked_audit_domain: payload.linkedAuditDomain,
+      user_agent: payload.userAgent,
+      referrer: payload.referrer,
+    }),
+  });
+
+  const rows = safeArray(await response.json());
+  return rows[0] ? normalizeContactRequestRecord(rows[0]) : null;
 }
 
 export async function getDomainLeadSnapshot(
@@ -334,6 +395,22 @@ export async function persistSuccessfulAudit(request: Request, inputUrl: string,
   return savedAudit;
 }
 
+export async function persistContactRequest(
+  request: Request,
+  payload: Omit<ContactRequestInsert, "userAgent" | "referrer">,
+) {
+  if (!isLeadStorageConfigured()) {
+    console.warn("Contact request save preskoceny: chyba Supabase konfiguracia.");
+    return null;
+  }
+
+  return insertContactRequest({
+    ...payload,
+    userAgent: request.headers.get("user-agent"),
+    referrer: request.headers.get("referer") ?? request.headers.get("referrer"),
+  });
+}
+
 export async function getLeadRollups({
   query,
   sort = "last-seen",
@@ -387,4 +464,32 @@ export async function getRecentAudits({ query, limit = 25 }: RecentAuditQuery = 
   });
 
   return safeArray(await response.json(), normalizeRecentAuditRecord);
+}
+
+export async function getRecentContactRequests({ query, limit = 25 }: RecentAuditQuery = {}) {
+  if (!isLeadStorageConfigured()) {
+    return [];
+  }
+
+  const searchParams = new URLSearchParams({
+    select:
+      "id,created_at,name,email,website,message,source,normalized_domain,linked_audit_domain,referrer",
+    order: "created_at.desc",
+    limit: String(limit),
+  });
+
+  const sanitizedQuery = query ? sanitizeSearchQuery(query) : "";
+
+  if (sanitizedQuery) {
+    searchParams.set(
+      "or",
+      `(normalized_domain.ilike.*${sanitizedQuery}*,email.ilike.*${sanitizedQuery}*,name.ilike.*${sanitizedQuery}*)`,
+    );
+  }
+
+  const response = await supabaseRestFetch("contact_requests", {
+    searchParams,
+  });
+
+  return safeArray(await response.json(), normalizeRecentContactRequestRecord);
 }

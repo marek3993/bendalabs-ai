@@ -21,7 +21,6 @@ export default function FinanceAndInsurancePage() {
       heroAddon={
         <AuditBot
           locale="sk"
-          proposalTargetId="cta"
           badge={content.auditBot.badge}
           title={content.auditBot.title}
           description={content.auditBot.description}

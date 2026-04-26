@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { getNormalizedDomainFromUrl } from "@/lib/leads/domain-utils";
 import type { LeadRollup, LeadStatusFilter } from "@/lib/leads/types";
 
 const DEFAULT_HASH_SALT = "bendalabs-local-dev-salt";
@@ -13,11 +14,7 @@ function getHashSalt() {
 }
 
 export function getNormalizedDomain(inputUrl: string) {
-  try {
-    return new URL(inputUrl).hostname.toLowerCase().replace(/^www\./, "");
-  } catch {
-    return null;
-  }
+  return getNormalizedDomainFromUrl(inputUrl);
 }
 
 export function getClientIp(request: Request) {

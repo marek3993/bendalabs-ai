@@ -21,7 +21,6 @@ export default function CzechMarketplaceAndRentalPage() {
       heroAddon={
         <AuditBot
           locale="cs"
-          proposalTargetId="cta"
           badge={content.auditBot.badge}
           title={content.auditBot.title}
           description={content.auditBot.description}

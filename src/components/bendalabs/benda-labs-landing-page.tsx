@@ -3,6 +3,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AuditBot from "@/components/bendalabs/audit-bot";
+import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
 import {
   getHomePageContent,
   type SiteCard,
@@ -272,7 +273,7 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
         <section id="audit" data-section className="section-divider section-surface-soft scroll-mt-24">
           <div className="mx-auto max-w-7xl px-6 py-8 sm:py-10">
             <div data-reveal className="mx-auto max-w-6xl">
-              <AuditBot locale={locale} onRequestProposal={() => scrollToSection("kontakt")} />
+              <AuditBot locale={locale} />
             </div>
           </div>
         </section>
@@ -528,7 +529,7 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
         <section id="kontakt" data-section className="section-divider section-surface-soft">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div className="glass-panel rounded-[34px] p-8 sm:p-10">
-              <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+              <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
                 <div data-reveal>
                   <SectionTag>{content.contactTag}</SectionTag>
                   <h2
@@ -542,35 +543,36 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
                   </p>
                 </div>
 
-                <div
-                  data-reveal
-                  className="rounded-[28px] border border-black/10 bg-black p-6 text-white lg:justify-self-end"
-                >
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
-                    {content.contactCardLabel}
-                  </div>
-                  <div className="mt-4 text-2xl font-semibold tracking-[-0.04em]">Marek Benda</div>
-                  <div className="mt-5 space-y-3 text-base text-white/76">
-                    <a href="tel:+421944388123" className="block hover:text-white">
-                      0944 388 123
-                    </a>
-                    <a href="mailto:hello@bendalabs.sk" className="block hover:text-white">
-                      hello@bendalabs.sk
-                    </a>
-                  </div>
+                <div data-reveal className="grid gap-4 lg:justify-self-end">
+                  <LeadCaptureForm locale={locale} source="contact_section" variant="contact" />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      window.open(
-                        `mailto:hello@bendalabs.sk?subject=${encodeURIComponent(content.contactMailSubject)}&body=${encodeURIComponent(content.contactMailBody)}`,
-                        "_self",
-                      )
-                    }
-                    className="mt-6 rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black hover:bg-neutral-200"
-                  >
-                    {content.contactButtonLabel}
-                  </button>
+                  <div className="rounded-[28px] border border-black/10 bg-black p-6 text-white">
+                    <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
+                      {content.contactCardLabel}
+                    </div>
+                    <div className="mt-4 text-2xl font-semibold tracking-[-0.04em]">Marek Benda</div>
+                    <div className="mt-5 space-y-3 text-base text-white/76">
+                      <a href="tel:+421944388123" className="block hover:text-white">
+                        0944 388 123
+                      </a>
+                      <a href="mailto:hello@bendalabs.sk" className="block hover:text-white">
+                        hello@bendalabs.sk
+                      </a>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        window.open(
+                          `mailto:hello@bendalabs.sk?subject=${encodeURIComponent(content.contactMailSubject)}&body=${encodeURIComponent(content.contactMailBody)}`,
+                          "_self",
+                        )
+                      }
+                      className="mt-6 rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black hover:bg-neutral-200"
+                    >
+                      {content.contactButtonLabel}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
