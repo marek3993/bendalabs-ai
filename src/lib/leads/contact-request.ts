@@ -20,11 +20,21 @@ export type ContactRequestSubmission = Omit<ContactRequestInsert, "userAgent" | 
   locale: SiteLocale;
 };
 
+export type ContactRequestFieldErrors = Partial<Record<ContactRequestField, ContactRequestErrorCode>>;
+
 const contactRequestSourceValues = ["audit_result", "contact_section"] as const satisfies readonly ContactRequestSource[];
 const localeValues = ["sk", "cs"] as const satisfies readonly SiteLocale[];
 
-function normalizeAuditDomainValue(value: string | undefined) {
-  const trimmedValue = value?.trim();
+function normalizeLocale(input: unknown): SiteLocale {
+  return localeValues.includes(input as SiteLocale) ? (input as SiteLocale) : "sk";
+}
+
+function normalizeAuditDomainValue(value: unknown) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmedValue = value.trim();
 
   if (!trimmedValue) {
     return null;
@@ -39,9 +49,25 @@ function normalizeAuditDomainValue(value: string | undefined) {
   return getNormalizedDomainFromUrl(normalizedUrl);
 }
 
+function normalizeWebsiteValue(value: string, context: z.RefinementCtx) {
+  const normalizedValue = normalizeWebsiteUrl(value);
+
+  if (!normalizedValue) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["website"],
+      message: "invalid_website",
+    });
+
+    return z.NEVER;
+  }
+
+  return normalizedValue;
+}
+
 const contactRequestSchema = z
   .object({
-    locale: z.string().optional(),
+    locale: z.unknown().optional(),
     name: z
       .string()
       .trim()
@@ -52,35 +78,30 @@ const contactRequestSchema = z
       .trim()
       .min(1, "required_email")
       .email("invalid_email")
-      .max(180, "invalid_email"),
+      .max(180, "invalid_email")
+      .transform((value) => value.toLowerCase()),
     website: z
       .string()
       .trim()
       .min(1, "required_website")
-      .refine((value) => Boolean(normalizeWebsiteUrl(value)), "invalid_website")
-      .transform((value) => normalizeWebsiteUrl(value) as string),
+      .transform(normalizeWebsiteValue),
     message: z
       .string()
       .trim()
       .min(1, "required_message")
       .min(10, "invalid_message")
       .max(4000, "invalid_message"),
-    source: z.string().trim(),
-    linkedAuditDomain: z.string().optional(),
-  })
-  .superRefine((value, context) => {
-    if (!contactRequestSourceValues.includes(value.source as ContactRequestSource)) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["source"],
-        message: "invalid_source",
-      });
-    }
+    source: z
+      .string()
+      .trim()
+      .refine(
+        (value): value is ContactRequestSource =>
+          contactRequestSourceValues.includes(value as ContactRequestSource),
+        "invalid_source",
+      ),
+    linkedAuditDomain: z.unknown().optional(),
   })
   .transform((value): ContactRequestSubmission => {
-    const locale = localeValues.includes(value.locale as SiteLocale)
-      ? (value.locale as SiteLocale)
-      : "sk";
     const normalizedDomain = getNormalizedDomainFromUrl(value.website);
 
     if (!normalizedDomain) {
@@ -88,12 +109,12 @@ const contactRequestSchema = z
     }
 
     return {
-      locale,
+      locale: normalizeLocale(value.locale),
       name: value.name,
-      email: value.email.toLowerCase(),
+      email: value.email,
       website: value.website,
       message: value.message,
-      source: value.source as ContactRequestSource,
+      source: value.source,
       normalizedDomain,
       linkedAuditDomain: normalizeAuditDomainValue(value.linkedAuditDomain),
     };
@@ -103,8 +124,8 @@ export function parseContactRequestSubmission(value: unknown) {
   return contactRequestSchema.safeParse(value);
 }
 
-export function getContactRequestFieldErrors(error: z.ZodError<unknown>) {
-  const fieldErrors: Partial<Record<ContactRequestField, ContactRequestErrorCode>> = {};
+export function getContactRequestFieldErrors(error: z.ZodError<unknown>): ContactRequestFieldErrors {
+  const fieldErrors: ContactRequestFieldErrors = {};
 
   for (const issue of error.issues) {
     const field = issue.path[0];
