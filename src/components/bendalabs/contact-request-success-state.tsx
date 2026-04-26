@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { trackGoogleAdsConversion } from "@/lib/analytics/google-ads";
 
 type ContactRequestSuccessStateProps = {
   backHref: string;
@@ -17,10 +15,6 @@ export default function ContactRequestSuccessState({
   title,
   description,
 }: ContactRequestSuccessStateProps) {
-  useEffect(() => {
-    trackGoogleAdsConversion();
-  }, []);
-
   return (
     <main className="section-surface-soft min-h-screen px-6 py-16">
       <div className="mx-auto max-w-2xl rounded-[32px] border border-black/10 bg-white p-8 shadow-[0_16px_50px_rgba(17,17,17,0.05)] sm:p-10">

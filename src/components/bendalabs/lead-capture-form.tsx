@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { trackGoogleAdsConversion } from "@/lib/analytics/google-ads";
 import { getLeadFormCopy } from "@/lib/bendalabs/lead-form-content";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import type { ContactRequestSource } from "@/lib/leads/types";
@@ -32,6 +33,10 @@ export default function LeadCaptureForm({
   const copy = getLeadFormCopy(locale);
   const variantCopy = copy[variant];
 
+  function handleSubmit() {
+    trackGoogleAdsConversion();
+  }
+
   return (
     <div className="rounded-[28px] border border-black/10 bg-white/80 p-6 shadow-[0_16px_50px_rgba(17,17,17,0.05)] sm:p-7">
       <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">{variantCopy.badge}</div>
@@ -40,7 +45,12 @@ export default function LeadCaptureForm({
       </h3>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600">{variantCopy.description}</p>
 
-      <form action="/api/contact-requests" method="post" className="mt-6 grid gap-4">
+      <form
+        action="/api/contact-requests"
+        method="post"
+        onSubmit={handleSubmit}
+        className="mt-6 grid gap-4"
+      >
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="source" value={source} />
         <input type="hidden" name="returnPath" value={pathname} />
