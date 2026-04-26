@@ -4,7 +4,6 @@ const siteAuditShape = {
   score: z.number().finite(),
   is_good_fit: z.boolean(),
   site_type: z.string().min(2).max(120),
-  demo_override: z.literal("bazos").optional(),
   recommended_ai_type: z.array(z.string().min(2).max(60)).min(1).max(4),
   why_fit: z.array(z.string().min(8).max(220)).min(2).max(5),
   friction_points: z.array(z.string().min(8).max(220)).min(2).max(6),

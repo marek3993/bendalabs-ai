@@ -103,7 +103,6 @@ function createBazosAudit(locale: SiteLocale): SiteAudit {
   return siteAuditSchema.parse({
     score: 10,
     is_good_fit: true,
-    demo_override: "bazos",
     site_type: "classifieds marketplace",
     recommended_ai_type: ["navigator", "recommender", "lead qualifier"],
     summary: content.summary,
