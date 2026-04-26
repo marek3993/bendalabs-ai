@@ -37,7 +37,6 @@ const initialFormState: FormState = {
   message: "",
 };
 
-const isDev = process.env.NODE_ENV !== "production";
 const fieldOrder = ["name", "email", "website", "message"] as const;
 
 export default function LeadCaptureForm({
@@ -85,10 +84,6 @@ export default function LeadCaptureForm({
   };
 
   const logSubmitDebug = (reason: string, details?: unknown) => {
-    if (!isDev) {
-      return;
-    }
-
     console.info("[LeadCaptureForm]", reason, details);
   };
 
@@ -159,6 +154,13 @@ export default function LeadCaptureForm({
     event.preventDefault();
     setFieldErrors({});
     setSubmitError("");
+    logSubmitDebug("onSubmit start", {
+      status,
+      source,
+      variant,
+      linkedAuditDomain,
+      formState,
+    });
 
     const submission = parseContactRequestSubmission({
       locale,
@@ -180,9 +182,14 @@ export default function LeadCaptureForm({
       return;
     }
 
+    logSubmitDebug("client validation passed", submission.data);
     setStatus("submitting");
 
     try {
+      logSubmitDebug("before fetch", {
+        url: "/api/contact-requests",
+        payload: submission.data,
+      });
       const response = await fetch("/api/contact-requests", {
         method: "POST",
         headers: {
@@ -191,6 +198,11 @@ export default function LeadCaptureForm({
         body: JSON.stringify(submission.data),
       });
       const payload = await parseResponsePayload(response);
+      logSubmitDebug("after fetch", {
+        ok: response.ok,
+        status: response.status,
+        payload,
+      });
 
       if (!response.ok) {
         const { nextFieldErrors, nextSubmitError } = getMappedErrors(payload.fieldErrors ?? {});
@@ -337,6 +349,12 @@ export default function LeadCaptureForm({
             <button
               type="submit"
               disabled={status === "submitting"}
+              onClick={() =>
+                logSubmitDebug("submit button clicked", {
+                  status,
+                  disabled: status === "submitting",
+                })
+              }
               className="rounded-[18px] border border-black bg-black px-5 py-3 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === "submitting" ? variantCopy.submittingLabel : variantCopy.submitLabel}
