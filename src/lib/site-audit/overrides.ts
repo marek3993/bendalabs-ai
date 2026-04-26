@@ -2,6 +2,112 @@ import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import { getNormalizedDomain } from "@/lib/leads/domain";
 import { siteAuditSchema, type SiteAudit } from "@/lib/site-audit/schema";
 
+function createBendaLabsAudit(locale: SiteLocale): SiteAudit {
+  const localized = {
+    sk: {
+      summary:
+        "BendaLabs je priamo produktovy web pre AI vrstvu, audit, lead flow a konverzny funnel, preto je to velmi silny kandidat na vlastne AI asistovane routovanie navstevnikov. Web uz komunikuje AI use-case, sluzbu aj dalsi conversion krok v jednom jasnom flowe.",
+      whyFit: [
+        "Je to priamo produktovy web pre AI vrstvu a audit, nie len vseobecny obsahovy web.",
+        "Navstevnik prechadza jasnym funnelom od pochopenia ponuky po audit alebo kontakt.",
+        "Lead flow a konverzne miesta su uz prirodzene pripravene na AI qualification vrstvu.",
+        "Odporucanie dalsieho kroku je priamo spojene s obchodnym cielom webu.",
+      ],
+      frictionPoints: [
+        "Navstevnik potrebuje rychlo pochopit, ci je AI vrstva vhodna prave pre jeho web.",
+        "Rozhodovanie medzi auditom, kontaktom a konkretnou sluzbou potrebuje jasne nasmerovanie.",
+        "Bez asistencie moze navstevnik odist skor, nez si vyberie relevantny dalsi krok.",
+        "Lead capture potrebuje udrzat momentum medzi zaujmom a odoslanim dopytu.",
+      ],
+      upsell: [
+        "AI moze kvalifikovat lead podla typu webu a odporucit najrelevantnejsiu sluzbu.",
+        "Asistent moze presmerovat navstevnika na audit, demo alebo kontakt podla zrelej potreby.",
+        "Prirodzeny conversational flow vie zvysit conversion rate aj kvalitu leadov.",
+      ],
+      phaseOne: [
+        "Nasadit AI layer na routing medzi auditom, sluzbou a kontaktom.",
+        "Pouzit asistenta na rychlu qualification podla typu webu, funnelu a obchodneho ciela.",
+        "Merat dopad na mieru odoslanych auditov, kontaktov a kvalitu leadov.",
+      ],
+      flows: [
+        {
+          user_intent: "Mam servisny alebo produktovy web a chcem vediet, ci sa mi oplati AI vrstva.",
+          ai_action: "AI asistent zisti typ webu, identifikuje funnel a odporuci najvhodnejsi dalsi krok.",
+          business_value: "Vyssia pravdepodobnost, ze relevantny navstevnik dokonci audit alebo posle dopyt.",
+        },
+        {
+          user_intent: "Neviem, ci mam poziadat o audit alebo rovno o konzultaciu.",
+          ai_action: "Asistent polozi kratke kvalifikacne otazky a navrhne audit alebo kontakt.",
+          business_value: "Menej nerozhodnych odchodov a presnejsie smerovanie leadov.",
+        },
+        {
+          user_intent: "Chcem pochopit, co by AI vrstva spravila na mojom webe.",
+          ai_action: "AI vysvetli relevantny use-case a naviaze ho na audit alebo konkretnu sluzbu.",
+          business_value: "Vyssia konverzia z navstevnosti na kvalifikovany obchodny zaujem.",
+        },
+      ],
+    },
+    cs: {
+      summary:
+        "BendaLabs je primo produktovy web pro AI vrstvu, audit, lead flow a konverzni funnel, proto jde o velmi silny fit pro vlastni AI asistovane routovani navstevniku. Web uz kombinuje AI use-case, sluzbu i dalsi conversion krok v jednom jasnem flow.",
+      whyFit: [
+        "Jde primo o produktovy web pro AI vrstvu a audit, ne jen o obecny obsahovy web.",
+        "Navstevnik prochazi jasnym funnelom od pochopeni nabidky po audit nebo kontakt.",
+        "Lead flow a konverzni mista jsou prirozene pripravena pro AI qualification vrstvu.",
+        "Doporuceni dalsiho kroku je primo spojene s obchodnim cilem webu.",
+      ],
+      frictionPoints: [
+        "Navstevnik potrebuje rychle pochopit, zda je AI vrstva vhodna prave pro jeho web.",
+        "Rozhodovani mezi auditem, kontaktem a konkretni sluzbou potrebuje jasne nasmerovani.",
+        "Bez asistence muze navstevnik odejit driv, nez si vybere relevantni dalsi krok.",
+        "Lead capture potrebuje udrzet momentum mezi zajmem a odeslanim poptavky.",
+      ],
+      upsell: [
+        "AI muze kvalifikovat lead podle typu webu a doporucit nejrelevantnejsi sluzbu.",
+        "Asistent muze presmerovat navstevnika na audit, demo nebo kontakt podle zralosti potreby.",
+        "Prirozeny conversational flow umi zvysit conversion rate i kvalitu leadu.",
+      ],
+      phaseOne: [
+        "Nasadit AI layer na routing mezi auditem, sluzbou a kontaktem.",
+        "Pouzit asistenta pro rychlou qualification podle typu webu, funnelu a obchodniho cile.",
+        "Merit dopad na miru odeslanych auditu, kontaktu a kvalitu leadu.",
+      ],
+      flows: [
+        {
+          user_intent: "Mam servisni nebo produktovy web a chci vedet, zda se mi vyplati AI vrstva.",
+          ai_action: "AI asistent zjisti typ webu, identifikuje funnel a doporuci nejvhodnejsi dalsi krok.",
+          business_value: "Vyssi pravdepodobnost, ze relevantni navstevnik dokonci audit nebo posle poptavku.",
+        },
+        {
+          user_intent: "Nevim, zda mam pozadat o audit nebo rovnou o konzultaci.",
+          ai_action: "Asistent polozi kratke kvalifikacni otazky a navrhne audit nebo kontakt.",
+          business_value: "Mene nerozhodnych odchodu a presnejsi smerovani leadu.",
+        },
+        {
+          user_intent: "Chci pochopit, co by AI vrstva udelala na mem webu.",
+          ai_action: "AI vysvetli relevantni use-case a navaze ho na audit nebo konkretni sluzbu.",
+          business_value: "Vyssi konverze z navstevnosti na kvalifikovany obchodni zajem.",
+        },
+      ],
+    },
+  } as const;
+
+  const content = localized[locale];
+
+  return siteAuditSchema.parse({
+    score: 9,
+    is_good_fit: true,
+    site_type: "service web / AI product landing page",
+    recommended_ai_type: ["lead qualifier", "navigator", "upsell assistant"],
+    summary: content.summary,
+    why_fit: content.whyFit,
+    friction_points: content.frictionPoints,
+    upsell_opportunities: content.upsell,
+    phase_one_plan: content.phaseOne,
+    example_user_flows: content.flows,
+  });
+}
+
 function createBazosAudit(locale: SiteLocale): SiteAudit {
   const localized = {
     sk: {
@@ -116,6 +222,10 @@ function createBazosAudit(locale: SiteLocale): SiteAudit {
 
 export function getDomainAuditOverride(inputUrl: string, locale: SiteLocale = "sk"): SiteAudit | null {
   const normalizedDomain = getNormalizedDomain(inputUrl);
+
+  if (normalizedDomain === "bendalabs.sk") {
+    return createBendaLabsAudit(locale);
+  }
 
   if (normalizedDomain !== "bazos.sk") {
     return null;

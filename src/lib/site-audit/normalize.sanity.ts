@@ -1,5 +1,6 @@
 import { strict as assert } from "node:assert";
-import { getFitLabelFromScore, normalizeAuditResult } from "./normalize";
+import { getFitLabelFromScore, getFitTierFromScore, normalizeAuditResult } from "./normalize";
+import { getDomainAuditOverride } from "./overrides";
 import type { RawSiteAudit } from "./schema";
 
 function createAuditFixture(
@@ -98,8 +99,8 @@ const finportalFixture = normalizeAuditResult(
 );
 
 assert.equal(finportalFixture.is_good_fit, true);
-assert.equal(finportalFixture.score, 6);
-assert.equal(getFitLabelFromScore(finportalFixture.score), "Dobry fit");
+assert.equal(finportalFixture.score, 9);
+assert.equal(getFitLabelFromScore(finportalFixture.score), "Velmi silny fit");
 
 const rentuloFixture = normalizeAuditResult(
   createAuditFixture({
@@ -116,7 +117,46 @@ const rentuloFixture = normalizeAuditResult(
 );
 
 assert.equal(rentuloFixture.is_good_fit, true);
-assert.equal(rentuloFixture.score, 6);
-assert.equal(getFitLabelFromScore(rentuloFixture.score), "Dobry fit");
+assert.equal(rentuloFixture.score, 9);
+assert.equal(getFitLabelFromScore(rentuloFixture.score), "Velmi silny fit");
+
+const bendalabsOverride = getDomainAuditOverride("https://www.bendalabs.sk", "sk");
+
+assert.ok(bendalabsOverride);
+assert.equal(bendalabsOverride.score, 9);
+assert.equal(bendalabsOverride.site_type, "service web / AI product landing page");
+assert.equal(getFitTierFromScore(bendalabsOverride.score), "HIGH-FIT");
+
+const bazosOverride = getDomainAuditOverride("https://www.bazos.sk/inzerat/123", "sk");
+
+assert.ok(bazosOverride);
+assert.equal(bazosOverride.score, 10);
+assert.equal(bazosOverride.site_type, "classifieds marketplace");
+
+const repeatedServiceAuditA = normalizeAuditResult(
+  createAuditFixture({
+    score: 3,
+    is_good_fit: false,
+    site_type: "Service web",
+    summary:
+      "Tento service web ma jasny lead flow, viac decision pointov a priestor na AI usmernenie navstevnika.",
+  }),
+  { inputUrl: "https://example-service.sk" },
+);
+
+const repeatedServiceAuditB = normalizeAuditResult(
+  createAuditFixture({
+    score: 9,
+    is_good_fit: true,
+    site_type: "AI product landing page",
+    summary:
+      "Tento AI product landing page ma jasny lead flow, viac decision pointov a priestor na AI usmernenie navstevnika.",
+  }),
+  { inputUrl: "https://example-service.sk" },
+);
+
+assert.equal(repeatedServiceAuditA.score, repeatedServiceAuditB.score);
+assert.equal(repeatedServiceAuditA.is_good_fit, repeatedServiceAuditB.is_good_fit);
+assert.equal(getFitTierFromScore(repeatedServiceAuditA.score), "HIGH-FIT");
 
 console.log("Audit normalization sanity checks passed.");

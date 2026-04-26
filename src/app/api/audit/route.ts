@@ -53,7 +53,10 @@ export async function POST(request: Request) {
     }
 
     const crawledSite = await crawlSite(normalizedUrl);
-    const audit = await generateSiteAudit(crawledSite.siteSummary, locale);
+    const audit = await generateSiteAudit(crawledSite.siteSummary, {
+      locale,
+      inputUrl: crawledSite.normalizedUrl,
+    });
 
     try {
       await persistSuccessfulAudit(request, crawledSite.normalizedUrl, audit);

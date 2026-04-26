@@ -43,7 +43,16 @@ function getLanguageDirective(locale: SiteLocale) {
   return "Vystup musi byt v slovencine, konkretny, prakticky a oprety len o dodany summary webu.";
 }
 
-export async function generateSiteAudit(siteSummary: string, locale: SiteLocale = "sk"): Promise<SiteAudit> {
+type GenerateSiteAuditOptions = {
+  locale?: SiteLocale;
+  inputUrl?: string;
+};
+
+export async function generateSiteAudit(
+  siteSummary: string,
+  options: GenerateSiteAuditOptions = {},
+): Promise<SiteAudit> {
+  const locale = options.locale ?? "sk";
   const client = getOpenAIClient(locale);
   const model = process.env.OPENAI_MODEL || "gpt-5.4-mini";
 
@@ -80,5 +89,7 @@ export async function generateSiteAudit(siteSummary: string, locale: SiteLocale 
     throw new Error(getLocalizedAuditError(locale, "emptyAudit"));
   }
 
-  return normalizeAuditResult(audit);
+  return normalizeAuditResult(audit, {
+    inputUrl: options.inputUrl,
+  });
 }
