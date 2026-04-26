@@ -1,26 +1,26 @@
 import type { Metadata } from "next";
 import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
-import { getAuditPageContent } from "@/lib/bendalabs/site-content";
+import { getFinancePageContent } from "@/lib/bendalabs/site-content";
 
-const content = getAuditPageContent("sk");
+const content = getFinancePageContent("cs");
 
 export const metadata: Metadata = {
   title: content.metadataTitle,
   description: content.metadataDescription,
 };
 
-export default function AuditPage() {
+export default function CzechFinanceAndInsurancePage() {
   return (
     <ServicePageTemplate
-      locale="sk"
+      locale="cs"
       eyebrow={content.eyebrow}
       title={content.title}
       subtitle={content.subtitle}
       heroChips={content.heroChips}
       heroAddon={
         <AuditBot
-          locale="sk"
+          locale="cs"
           proposalTargetId="cta"
           badge={content.auditBot.badge}
           title={content.auditBot.title}

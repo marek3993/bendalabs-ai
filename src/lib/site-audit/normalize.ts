@@ -1,6 +1,6 @@
 import { siteAuditSchema, type RawSiteAudit, type SiteAudit } from "./schema";
 
-export type FitLabel = "Slaby fit" | "Hranicny fit" | "Dobry fit" | "Velmi silny fit";
+export type FitLabelKey = "low" | "borderline" | "good" | "strong";
 
 type FitSignal = "low" | "mixed" | "high" | null;
 
@@ -15,6 +15,14 @@ const LOW_SIGNAL_PATTERNS = [
   "obmedzeny priestor",
   "nizky potencial",
   "jednoduchy web",
+  "slaby potencial",
+  "omezeny prinos",
+  "maly prinos",
+  "minimalni prinos",
+  "minimalni prostor",
+  "omezeny prostor",
+  "nizky potencial",
+  "jednoduchy web",
 ];
 
 const MIXED_SIGNAL_PATTERNS = [
@@ -24,6 +32,10 @@ const MIXED_SIGNAL_PATTERNS = [
   "ciastocny fit",
   "s rezervou",
   "na vybranych miestach",
+  "hranicni fit",
+  "smiseny fit",
+  "castecny fit",
+  "na vybranych mistech",
 ];
 
 const HIGH_SIGNAL_PATTERNS = [
@@ -33,6 +45,10 @@ const HIGH_SIGNAL_PATTERNS = [
   "vysoky potencial",
   "silny priestor",
   "vyrazny priestor",
+  "velmi silny kandidat",
+  "velmi silny kandidat",
+  "silny prostor",
+  "vyrazny prostor",
 ];
 
 export function clampFitScore(score: number) {
@@ -43,22 +59,33 @@ export function clampFitScore(score: number) {
   return Math.min(10, Math.max(1, Math.round(score)));
 }
 
-export function getFitLabelFromScore(score: number): FitLabel {
+export function getFitLabelKeyFromScore(score: number): FitLabelKey {
   const normalizedScore = clampFitScore(score);
 
   if (normalizedScore <= 3) {
-    return "Slaby fit";
+    return "low";
   }
 
   if (normalizedScore <= 5) {
-    return "Hranicny fit";
+    return "borderline";
   }
 
   if (normalizedScore <= 8) {
-    return "Dobry fit";
+    return "good";
   }
 
-  return "Velmi silny fit";
+  return "strong";
+}
+
+export function getFitLabelFromScore(score: number) {
+  const labels = {
+    low: "Slaby fit",
+    borderline: "Hranicny fit",
+    good: "Dobry fit",
+    strong: "Velmi silny fit",
+  } as const;
+
+  return labels[getFitLabelKeyFromScore(score)];
 }
 
 function detectFitSignal(text: string): FitSignal {

@@ -3,24 +3,24 @@ import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
 import { getAuditPageContent } from "@/lib/bendalabs/site-content";
 
-const content = getAuditPageContent("sk");
+const content = getAuditPageContent("cs");
 
 export const metadata: Metadata = {
   title: content.metadataTitle,
   description: content.metadataDescription,
 };
 
-export default function AuditPage() {
+export default function CzechAuditPage() {
   return (
     <ServicePageTemplate
-      locale="sk"
+      locale="cs"
       eyebrow={content.eyebrow}
       title={content.title}
       subtitle={content.subtitle}
       heroChips={content.heroChips}
       heroAddon={
         <AuditBot
-          locale="sk"
+          locale="cs"
           proposalTargetId="cta"
           badge={content.auditBot.badge}
           title={content.auditBot.title}

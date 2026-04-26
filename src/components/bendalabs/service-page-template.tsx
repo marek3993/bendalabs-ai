@@ -1,24 +1,16 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-
-type Card = {
-  title: string;
-  text: string;
-};
-
-type ServicePageSection = {
-  id: string;
-  label: string;
-  title: string;
-  description: string;
-  surface: "white" | "soft" | "tint";
-  cards?: ReadonlyArray<Card>;
-  bullets?: ReadonlyArray<string>;
-  statements?: ReadonlyArray<string>;
-  columns?: 2 | 3;
-};
+import {
+  getSiteChrome,
+  getSitePaths,
+  getPageLinks,
+  type ServicePageSection,
+  type SiteCard,
+  type SiteLocale,
+} from "@/lib/bendalabs/site-content";
 
 type ServicePageTemplateProps = {
+  locale: SiteLocale;
   title: string;
   subtitle: string;
   eyebrow: string;
@@ -37,13 +29,6 @@ const surfaceClassName: Record<ServicePageSection["surface"], string> = {
   tint: "section-surface-tint",
 };
 
-const pageLinks = [
-  { href: "/", label: "Domov" },
-  { href: "/ai-vrstva-pre-financne-a-poistne-weby", label: "Financie a poistenie" },
-  { href: "/ai-vrstva-pre-marketplace-a-rental-weby", label: "Marketplace a rental" },
-  { href: "/ai-audit-webu", label: "AI audit webu" },
-] as const;
-
 function SectionTag({ children }: { children: ReactNode }) {
   return (
     <div className="inline-flex rounded-full border border-black/10 bg-white/78 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-neutral-600">
@@ -52,7 +37,7 @@ function SectionTag({ children }: { children: ReactNode }) {
   );
 }
 
-function SectionCards({ cards, columns = 2 }: { cards: ReadonlyArray<Card>; columns?: 2 | 3 }) {
+function SectionCards({ cards, columns = 2 }: { cards: ReadonlyArray<SiteCard>; columns?: 2 | 3 }) {
   return (
     <div className={`mt-10 grid gap-4 ${columns === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"}`}>
       {cards.map((card) => (
@@ -97,6 +82,7 @@ function SectionStatements({ statements }: { statements: ReadonlyArray<string> }
 }
 
 export default function ServicePageTemplate({
+  locale,
   title,
   subtitle,
   eyebrow,
@@ -108,15 +94,19 @@ export default function ServicePageTemplate({
   ctaButtonLabel,
   ctaMailSubject,
 }: ServicePageTemplateProps) {
+  const chrome = getSiteChrome(locale);
+  const pageLinks = getPageLinks(locale);
+  const sitePaths = getSitePaths(locale);
+
   return (
     <div className="site-shell min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-black/8 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
           <div>
-            <Link href="/" className="text-lg font-semibold tracking-[-0.04em] text-neutral-950">
+            <Link href={sitePaths.home} className="text-lg font-semibold tracking-[-0.04em] text-neutral-950">
               BendaLabs
             </Link>
-            <div className="text-xs text-neutral-500">AI vrstva pre weby s viacerymi cestami ku konverzii</div>
+            <div className="text-xs text-neutral-500">{chrome.brandTagline}</div>
           </div>
 
           <nav className="hidden items-center gap-6 text-sm text-neutral-500 xl:flex">
@@ -129,7 +119,7 @@ export default function ServicePageTemplate({
         </div>
       </header>
 
-      <main>
+      <main lang={locale === "cs" ? "cs" : "sk"}>
         <section className="section-surface-white mx-auto max-w-7xl px-6 pb-10 pt-8 sm:pb-12 sm:pt-10">
           <div className="max-w-4xl">
             <SectionTag>{eyebrow}</SectionTag>
@@ -157,13 +147,13 @@ export default function ServicePageTemplate({
                 href="#cta"
                 className="rounded-full border border-black/10 bg-white px-6 py-3.5 text-sm font-medium text-neutral-950 hover:bg-neutral-100"
               >
-                Otvorit CTA
+                {chrome.openCtaLabel}
               </Link>
               <Link
-                href="/ai-audit-webu"
+                href={sitePaths.audit}
                 className="rounded-full border border-black/10 bg-black/[0.03] px-6 py-3.5 text-sm font-medium text-neutral-700 hover:bg-black/[0.06]"
               >
-                Pozriet AI audit webu
+                {chrome.openAuditLabel}
               </Link>
             </div>
           </div>
@@ -201,7 +191,7 @@ export default function ServicePageTemplate({
             <div className="glass-panel rounded-[34px] p-8 sm:p-10">
               <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
                 <div>
-                  <SectionTag>CTA</SectionTag>
+                  <SectionTag>{chrome.ctaTag}</SectionTag>
                   <h2
                     className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                     style={{ fontFamily: "var(--font-display)" }}
@@ -212,7 +202,9 @@ export default function ServicePageTemplate({
                 </div>
 
                 <div className="rounded-[28px] border border-black/10 bg-black p-6 text-white lg:justify-self-end">
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">Kontakt</div>
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
+                    {chrome.contactLabel}
+                  </div>
                   <div className="mt-4 text-2xl font-semibold tracking-[-0.04em]">Marek Benda</div>
                   <div className="mt-5 space-y-3 text-base text-white/76">
                     <a href="tel:+421944388123" className="block hover:text-white">

@@ -3,116 +3,11 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AuditBot from "@/components/bendalabs/audit-bot";
-
-const sections = [
-  { id: "hero", label: "Hero" },
-  { id: "audit", label: "Audit" },
-  { id: "pre-koho", label: "Pre koho" },
-  { id: "co-robi", label: "Co robi" },
-  { id: "priklady", label: "Priklady" },
-  { id: "ako-to-funguje", label: "Ako to funguje" },
-  { id: "cennik", label: "Cennik" },
-  { id: "kontakt", label: "Kontakt" },
-] as const;
-
-const audiences = [
-  {
-    title: "Marketplace a service weby",
-    text: "Weby, kde clovek prichadza s potrebou, ale nevie, ktoru kategoriu, ponuku alebo flow ma otvorit ako prvy.",
-  },
-  {
-    title: "Financne a poistne portaly",
-    text: "Komplexne rozhodovanie medzi produktmi, refinancovanim, kalkulackami, formularmi a spravnou vetvou dopytu.",
-  },
-  {
-    title: "Rental a discovery use-casy",
-    text: "Weby typu Rentulo, kde navstevnik nehlada nazov kategorie, ale co chce vyriesit, prenajat alebo objavit.",
-  },
-  {
-    title: "Katalogy produktov a sluzieb",
-    text: "Siroka ponuka, viacero ciest ku konverzii a potreba dostat cloveka k spravnej volbe bez trenia a zbytocneho klikania.",
-  },
-];
-
-const features = [
-  "Pochopi, co chce clovek realne urobit, aj ked to nepovie nazvom produktu alebo kategorie.",
-  "Posle ho do spravnej cesty bez bludenia cez menu, filtre, porovnavania alebo nespravne formulare.",
-  "Odporuci vhodnejsi alebo doplnkovy krok presne v momente, ked je navstevnik pripraveny konat.",
-  "Ukaze, kde sa lame konverzia a na ktorych miestach sa ludia najcastejsie zaseknu.",
-];
-
-const outcomes = [
-  "Kratsia cesta k vysledku a menej stratenych navstevnikov",
-  "Vyssia konverzia z existujucej navstevnosti",
-  "Lepsie odporucanie relevantneho dalsieho kroku",
-  "Presnejsie data o tom, kde web brzdi pouzivatela",
-];
-
-const examples = [
-  {
-    title: "Financny web",
-    prompt: "Chcem znizit mesacnu splatku hypoteky.",
-    answer:
-      "AI vrstva rozpozna intent, odlisi refinancovanie od novej hypoteky a posle navstevnika rovno do spravneho flowu.",
-  },
-  {
-    title: "Marketplace / sluzby",
-    prompt: "Potrebujem niekoho na rekonstrukciu kupelne.",
-    answer:
-      "Namiesto hladania cez kategorie alebo filtre dostane clovek relevantnu sluzbu, spravny dopytovy formular a odporucany dalsi krok.",
-  },
-  {
-    title: "Rental / discovery",
-    prompt: "Na vikend potrebujem naradie na brusenie stareho plotu.",
-    answer:
-      "AI vrstva rozpozna situaciu, navrhne spravny typ naradia alebo sluzby a dovedie pouzivatela k rezervacii bez bludenia.",
-  },
-];
-
-const journeySteps = [
-  {
-    title: "Pouzivatel napise, co chce vyriesit",
-    text: "Namiesto klikania cez menu, filtre alebo komplikovany formular jednoducho napise svoj zamer vlastnymi slovami.",
-  },
-  {
-    title: "AI rozpozna intent a kontext webu",
-    text: "Vrstva vyhodnoti, ci ide o navigaciu, odporucanie produktu, kvalifikaciu leadu alebo prilezitost na upsell.",
-  },
-  {
-    title: "AI vyberie najvhodnejsi flow",
-    text: "System urci, ktora vetva webu, ponuky alebo formulara ma najvyssiu sancu dostat cloveka k vysledku bez trenia.",
-  },
-  {
-    title: "Pouzivatel ide rovno na spravne miesto",
-    text: "Navstevnik sa dostane priamo na relevantnu podstranku, ponuku, formular alebo kombinaciu dalsich krokov.",
-  },
-  {
-    title: "AI odporuci dalsi relevantny krok",
-    text: "Ked je vhodny moment, vrstva navrhne lepsiu variantu, doplnkovu sluzbu alebo dalsiu akciu s vyssou pravdepodobnostou dokoncenia.",
-  },
-  {
-    title: "Z interakcii vznikaju pouzitelne insighty",
-    text: "Kazda konverzacia ukazuje, kde je web nejasny, kde sa ludia stracaju a ktore trasy vedu najspolahlivejsie ku konverzii.",
-  },
-];
-
-const pricing = [
-  {
-    name: "Jednoduchšia implementácia",
-    price: "1 500 € jednorazovo",
-    text: "Pre jednoduchšie weby alebo jednu hlavnú rozhodovaciu vrstvu.",
-  },
-  {
-    name: "Zložitejšia implementácia",
-    price: "2 500 € jednorazovo",
-    text: "Pre väčšie weby s viacerými vetvami, ponukami a miestami, kde sa láme konverzia.",
-  },
-  {
-    name: "Mesačné doladenie",
-    price: "190 € / mesiac",
-    text: "Optimalizácia podľa dát a reálneho správania návštevníkov. Úpravy pri zmene webu, obsahu alebo rozhodovacích ciest. 1 väčšia zmena mesačne v rámci nasadenej AI vrstvy.",
-  },
-];
+import {
+  getHomePageContent,
+  type SiteCard,
+  type SiteLocale,
+} from "@/lib/bendalabs/site-content";
 
 function scrollToSection(sectionId: string) {
   document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -126,7 +21,7 @@ function SectionTag({ children }: { children: ReactNode }) {
   );
 }
 
-function AudienceCard({ title, text }: { title: string; text: string }) {
+function AudienceCard({ title, text }: SiteCard) {
   return (
     <div data-reveal className="glass-panel rounded-[28px] p-6">
       <div className="mb-5 h-px w-16 bg-gradient-to-r from-black/35 to-black/0" />
@@ -136,7 +31,12 @@ function AudienceCard({ title, text }: { title: string; text: string }) {
   );
 }
 
-export default function BendaLabsLandingPage() {
+type BendaLabsLandingPageProps = {
+  locale: SiteLocale;
+};
+
+export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPageProps) {
+  const content = getHomePageContent(locale);
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [activeStep, setActiveStep] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -144,7 +44,7 @@ export default function BendaLabsLandingPage() {
   const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
   const storyFrameRef = useRef<number | null>(null);
 
-  const activeJourneyStep = journeySteps[activeStep] ?? journeySteps[0];
+  const activeJourneyStep = content.journeySteps[activeStep] ?? content.journeySteps[0];
 
   const updateScrollState = useEffectEvent(() => {
     const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -274,11 +174,11 @@ export default function BendaLabsLandingPage() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div>
             <div className="text-lg font-semibold tracking-[-0.04em] text-neutral-950">BendaLabs</div>
-            <div className="text-xs text-neutral-500">AI vrstva, ktora meni sposob pouzivania webu</div>
+            <div className="text-xs text-neutral-500">{content.brandTagline}</div>
           </div>
 
           <nav className="hidden items-center gap-6 text-sm text-neutral-500 lg:flex">
-            {sections.slice(1).map((section) => (
+            {content.sections.slice(1).map((section) => (
               <button
                 key={section.id}
                 type="button"
@@ -295,7 +195,7 @@ export default function BendaLabsLandingPage() {
       <div className="pointer-events-none fixed right-6 top-1/2 z-30 hidden -translate-y-1/2 xl:block">
         <div className="rounded-full border border-black/8 bg-white/80 px-3 py-3 backdrop-blur-xl shadow-[0_12px_40px_rgba(17,17,17,0.06)]">
           <div className="flex flex-col gap-3">
-            {sections.map((section) => (
+            {content.sections.map((section) => (
               <button
                 key={section.id}
                 type="button"
@@ -321,31 +221,26 @@ export default function BendaLabsLandingPage() {
         </div>
       </div>
 
-      <main>
+      <main lang={locale === "cs" ? "cs" : "sk"}>
         <section
-          id="hero"
+          id={content.sections[0]?.id}
           data-section
           className="section-surface-white mx-auto max-w-7xl px-6 pb-8 pt-6 sm:pb-10 sm:pt-8"
         >
           <div data-reveal className="max-w-4xl pt-1">
-            <SectionTag>AI vrstva pre weby</SectionTag>
+            <SectionTag>{content.heroTag}</SectionTag>
             <h1
               className="mt-5 text-[3rem] font-semibold leading-[0.94] tracking-[-0.06em] text-neutral-950 sm:text-[4.2rem] xl:text-[4.8rem]"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Navstevnik nemusi hladat v menu. Napise, co chce, a web ho tam dovedie.
+              {content.heroTitle}
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-neutral-600 sm:text-xl">
-              AI vrstva pre weby, ktora meni sposob pouzivania webu. Namiesto bludenia cez menu,
-              filtre a formulare navstevnik napise svoj zamer a dostane spravny dalsi krok.
+              {content.heroDescription}
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              {[
-                "Komplexne weby s viacerymi cestami ku konverzii",
-                "Jeden vstup pre intent, navigaciu a odporucanie",
-                "Audit bot ukaze realne miesta, kde sa lame konverzia",
-              ].map((item) => (
+              {content.heroChips.map((item) => (
                 <div
                   key={item}
                   className="rounded-full border border-black/8 bg-white/72 px-4 py-2.5 text-sm text-neutral-700 shadow-[0_12px_36px_rgba(17,17,17,0.04)]"
@@ -361,73 +256,63 @@ export default function BendaLabsLandingPage() {
                 onClick={() => scrollToSection("audit")}
                 className="rounded-full border border-black/10 bg-white px-6 py-3.5 text-sm font-medium text-neutral-950 hover:bg-neutral-100"
               >
-                Spustit rychly audit
+                {content.heroPrimaryCta}
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection("kontakt")}
                 className="rounded-full border border-black/10 bg-black/[0.03] px-6 py-3.5 text-sm font-medium text-neutral-700 hover:bg-black/[0.06]"
               >
-                Kontakt / CTA
+                {content.heroSecondaryCta}
               </button>
             </div>
           </div>
         </section>
 
-        <section
-          id="audit"
-          data-section
-          className="section-divider section-surface-soft scroll-mt-24"
-        >
+        <section id="audit" data-section className="section-divider section-surface-soft scroll-mt-24">
           <div className="mx-auto max-w-7xl px-6 py-8 sm:py-10">
             <div data-reveal className="mx-auto max-w-6xl">
-              <AuditBot onRequestProposal={() => scrollToSection("kontakt")} />
+              <AuditBot locale={locale} onRequestProposal={() => scrollToSection("kontakt")} />
             </div>
           </div>
         </section>
 
-        <section id="pre-koho" data-section className="section-divider section-surface-tint">
+        <section id={content.sections[2]?.id} data-section className="section-divider section-surface-tint">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div data-reveal className="max-w-3xl">
-              <SectionTag>Pre koho to je</SectionTag>
+              <SectionTag>{content.audiencesTag}</SectionTag>
               <h2
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Pre weby, kde je silna ponuka, ale clovek sa pred vysledkom stale straca.
+                {content.audiencesTitle}
               </h2>
-              <p className="mt-5 text-lg leading-8 text-neutral-600">
-                Funguje napriec business use-casmi. Nie len pre financie. Dolezita je komplexita
-                ponuky, mnozstvo ciest a moment, ked navstevnik nevie, kam presne patri.
-              </p>
+              <p className="mt-5 text-lg leading-8 text-neutral-600">{content.audiencesDescription}</p>
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2">
-              {audiences.map((item) => (
+              {content.audiences.map((item) => (
                 <AudienceCard key={item.title} title={item.title} text={item.text} />
               ))}
             </div>
           </div>
         </section>
 
-        <section id="co-robi" data-section className="section-divider section-surface-white">
+        <section id={content.sections[3]?.id} data-section className="section-divider section-surface-white">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div className="grid gap-12 lg:grid-cols-[0.88fr_1.12fr]">
               <div data-reveal>
-                <SectionTag>Co robi AI vrstva</SectionTag>
+                <SectionTag>{content.featuresTag}</SectionTag>
                 <h2
                   className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
-                  Nie dalsi widget. Nova vrstva rozhodovania, navigacie a odporucania.
+                  {content.featuresTitle}
                 </h2>
-                <p className="mt-5 text-lg leading-8 text-neutral-600">
-                  Clovek neprichadza s nazvom produktu ani s presnou kategoriou. Prichadza s tym,
-                  co chce vyriesit. Prave tam sa lame konverzia.
-                </p>
+                <p className="mt-5 text-lg leading-8 text-neutral-600">{content.featuresDescription}</p>
 
                 <div className="mt-8 grid gap-3">
-                  {outcomes.map((item) => (
+                  {content.outcomes.map((item) => (
                     <div
                       key={item}
                       className="rounded-[22px] border border-black/8 bg-white/72 px-4 py-4 text-sm text-neutral-700 shadow-[0_12px_36px_rgba(17,17,17,0.04)]"
@@ -439,7 +324,7 @@ export default function BendaLabsLandingPage() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                {features.map((item, index) => (
+                {content.features.map((item, index) => (
                   <div key={item} data-reveal className="glass-panel rounded-[28px] p-6">
                     <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
                       0{index + 1}
@@ -454,20 +339,20 @@ export default function BendaLabsLandingPage() {
           </div>
         </section>
 
-        <section id="priklady" data-section className="section-divider section-surface-soft">
+        <section id={content.sections[4]?.id} data-section className="section-divider section-surface-soft">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div data-reveal className="max-w-3xl">
-              <SectionTag>Priklady pouzitia</SectionTag>
+              <SectionTag>{content.examplesTag}</SectionTag>
               <h2
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                AI nevedie cloveka cez menu. Vedie ho cez jeho zamer.
+                {content.examplesTitle}
               </h2>
             </div>
 
             <div className="mt-10 grid gap-4 lg:grid-cols-3">
-              {examples.map((example, index) => (
+              {content.examples.map((example, index) => (
                 <div
                   key={example.title}
                   data-reveal
@@ -487,28 +372,24 @@ export default function BendaLabsLandingPage() {
           </div>
         </section>
 
-        <section id="ako-to-funguje" data-section className="section-divider section-surface-tint">
+        <section id={content.sections[5]?.id} data-section className="section-divider section-surface-tint">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div data-reveal className="max-w-3xl">
-              <SectionTag>Ako to funguje</SectionTag>
+              <SectionTag>{content.journeyTag}</SectionTag>
               <h2
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Stabilny flow od intentu po insighty, bez preskakovania krokov.
+                {content.journeyTitle}
               </h2>
-              <p className="mt-5 text-lg leading-8 text-neutral-600">
-                Na desktope sa aktivny krok urcuje podla triggeru, ktory je najblizsie stredu
-                viewportu. Na mobile a tablete sa sekcia prepne do jednoducheho stacked layoutu bez
-                sticky spravania.
-              </p>
+              <p className="mt-5 text-lg leading-8 text-neutral-600">{content.journeyDescription}</p>
             </div>
 
             <div className="mt-12 hidden gap-8 xl:grid xl:grid-cols-[0.92fr_1.08fr] xl:items-start">
               <div className="xl:sticky xl:top-28">
                 <div data-card-active="true" className="glass-panel rounded-[32px] p-6 sm:p-8">
                   <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                    Aktivny krok
+                    {content.activeStepLabel}
                   </div>
                   <div className="mt-4 flex items-center gap-4">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-black/12 bg-black text-lg font-semibold text-white">
@@ -524,7 +405,7 @@ export default function BendaLabsLandingPage() {
               </div>
 
               <div className="space-y-6">
-                {journeySteps.map((step, index) => (
+                {content.journeySteps.map((step, index) => (
                   <div
                     key={step.title}
                     ref={(element) => {
@@ -535,7 +416,7 @@ export default function BendaLabsLandingPage() {
                     className="glass-panel min-h-[320px] rounded-[30px] p-8"
                   >
                     <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                      Krok 0{index + 1}
+                      {content.stepLabel} 0{index + 1}
                     </div>
                     <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
                       {step.title}
@@ -547,10 +428,10 @@ export default function BendaLabsLandingPage() {
             </div>
 
             <div className="mt-12 grid gap-4 xl:hidden">
-              {journeySteps.map((step, index) => (
+              {content.journeySteps.map((step, index) => (
                 <div key={step.title} data-reveal className="glass-panel rounded-[28px] p-6">
                   <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                    Krok 0{index + 1}
+                    {content.stepLabel} 0{index + 1}
                   </div>
                   <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
                     {step.title}
@@ -562,112 +443,85 @@ export default function BendaLabsLandingPage() {
           </div>
         </section>
 
-        <section id="cennik" data-section className="section-divider section-surface-white">
+        <section id={content.sections[6]?.id} data-section className="section-divider section-surface-white">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div data-reveal className="max-w-3xl">
-              <SectionTag>Cennik</SectionTag>
+              <SectionTag>{content.pricingTag}</SectionTag>
               <h2
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Jasny pricing pre prvu fazu aj priebezne doladenie.
+                {content.pricingTitle}
               </h2>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1fr_0.88fr]" data-tier-count={3}>
+            <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1fr_0.88fr]">
               <div data-reveal className="glass-panel rounded-[30px] p-6">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Implementácia</div>
+                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
+                  {content.pricing.implementationLabel}
+                </div>
                 <p className="mt-4 text-sm leading-7 text-neutral-600">
-                  Vyberáte si jednu z dvoch úrovní nasadenia podľa komplexity webu a počtu rozhodovacích miest.
+                  {content.pricing.implementationDescription}
                 </p>
 
                 <div className="mt-6 space-y-4">
-                  <div className="rounded-[24px] border border-black/8 bg-white/70 p-5 shadow-[0_12px_30px_rgba(17,17,17,0.04)]">
-                    <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Varianta 1</div>
-                    <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
-                      Jednoduchšia implementácia
-                    </h3>
-                    <div className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
-                      1 500 € <span className="text-lg text-neutral-500">jednorazovo</span>
+                  {content.pricing.tiers.map((tier) => (
+                    <div
+                      key={tier.name}
+                      className={`rounded-[24px] border border-black/8 p-5 ${
+                        tier.tone === "light"
+                          ? "bg-white/70 shadow-[0_12px_30px_rgba(17,17,17,0.04)]"
+                          : "bg-black/[0.02]"
+                      }`}
+                    >
+                      <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
+                        {tier.variant}
+                      </div>
+                      <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
+                        {tier.name}
+                      </h3>
+                      <div className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+                        {tier.price}
+                        {tier.cadenceLabel ? (
+                          <span className="text-lg text-neutral-500"> {tier.cadenceLabel}</span>
+                        ) : null}
+                      </div>
+                      <p className="mt-4 text-sm leading-7 text-neutral-600">{tier.text}</p>
                     </div>
-                    <p className="mt-4 text-sm leading-7 text-neutral-600">
-                      Pre jednoduchšie weby alebo jednu hlavnú rozhodovaciu vrstvu.
-                    </p>
-                  </div>
-
-                  <div className="rounded-[24px] border border-black/8 bg-black/[0.02] p-5">
-                    <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Varianta 2</div>
-                    <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
-                      Zložitejšia implementácia
-                    </h3>
-                    <div className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
-                      2 500 € <span className="text-lg text-neutral-500">jednorazovo</span>
-                    </div>
-                    <p className="mt-4 text-sm leading-7 text-neutral-600">
-                      Pre väčšie weby s viacerými vetvami, ponukami a miestami, kde sa láme konverzia.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div data-reveal className="glass-panel rounded-[30px] p-6">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Mesačné doladenie</div>
-                <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-                  190 € <span className="text-lg text-neutral-500">/ mesiac</span>
-                </div>
-                <div className="mt-5 space-y-3 text-sm leading-7 text-neutral-600">
-                  <div>Optimalizácia podľa dát a reálneho správania návštevníkov.</div>
-                  <div>Úpravy pri zmene webu, obsahu alebo rozhodovacích ciest.</div>
-                  <div>1 väčšia mesačná zmena v rámci nasadenej AI vrstvy.</div>
+                  ))}
                 </div>
               </div>
 
               <div data-reveal className="glass-panel rounded-[30px] p-6">
                 <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                  AI computing power
+                  {content.pricing.supportLabel}
                 </div>
                 <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-                  odhad 10 až 100 €
-                  <span className="text-lg text-neutral-500"> / mesiac</span>
+                  {content.pricing.supportPrice}
+                  <span className="text-lg text-neutral-500"> {content.pricing.supportCadenceLabel}</span>
                 </div>
                 <div className="mt-5 space-y-3 text-sm leading-7 text-neutral-600">
-                  <div>Podľa reálneho používania, návštevnosti a náročnosti nasadenia.</div>
-                  <div>Spotreba ide priamo cez vlastný OpenAI Developer Platform účet klienta.</div>
-                  <div>BendaLabs zabezpečuje implementáciu, napojenie, logiku a priebežné doladenie.</div>
+                  {content.pricing.supportLines.map((line) => (
+                    <div key={line}>{line}</div>
+                  ))}
                 </div>
               </div>
-            </div>
-
-              {pricing.length === 4 && (
-            <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1fr_0.88fr]">
-              {pricing.map((tier) => (
-                <div key={tier.name} data-reveal className="glass-panel rounded-[30px] p-6">
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                    {tier.name}
-                  </div>
-                  <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-                    {tier.price}
-                  </div>
-                  <p className="mt-5 text-sm leading-7 text-neutral-600">{tier.text}</p>
-                </div>
-              ))}
 
               <div data-reveal className="glass-panel rounded-[30px] p-6">
                 <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                  AI computing power
+                  {content.pricing.computeLabel}
                 </div>
                 <div className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-neutral-950">
-                  odhad 10 až 100 €
-                  <span className="text-lg text-neutral-500"> / mesiac</span>
+                  {content.pricing.computePrice}
+                  <span className="text-lg text-neutral-500"> {content.pricing.computeCadenceLabel}</span>
                 </div>
                 <div className="mt-5 space-y-3 text-sm leading-7 text-neutral-600">
-                  <div>Podľa reálneho používania, návštevnosti a náročnosti nasadenia.</div>
-                  <div>Spotreba ide priamo cez vlastný OpenAI Developer Platform účet klienta.</div>
-                  <div>BendaLabs zabezpečuje implementáciu, napojenie, logiku a priebežné doladenie.</div>
+                  {content.pricing.computeLines.map((line) => (
+                    <div key={line}>{line}</div>
+                  ))}
                 </div>
               </div>
             </div>
-              )}
           </div>
         </section>
 
@@ -676,16 +530,15 @@ export default function BendaLabsLandingPage() {
             <div className="glass-panel rounded-[34px] p-8 sm:p-10">
               <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
                 <div data-reveal>
-                  <SectionTag>Kontakt / CTA</SectionTag>
+                  <SectionTag>{content.contactTag}</SectionTag>
                   <h2
                     className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
-                    Poslite svoj web a ukazem vam, kde sa lame konverzia.
+                    {content.contactTitle}
                   </h2>
                   <p className="mt-5 max-w-2xl text-lg leading-8 text-neutral-600">
-                    Staci poslat URL a kratko pomenovat, kde sa podla vas navstevnici stracaju alebo
-                    co ma byt pre nich citelne jednoduchsie.
+                    {content.contactDescription}
                   </p>
                 </div>
 
@@ -693,7 +546,9 @@ export default function BendaLabsLandingPage() {
                   data-reveal
                   className="rounded-[28px] border border-black/10 bg-black p-6 text-white lg:justify-self-end"
                 >
-                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">Kontakt</div>
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
+                    {content.contactCardLabel}
+                  </div>
                   <div className="mt-4 text-2xl font-semibold tracking-[-0.04em]">Marek Benda</div>
                   <div className="mt-5 space-y-3 text-base text-white/76">
                     <a href="tel:+421944388123" className="block hover:text-white">
@@ -708,13 +563,13 @@ export default function BendaLabsLandingPage() {
                     type="button"
                     onClick={() =>
                       window.open(
-                        "mailto:hello@bendalabs.sk?subject=AI%20audit%20webu&body=Ahoj,%20posielam%20URL%20na%20audit:%20",
+                        `mailto:hello@bendalabs.sk?subject=${encodeURIComponent(content.contactMailSubject)}&body=${encodeURIComponent(content.contactMailBody)}`,
                         "_self",
                       )
                     }
                     className="mt-6 rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black hover:bg-neutral-200"
                   >
-                    Poziadat o konkretny navrh
+                    {content.contactButtonLabel}
                   </button>
                 </div>
               </div>

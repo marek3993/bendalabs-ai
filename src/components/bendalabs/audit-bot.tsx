@@ -1,17 +1,13 @@
 "use client";
 
-import { startTransition, useEffect, useState } from "react";
-import { getFitLabelFromScore } from "@/lib/site-audit/normalize";
+import { startTransition, useEffect, useMemo, useState } from "react";
+import { getAuditBotCopy, type SiteLocale } from "@/lib/bendalabs/site-content";
+import { getFitLabelKeyFromScore } from "@/lib/site-audit/normalize";
 import type { SiteAudit } from "@/lib/site-audit/schema";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
-const loadingSteps = [
-  "Nacitavam stranku...",
-  "Analyzujem strukturu...",
-  "Vyhodnocujem vhodnost pre AI vrstvu...",
-];
-
 type AuditBotProps = {
+  locale?: SiteLocale;
   onRequestProposal?: () => void;
   proposalTargetId?: string;
   badge?: string;
@@ -55,23 +51,50 @@ function ResultCard({
 }
 
 export default function AuditBot({
+  locale = "sk",
   onRequestProposal,
   proposalTargetId,
-  badge = "AI audit bot",
-  title = "Zadajte URL a hned uvidite, kde by AI vrstva vedela zmenit sposob pouzivania webu.",
-  description = "Audit nacita homepage, prejde relevantne podstranky a vyhodnoti, kde by AI vrstva vedela zjednodusit navigaciu, odporucanie, lead flow a dalsi krok pouzivatela.",
-  submitLabel = "Analyzovat web",
-  loadingLabel = "Analyzujem web",
-  proposalTitle = "Chcete plny audit a konkretny navrh pre vas web?",
-  proposalDescription = "Poslite web a pripravim konkretny navrh AI vrstvy, prioritne miesta zasahu a realisticku prvu fazu nasadenia.",
-  proposalButtonLabel = "Poziadat o konkretny navrh",
+  badge,
+  title,
+  description,
+  submitLabel,
+  loadingLabel,
+  proposalTitle,
+  proposalDescription,
+  proposalButtonLabel,
 }: AuditBotProps) {
+  const defaults = getAuditBotCopy(locale);
+  const copy = useMemo(
+    () => ({
+      ...defaults,
+      badge: badge ?? defaults.badge,
+      title: title ?? defaults.title,
+      description: description ?? defaults.description,
+      submitLabel: submitLabel ?? defaults.submitLabel,
+      loadingLabel: loadingLabel ?? defaults.loadingLabel,
+      proposalTitle: proposalTitle ?? defaults.proposalTitle,
+      proposalDescription: proposalDescription ?? defaults.proposalDescription,
+      proposalButtonLabel: proposalButtonLabel ?? defaults.proposalButtonLabel,
+    }),
+    [
+      badge,
+      defaults,
+      description,
+      loadingLabel,
+      proposalButtonLabel,
+      proposalDescription,
+      proposalTitle,
+      submitLabel,
+      title,
+    ],
+  );
+
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [audit, setAudit] = useState<SiteAudit | null>(null);
   const [loadingIndex, setLoadingIndex] = useState(0);
-  const fitLabel = audit ? getFitLabelFromScore(audit.score) : null;
+  const fitLabel = audit ? copy.fitLabels[getFitLabelKeyFromScore(audit.score)] : null;
 
   useEffect(() => {
     if (status !== "loading") {
@@ -80,7 +103,7 @@ export default function AuditBot({
 
     const interval = window.setInterval(() => {
       setLoadingIndex((current) => {
-        if (current >= loadingSteps.length - 1) {
+        if (current >= copy.loadingSteps.length - 1) {
           return current;
         }
 
@@ -89,7 +112,7 @@ export default function AuditBot({
     }, 1500);
 
     return () => window.clearInterval(interval);
-  }, [status]);
+  }, [copy.loadingSteps.length, status]);
 
   const normalizeFieldValue = () => {
     const normalized = normalizeWebsiteUrl(url);
@@ -116,7 +139,7 @@ export default function AuditBot({
     if (!normalized) {
       setStatus("error");
       setAudit(null);
-      setError("Zadajte platnu webovu adresu. Staci aj domena ako bendalabs.sk.");
+      setError(copy.invalidUrlMessage);
       return;
     }
 
@@ -131,13 +154,13 @@ export default function AuditBot({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ url: normalized }),
+        body: JSON.stringify({ url: normalized, locale }),
       });
 
       const payload = (await response.json()) as { audit?: SiteAudit; error?: string };
 
       if (!response.ok || !payload.audit) {
-        throw new Error(payload.error || "Audit sa teraz nepodarilo vygenerovat.");
+        throw new Error(payload.error || copy.genericErrorMessage);
       }
 
       startTransition(() => {
@@ -147,11 +170,7 @@ export default function AuditBot({
     } catch (requestError) {
       setStatus("error");
       setAudit(null);
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Audit sa teraz nepodarilo vygenerovat.",
-      );
+      setError(requestError instanceof Error ? requestError.message : copy.genericErrorMessage);
     }
   };
 
@@ -177,18 +196,18 @@ export default function AuditBot({
         <div className="absolute inset-x-16 bottom-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
       </div>
 
-        <div className="relative z-10">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-neutral-600">
-              {badge}
-            </div>
-            <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
-              {title}
-            </h3>
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-neutral-600">
-              {description}
-            </p>
+      <div className="relative z-10">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-neutral-600">
+            {copy.badge}
           </div>
+          <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
+            {copy.title}
+          </h3>
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-neutral-600">
+            {copy.description}
+          </p>
+        </div>
 
         <form
           onSubmit={handleSubmit}
@@ -204,7 +223,7 @@ export default function AuditBot({
             value={url}
             onChange={(event) => setUrl(event.target.value)}
             onBlur={normalizeFieldValue}
-            placeholder="napr. bendalabs.sk alebo https://bendalabs.sk"
+            placeholder={copy.placeholder}
             className="min-h-14 rounded-[20px] border border-black/10 bg-white px-5 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
           />
           <button
@@ -212,13 +231,13 @@ export default function AuditBot({
             disabled={status === "loading"}
             className="rounded-[20px] border border-black bg-black px-6 py-4 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {status === "loading" ? loadingLabel : submitLabel}
+            {status === "loading" ? copy.loadingLabel : copy.submitLabel}
           </button>
         </form>
 
         {status === "idle" ? (
           <div className="mx-auto mt-6 grid max-w-4xl gap-3 md:grid-cols-3">
-            {loadingSteps.map((step, index) => (
+            {copy.loadingSteps.map((step, index) => (
               <div
                 key={step}
                 className={`rounded-[22px] border px-4 py-4 text-sm ${
@@ -235,12 +254,12 @@ export default function AuditBot({
 
         {status === "loading" ? (
           <div className="mx-auto mt-6 max-w-4xl rounded-[24px] border border-black/10 bg-white/82 p-5">
-            <div className="text-sm text-neutral-500">Prave bezi audit</div>
+            <div className="text-sm text-neutral-500">{copy.activeAuditLabel}</div>
             <div className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-neutral-950">
-              {loadingSteps[loadingIndex]}
+              {copy.loadingSteps[loadingIndex]}
             </div>
             <div className="mt-6 space-y-3">
-              {loadingSteps.map((step, index) => (
+              {copy.loadingSteps.map((step, index) => (
                 <div
                   key={step}
                   className={`flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm ${
@@ -274,10 +293,12 @@ export default function AuditBot({
         {audit ? (
           <div className="mt-8 space-y-6">
             <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
-              <ResultCard title="Vhodnost pre AI vrstvu">
+              <ResultCard title={copy.fitCardTitle}>
                 <div className="flex flex-wrap items-end gap-4">
                   <div className="rounded-[22px] border border-black bg-black px-5 py-4 text-white">
-                    <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">Score</div>
+                    <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
+                      {copy.scoreLabel}
+                    </div>
                     <div className="mt-2 text-4xl font-semibold tracking-[-0.05em]">
                       {audit.score}
                       <span className="text-lg text-white/45">/10</span>
@@ -290,7 +311,7 @@ export default function AuditBot({
                 </div>
               </ResultCard>
 
-              <ResultCard title="Odporucany typ riesenia">
+              <ResultCard title={copy.solutionCardTitle}>
                 <div className="flex flex-wrap gap-3">
                   {audit.recommended_ai_type.map((item) => (
                     <div
@@ -306,23 +327,23 @@ export default function AuditBot({
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              <ResultCard title="Preco je alebo nie je web vhodny">
+              <ResultCard title={copy.whyFitTitle}>
                 <ResultList items={audit.why_fit} />
               </ResultCard>
-              <ResultCard title="Kde sa pouzivatelia pravdepodobne stracaju">
+              <ResultCard title={copy.frictionTitle}>
                 <ResultList items={audit.friction_points} />
               </ResultCard>
-              <ResultCard title="Kde je priestor na upsell alebo cross-sell">
+              <ResultCard title={copy.upsellTitle}>
                 <ResultList items={audit.upsell_opportunities} />
               </ResultCard>
-              <ResultCard title="Ako by mohla vyzerat 1. faza nasadenia">
+              <ResultCard title={copy.phaseOneTitle}>
                 <ResultList items={audit.phase_one_plan} />
               </ResultCard>
             </div>
 
             <div className="rounded-[28px] border border-black/8 bg-white/78 p-6 shadow-[0_16px_50px_rgba(17,17,17,0.05)]">
               <div className="text-[11px] uppercase tracking-[0.24em] text-neutral-500">
-                3 priklady, ako by AI vrstva pomahala navstevnikom
+                {copy.exampleFlowsTitle}
               </div>
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 {audit.example_user_flows.map((flow) => (
@@ -331,17 +352,17 @@ export default function AuditBot({
                     className="rounded-[24px] border border-black/8 bg-black/[0.03] p-5"
                   >
                     <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                      Pouzivatelsky zamer
+                      {copy.userIntentLabel}
                     </div>
                     <div className="mt-3 text-lg font-medium leading-7 text-neutral-950">
                       {flow.user_intent}
                     </div>
                     <div className="mt-5 text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                      AI akcia
+                      {copy.aiActionLabel}
                     </div>
                     <p className="mt-2 text-sm leading-6 text-neutral-700">{flow.ai_action}</p>
                     <div className="mt-5 text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                      Biznisova hodnota
+                      {copy.businessValueLabel}
                     </div>
                     <p className="mt-2 text-sm leading-6 text-neutral-700">{flow.business_value}</p>
                   </div>
@@ -351,13 +372,11 @@ export default function AuditBot({
 
             <div className="rounded-[28px] border border-black/10 bg-black px-6 py-6 text-white sm:flex sm:items-end sm:justify-between sm:gap-8">
               <div className="max-w-2xl">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">Dalsi krok</div>
-                <div className="mt-3 text-2xl font-semibold tracking-[-0.04em]">
-                  {proposalTitle}
+                <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
+                  {copy.nextStepLabel}
                 </div>
-                <p className="mt-3 text-sm leading-6 text-white/70">
-                  {proposalDescription}
-                </p>
+                <div className="mt-3 text-2xl font-semibold tracking-[-0.04em]">{copy.proposalTitle}</div>
+                <p className="mt-3 text-sm leading-6 text-white/70">{copy.proposalDescription}</p>
               </div>
 
               <button
@@ -365,7 +384,7 @@ export default function AuditBot({
                 onClick={handleRequestProposal}
                 className="mt-6 rounded-[20px] border border-white bg-white px-6 py-4 text-sm font-medium text-black hover:bg-neutral-200 sm:mt-0"
               >
-                {proposalButtonLabel}
+                {copy.proposalButtonLabel}
               </button>
             </div>
           </div>
