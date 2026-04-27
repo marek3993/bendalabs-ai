@@ -263,7 +263,6 @@ export default function AuditBot({
     ],
   );
   const featuredBenefits = benefits ?? [];
-  const featuredTrustItems = trustItems ?? [];
   const featuredExplainer = explainerLine ?? "";
   const previewSteps = copy.loadingSteps.length > 0 ? copy.loadingSteps : defaults.loadingSteps;
   const previewIdleStepsResolved = previewIdleSteps ?? [];
@@ -451,19 +450,8 @@ export default function AuditBot({
                 </p>
               ) : null}
 
-              {featuredTrustItems.length > 0 ? (
-                <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-medium text-emerald-50/72">
-                  {featuredTrustItems.map((item, index) => (
-                    <div key={item} className="flex items-center gap-3">
-                      {index > 0 ? <span className="h-1 w-1 rounded-full bg-emerald-50/28" /> : null}
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-
               {featuredExplainer ? (
-                <div className="mt-5 rounded-[22px] border border-white/10 bg-white/6 px-4 py-3 text-sm leading-6 text-emerald-50/76 shadow-[0_12px_30px_rgba(4,12,10,0.14)]">
+                <div className="mt-6 rounded-[22px] border border-white/10 bg-white/6 px-4 py-3 text-sm leading-6 text-emerald-50/76 shadow-[0_12px_30px_rgba(4,12,10,0.14)]">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     {featuredExplainer.split("|").map((item, index) => (
                       <div key={item} className="flex items-center gap-3">
@@ -504,7 +492,7 @@ export default function AuditBot({
                 </button>
               </form>
 
-              {featuredBenefits.length > 0 && featuredTrustItems.length === 0 && !featuredExplainer ? (
+              {featuredBenefits.length > 0 && !featuredExplainer ? (
                 <div className="mt-5 flex flex-wrap gap-2.5 text-left">
                   {featuredBenefits.map((benefit) => (
                     <div
