@@ -289,7 +289,7 @@ const homeContent = {
       { id: "kontakt", label: "Kontakt" },
     ],
     heroTag: "AI vrstva pre weby",
-    heroTitle: "Návštevník nemusí hľadať v menu. Napíše, čo chce, a web ho tam dovedie.",
+    heroTitle: "Návštevník nemusí hľadať v menu. Napíše, čo chce, a web spraví prácu za neho.",
     heroDescription:
       "AI vrstva pre weby, ktorá mení spôsob používania webu. Namiesto blúdenia cez menu, filtre a formuláre návštevník napíše svoj zámer a dostane správny ďalší krok.",
     heroChips: [
