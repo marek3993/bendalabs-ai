@@ -544,7 +544,15 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
 
         <section id="kontakt" data-section className="section-divider section-surface-soft">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
-            <div className="glass-panel rounded-[34px] p-8 sm:p-10">
+            <div className="relative overflow-hidden rounded-[36px] border border-[#8fb6a8]/55 bg-[radial-gradient(circle_at_top_right,rgba(196,231,214,0.46),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(219,242,231,0.52),transparent_30%),linear-gradient(180deg,rgba(253,255,254,0.98),rgba(242,249,245,0.96))] p-8 shadow-[0_26px_72px_rgba(80,118,103,0.12)] sm:p-10">
+              <div className="pointer-events-none absolute inset-0">
+                <div className="grid-surface absolute inset-0 opacity-20" />
+                <div className="absolute -right-12 top-10 h-36 w-36 rounded-full bg-[#dff3e6] blur-3xl" />
+                <div className="absolute -left-10 bottom-8 h-28 w-28 rounded-full bg-[#edf8f2] blur-3xl" />
+                <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#7da994]/35 to-transparent" />
+              </div>
+
+              <div className="relative z-10">
               <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
                 <div data-reveal>
                   <SectionTag>{content.contactTag}</SectionTag>
@@ -562,8 +570,8 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
                 <div data-reveal className="grid gap-4 lg:justify-self-end">
                   <LeadCaptureForm locale={locale} source="contact_section" variant="contact" />
 
-                  <div className="rounded-[28px] border border-black/10 bg-black p-6 text-white">
-                    <div className="text-[11px] uppercase tracking-[0.22em] text-white/55">
+                  <div className="rounded-[30px] border border-[#8fb6a8]/45 bg-[linear-gradient(180deg,rgba(28,52,44,0.96),rgba(35,66,56,0.92))] p-6 text-white shadow-[0_18px_48px_rgba(23,52,44,0.16)]">
+                    <div className="text-[11px] uppercase tracking-[0.22em] text-emerald-50/60">
                       {content.contactCardLabel}
                     </div>
                     <div className="mt-4 text-2xl font-semibold tracking-[-0.04em]">Marek Benda</div>
@@ -584,12 +592,13 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
                           "_self",
                         )
                       }
-                      className="mt-6 rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black hover:bg-neutral-200"
+                      className="mt-6 rounded-full border border-white/80 bg-white px-5 py-3 text-sm font-semibold text-[#17342c] shadow-[0_14px_30px_rgba(4,12,10,0.18)] hover:bg-[#f0fbf4]"
                     >
                       {content.contactButtonLabel}
                     </button>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>

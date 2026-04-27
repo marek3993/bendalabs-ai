@@ -65,7 +65,7 @@ const leadFormCopy = {
       successMessage: "Ozvem sa s konkretnym navrhom pre vas web.",
     },
     contact: {
-      badge: "Lead form",
+      badge: "\u25cf CHCETE TO AJ NA SVOJ WEB?",
       title: "Poslite web a obchodny ciel",
       description:
         "Strucne napiste, co ma web predavat lepsie alebo kde dnes navstevnik odpada. Staci kratky kontext.",
@@ -116,7 +116,7 @@ const leadFormCopy = {
       successMessage: "Ozvu se s konkretnim navrhem pro vas web.",
     },
     contact: {
-      badge: "Lead form",
+      badge: "\u25cf CHCETE TO TAKE NA SVUJ WEB?",
       title: "Poslete web a obchodni cil",
       description:
         "Strucne napiste, co ma web prodavat lepe nebo kde dnes navstevnik odpada. Staci kratky kontext.",

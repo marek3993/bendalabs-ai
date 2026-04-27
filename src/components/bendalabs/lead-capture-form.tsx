@@ -32,18 +32,35 @@ export default function LeadCaptureForm({
   const pathname = usePathname() || (locale === "cs" ? "/cs" : "/");
   const copy = getLeadFormCopy(locale);
   const variantCopy = copy[variant];
+  const isContactVariant = variant === "contact";
 
   function handleSubmit() {
     trackGoogleAdsConversion();
   }
 
   return (
-    <div className="rounded-[28px] border border-black/10 bg-white/80 p-6 shadow-[0_16px_50px_rgba(17,17,17,0.05)] sm:p-7">
-      <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">{variantCopy.badge}</div>
+    <div
+      className={`rounded-[30px] border p-6 shadow-[0_16px_50px_rgba(17,17,17,0.05)] sm:p-7 ${
+        isContactVariant
+          ? "border-[#8fb6a8]/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(243,250,246,0.96))] shadow-[0_24px_64px_rgba(80,118,103,0.12)]"
+          : "border-black/10 bg-white/80"
+      }`}
+    >
+      <div
+        className={`text-[11px] uppercase tracking-[0.22em] ${
+          isContactVariant
+            ? "inline-flex items-center rounded-full border border-[#8fb6a8]/45 bg-[#eef7f2] px-3 py-1.5 font-semibold text-[#355648]"
+            : "text-neutral-500"
+        }`}
+      >
+        {variantCopy.badge}
+      </div>
       <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
         {variantCopy.title}
       </h3>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600">{variantCopy.description}</p>
+      <p className={`mt-3 max-w-2xl text-sm leading-6 ${isContactVariant ? "text-neutral-700" : "text-neutral-600"}`}>
+        {variantCopy.description}
+      </p>
 
       <form
         action="/api/contact-requests"
@@ -67,7 +84,11 @@ export default function LeadCaptureForm({
               autoComplete="name"
               required
               maxLength={120}
-              className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+              className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
+                isContactVariant
+                  ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                  : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+              }`}
               placeholder={copy.placeholders.name}
             />
           </label>
@@ -80,7 +101,11 @@ export default function LeadCaptureForm({
               autoComplete="email"
               required
               maxLength={180}
-              className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+              className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
+                isContactVariant
+                  ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                  : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+              }`}
               placeholder={copy.placeholders.email}
             />
           </label>
@@ -95,7 +120,11 @@ export default function LeadCaptureForm({
             autoComplete="url"
             required
             defaultValue={initialWebsite}
-            className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+            className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
+              isContactVariant
+                ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+            }`}
             placeholder={copy.placeholders.website}
           />
         </label>
@@ -108,18 +137,26 @@ export default function LeadCaptureForm({
             required
             minLength={10}
             maxLength={4000}
-            className="rounded-[18px] border border-black/10 bg-white px-4 py-3 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+            className={`rounded-[18px] bg-white px-4 py-3 text-neutral-950 outline-none ${
+              isContactVariant
+                ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+            }`}
             placeholder={copy.placeholders.message}
           />
         </label>
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="text-xs uppercase tracking-[0.18em] text-neutral-400">
+          <div className={`text-xs uppercase tracking-[0.18em] ${isContactVariant ? "text-[#5d7c6f]" : "text-neutral-400"}`}>
             {copy.sourceLabels[source]}
           </div>
           <button
             type="submit"
-            className="rounded-[18px] border border-black bg-black px-5 py-3 text-sm font-medium text-white hover:bg-neutral-800"
+            className={`rounded-[20px] px-6 py-3.5 text-sm font-semibold transition-all ${
+              isContactVariant
+                ? "border border-[#46a06f] bg-[linear-gradient(180deg,#2f9a68_0%,#267c55_100%)] text-white shadow-[0_18px_34px_rgba(23,85,58,0.24),0_0_0_1px_rgba(191,242,214,0.08)_inset] hover:-translate-y-0.5 hover:bg-[linear-gradient(180deg,#39ab75_0%,#2b8b5e_100%)] hover:shadow-[0_22px_38px_rgba(23,85,58,0.28),0_0_0_1px_rgba(216,247,229,0.14)_inset]"
+                : "border border-black bg-black text-white hover:bg-neutral-800"
+            }`}
           >
             {variantCopy.submitLabel}
           </button>
