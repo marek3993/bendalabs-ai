@@ -133,6 +133,23 @@ assert.ok(bazosOverride);
 assert.equal(bazosOverride.score, 10);
 assert.equal(bazosOverride.site_type, "classifieds marketplace");
 
+const bosenOverride = getDomainAuditOverride("https://bosen.sk", "sk");
+
+assert.ok(bosenOverride);
+assert.equal(bosenOverride.score, 10);
+assert.equal(bosenOverride.is_good_fit, true);
+assert.equal(getFitTierFromScore(bosenOverride.score), "HIGH-FIT");
+
+const bosenWwwOverride = getDomainAuditOverride("https://www.bosen.sk/ponuka", "sk");
+
+assert.ok(bosenWwwOverride);
+assert.equal(bosenWwwOverride.score, 10);
+assert.equal(bosenWwwOverride.site_type, "real estate brokerage and listings web");
+
+const untargetedOverride = getDomainAuditOverride("https://example.com", "sk");
+
+assert.equal(untargetedOverride, null);
+
 const repeatedServiceAuditA = normalizeAuditResult(
   createAuditFixture({
     score: 3,
