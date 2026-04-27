@@ -16,8 +16,16 @@ import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
+const DOMAIN_OVERRIDE_DELAY_MS = 4500;
+
 function normalizeLocale(input: unknown): SiteLocale {
   return input === "cs" ? "cs" : "sk";
+}
+
+function waitForOverrideDelay() {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, DOMAIN_OVERRIDE_DELAY_MS);
+  });
 }
 
 export async function POST(request: Request) {
@@ -40,6 +48,8 @@ export async function POST(request: Request) {
     const domainOverride = getDomainAuditOverride(normalizedUrl, locale);
 
     if (domainOverride) {
+      await waitForOverrideDelay();
+
       try {
         await persistSuccessfulAudit(request, normalizedUrl, domainOverride);
       } catch (leadCaptureError) {

@@ -12,6 +12,8 @@ import { getFitLabelKeyFromScore } from "@/lib/site-audit/normalize";
 import type { SiteAudit } from "@/lib/site-audit/schema";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
+const AUDIT_LOADING_STEP_INTERVAL_MS = 1500;
+
 type AuditBotProps = {
   locale?: SiteLocale;
   variant?: "default" | "featured";
@@ -40,6 +42,20 @@ type AuditApiResponse = {
   error?: string;
   suggestion?: AuditErrorSuggestion | null;
 };
+
+function waitForDuration(durationMs: number) {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, durationMs);
+  });
+}
+
+function getMinimumAuditLoadingDuration(stepCount: number) {
+  if (stepCount <= 1) {
+    return 0;
+  }
+
+  return (stepCount - 1) * AUDIT_LOADING_STEP_INTERVAL_MS;
+}
 
 function ResultList({ items }: { items: string[] }) {
   return (
@@ -299,7 +315,7 @@ export default function AuditBot({
 
         return current + 1;
       });
-    }, 1500);
+    }, AUDIT_LOADING_STEP_INTERVAL_MS);
 
     return () => window.clearInterval(interval);
   }, [copy.loadingSteps.length, status]);
@@ -323,6 +339,10 @@ export default function AuditBot({
   };
 
   const runAudit = async (normalized: string) => {
+    const minimumLoadingPromise = waitForDuration(
+      getMinimumAuditLoadingDuration(copy.loadingSteps.length),
+    );
+
     setStatus("loading");
     setError("");
     setErrorSuggestion(null);
@@ -347,6 +367,8 @@ export default function AuditBot({
         payload = null;
       }
 
+      await minimumLoadingPromise;
+
       if (!response.ok || !payload?.audit) {
         setStatus("error");
         setAudit(null);
@@ -364,6 +386,7 @@ export default function AuditBot({
         setErrorSuggestion(null);
       });
     } catch {
+      await minimumLoadingPromise;
       setStatus("error");
       setAudit(null);
       setError(getGenericAuditErrorMessage(locale));
@@ -565,7 +588,7 @@ export default function AuditBot({
         )}
 
         {status === "idle" && !isFeatured ? (
-          <div className="mx-auto mt-6 grid max-w-4xl gap-3 md:grid-cols-3">
+          <div className="mx-auto mt-6 grid max-w-4xl gap-3 md:grid-cols-2 xl:grid-cols-4">
             {copy.loadingSteps.map((step, index) => (
               <div
                 key={step}
