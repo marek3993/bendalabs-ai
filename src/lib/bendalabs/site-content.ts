@@ -28,6 +28,17 @@ type HomeExample = {
   answer: string;
 };
 
+type HomeAuditBlock = {
+  badge: string;
+  title: string;
+  subtext: string;
+  description?: string;
+  benefits?: ReadonlyArray<string>;
+  placeholder: string;
+  submitLabel: string;
+  variant?: "featured";
+};
+
 type JourneyStep = {
   title: string;
   text: string;
@@ -100,6 +111,7 @@ type HomePageContent = {
   heroChips: ReadonlyArray<string>;
   heroPrimaryCta: string;
   heroSecondaryCta: string;
+  auditBlock?: HomeAuditBlock;
   audiencesTag: string;
   audiencesTitle: string;
   audiencesDescription: string;
@@ -299,6 +311,20 @@ const homeContent = {
     ],
     heroPrimaryCta: "Spustiť rýchly audit",
     heroSecondaryCta: "Kontakt / CTA",
+    auditBlock: {
+      badge: "● VYSKÚŠAJTE NA VLASTNOM WEBE",
+      title: "Zadajte adresu svojho webu a do 5 sekúnd uvidíte, kde vám unikajú zákazníci.",
+      subtext: "Bez registrácie. Bez e-mailu. Len výsledok, nie otrava.",
+      description: "",
+      benefits: [
+        "✓ načíta homepage",
+        "✓ prejde relevantné podstránky",
+        "✓ ukáže, kde AI vrstva pomôže s navigáciou, odporúčaním a lead flow",
+      ],
+      placeholder: "napr. https://vasafirma.sk",
+      submitLabel: "Spustiť bezplatný audit →",
+      variant: "featured",
+    },
     audiencesTag: "Pre koho to je",
     audiencesTitle: "Pre weby, kde je silná ponuka, ale človek sa pred výsledkom stále stráca.",
     audiencesDescription:

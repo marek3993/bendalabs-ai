@@ -38,6 +38,7 @@ type BendaLabsLandingPageProps = {
 
 export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPageProps) {
   const content = getHomePageContent(locale);
+  const auditBlock = locale === "sk" ? content.auditBlock : undefined;
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [activeStep, setActiveStep] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -273,7 +274,17 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
         <section id="audit" data-section className="section-divider section-surface-soft scroll-mt-24">
           <div className="mx-auto max-w-7xl px-6 py-8 sm:py-10">
             <div data-reveal className="mx-auto max-w-6xl">
-              <AuditBot locale={locale} />
+              <AuditBot
+                locale={locale}
+                variant={auditBlock?.variant}
+                badge={auditBlock?.badge}
+                title={auditBlock?.title}
+                subtext={auditBlock?.subtext}
+                description={auditBlock?.description}
+                benefits={auditBlock?.benefits}
+                placeholder={auditBlock?.placeholder}
+                submitLabel={auditBlock?.submitLabel}
+              />
             </div>
           </div>
         </section>

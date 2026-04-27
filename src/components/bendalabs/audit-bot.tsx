@@ -14,10 +14,13 @@ import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
 type AuditBotProps = {
   locale?: SiteLocale;
+  variant?: "default" | "featured";
   badge?: string;
   title?: string;
   subtext?: string;
   description?: string;
+  benefits?: ReadonlyArray<string>;
+  placeholder?: string;
   submitLabel?: string;
   loadingLabel?: string;
   proposalTitle?: string;
@@ -63,10 +66,13 @@ function ResultCard({
 
 export default function AuditBot({
   locale = "sk",
+  variant = "default",
   badge,
   title,
   subtext,
   description,
+  benefits,
+  placeholder,
   submitLabel,
   loadingLabel,
   proposalTitle,
@@ -74,6 +80,7 @@ export default function AuditBot({
   proposalButtonLabel,
 }: AuditBotProps) {
   const defaults = getAuditBotCopy(locale);
+  const isFeatured = variant === "featured";
   const copy = useMemo(
     () => ({
       ...defaults,
@@ -81,6 +88,7 @@ export default function AuditBot({
       title: title ?? defaults.title,
       subtext: subtext ?? defaults.subtext,
       description: description ?? defaults.description,
+      placeholder: placeholder ?? defaults.placeholder,
       submitLabel: submitLabel ?? defaults.submitLabel,
       loadingLabel: loadingLabel ?? defaults.loadingLabel,
       proposalTitle: proposalTitle ?? defaults.proposalTitle,
@@ -92,6 +100,7 @@ export default function AuditBot({
       defaults,
       description,
       loadingLabel,
+      placeholder,
       subtext,
       proposalButtonLabel,
       proposalDescription,
@@ -100,6 +109,7 @@ export default function AuditBot({
       title,
     ],
   );
+  const featuredBenefits = benefits ?? [];
 
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -227,29 +237,75 @@ export default function AuditBot({
   };
 
   return (
-    <div className="glass-panel scanlines noise-mask relative overflow-hidden rounded-[36px] p-6 sm:p-10 lg:p-12">
+    <div
+      className={`glass-panel scanlines noise-mask relative overflow-hidden rounded-[36px] border p-6 sm:p-10 lg:p-12 ${
+        isFeatured
+          ? "border-[#8fb6a8]/55 bg-[linear-gradient(180deg,rgba(252,255,253,0.98),rgba(244,250,247,0.96))] shadow-[0_28px_80px_rgba(80,118,103,0.12)]"
+          : "border-black/8"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-0">
-        <div className="grid-surface absolute inset-0 opacity-35" />
+        <div className={`grid-surface absolute inset-0 ${isFeatured ? "opacity-25" : "opacity-35"}`} />
+        {isFeatured ? (
+          <>
+            <div className="absolute -right-12 top-10 h-36 w-36 rounded-full bg-[#d8f0e7] blur-3xl" />
+            <div className="absolute -left-10 bottom-6 h-28 w-28 rounded-full bg-[#edf7f2] blur-3xl" />
+          </>
+        ) : null}
         <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-black/15 to-transparent" />
         <div className="absolute inset-x-16 bottom-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
       </div>
 
       <div className="relative z-10">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-neutral-600">
+          <div
+            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
+              isFeatured
+                ? "border border-[#8fb6a8]/55 bg-white/86 text-neutral-700 shadow-[0_10px_24px_rgba(80,118,103,0.08)]"
+                : "border border-black/10 bg-black/[0.03] text-neutral-600"
+            }`}
+          >
+            {isFeatured ? (
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500/35" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+            ) : null}
             {copy.badge}
           </div>
-          <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
+          <h3
+            className={`mt-4 font-semibold tracking-[-0.04em] text-neutral-950 ${
+              isFeatured ? "text-[2.2rem] leading-[1.02] sm:text-[3rem]" : "text-3xl sm:text-4xl"
+            }`}
+          >
             {copy.title}
           </h3>
           {copy.subtext ? (
-            <p className="mx-auto mt-4 max-w-3xl text-sm font-medium leading-6 text-neutral-900">
+            <p
+              className={`mx-auto mt-4 max-w-3xl leading-6 ${
+                isFeatured ? "text-base font-medium text-neutral-900" : "text-sm font-medium text-neutral-900"
+              }`}
+            >
               {copy.subtext}
             </p>
           ) : null}
-          <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-neutral-600">
-            {copy.description}
-          </p>
+          {isFeatured && featuredBenefits.length > 0 ? (
+            <div className="mx-auto mt-5 flex max-w-4xl flex-wrap justify-center gap-2.5 text-left">
+              {featuredBenefits.map((benefit) => (
+                <div
+                  key={benefit}
+                  className="rounded-full border border-[#8fb6a8]/45 bg-white/88 px-3.5 py-2 text-sm text-neutral-700 shadow-[0_10px_24px_rgba(80,118,103,0.06)]"
+                >
+                  {benefit}
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {copy.description ? (
+            <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-neutral-600">
+              {copy.description}
+            </p>
+          ) : null}
         </div>
 
         <form
@@ -267,18 +323,26 @@ export default function AuditBot({
             onChange={(event) => setUrl(event.target.value)}
             onBlur={normalizeFieldValue}
             placeholder={copy.placeholder}
-            className="min-h-14 rounded-[20px] border border-black/10 bg-white px-5 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+            className={`min-h-14 rounded-[20px] px-5 text-neutral-950 outline-none ${
+              isFeatured
+                ? "border border-[#8fb6a8]/55 bg-white/96 shadow-[0_12px_30px_rgba(80,118,103,0.08)] focus:border-[#5f8a7b] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                : "border border-black/10 bg-white focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+            }`}
           />
           <button
             type="submit"
             disabled={status === "loading"}
-            className="rounded-[20px] border border-black bg-black px-6 py-4 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className={`rounded-[20px] px-6 py-4 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60 ${
+              isFeatured
+                ? "border border-[#17342c] bg-[#17342c] shadow-[0_18px_34px_rgba(23,52,44,0.18)] hover:bg-[#22483d]"
+                : "border border-black bg-black hover:bg-neutral-800"
+            }`}
           >
             {status === "loading" ? copy.loadingLabel : copy.submitLabel}
           </button>
         </form>
 
-        {status === "idle" ? (
+        {status === "idle" && !isFeatured ? (
           <div className="mx-auto mt-6 grid max-w-4xl gap-3 md:grid-cols-3">
             {copy.loadingSteps.map((step, index) => (
               <div
