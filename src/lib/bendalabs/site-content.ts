@@ -34,6 +34,9 @@ type HomeAuditBlock = {
   subtext: string;
   description?: string;
   benefits?: ReadonlyArray<string>;
+  trustItems?: ReadonlyArray<string>;
+  explainerLine?: string;
+  loadingSteps?: ReadonlyArray<string>;
   placeholder: string;
   submitLabel: string;
   variant?: "featured";
@@ -74,7 +77,7 @@ type AuditBotCopy = {
   description: string;
   submitLabel: string;
   loadingLabel: string;
-  loadingSteps: readonly [string, string, string];
+  loadingSteps: ReadonlyArray<string>;
   placeholder: string;
   invalidUrlMessage: string;
   genericErrorMessage: string;
@@ -316,6 +319,15 @@ const homeContent = {
       title: "Zadajte adresu svojho webu a do 5 sekúnd uvidíte, kde vám unikajú zákazníci.",
       subtext: "Bez registrácie. Bez e-mailu. Len výsledok, nie otrava.",
       description: "",
+      trustItems: ["\u2248 5 sek\u00fand", "bez e-mailu", "bez registr\u00e1cie"],
+      explainerLine:
+        "Na\u010d\u00edta homepage | prejde relevantn\u00e9 podstr\u00e1nky | uk\u00e1\u017ee slab\u00e9 miesta",
+      loadingSteps: [
+        "Na\u010d\u00edtavam homepage...",
+        "Prech\u00e1dzam relevantn\u00e9 podstr\u00e1nky...",
+        "Vyhodnocujem navig\u00e1ciu...",
+        "H\u013ead\u00e1m slab\u00e9 miesta v lead flow...",
+      ],
       benefits: [
         "✓ načíta homepage",
         "✓ prejde relevantné podstránky",

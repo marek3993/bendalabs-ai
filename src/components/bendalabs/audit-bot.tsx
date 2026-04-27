@@ -20,9 +20,12 @@ type AuditBotProps = {
   subtext?: string;
   description?: string;
   benefits?: ReadonlyArray<string>;
+  trustItems?: ReadonlyArray<string>;
+  explainerLine?: string;
   placeholder?: string;
   submitLabel?: string;
   loadingLabel?: string;
+  loadingSteps?: ReadonlyArray<string>;
   proposalTitle?: string;
   proposalDescription?: string;
   proposalButtonLabel?: string;
@@ -64,6 +67,105 @@ function ResultCard({
   );
 }
 
+function AuditPreviewPanel({
+  locale,
+  steps,
+  activeIndex,
+  status,
+}: {
+  locale: SiteLocale;
+  steps: ReadonlyArray<string>;
+  activeIndex: number;
+  status: Status;
+}) {
+  const safeIndex = Math.max(0, Math.min(activeIndex, Math.max(steps.length - 1, 0)));
+  const progress = steps.length > 0 ? `${Math.max(14, ((safeIndex + 1) / steps.length) * 100)}%` : "14%";
+  const panelLabel =
+    status === "loading"
+      ? locale === "sk"
+        ? "Audit pr\u00e1ve be\u017e\u00ed"
+        : "Audit pr\u00e1v\u011b b\u011b\u017e\u00ed"
+      : "Live preview";
+  const currentStep = steps[safeIndex] ?? "";
+
+  return (
+    <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(11,20,18,0.96),rgba(15,29,25,0.9))] p-5 text-white shadow-[0_28px_60px_rgba(3,10,8,0.35)] sm:p-6">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(104,165,134,0.22),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(88,138,115,0.2),transparent_30%)]" />
+        <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
+
+      <div className="relative z-10">
+        <div className="flex items-center justify-between gap-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-emerald-50/78">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#9be3be]/45" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#9be3be]" />
+            </span>
+            {panelLabel}
+          </div>
+          <div className="text-xs font-medium text-emerald-50/56">
+            {steps.length > 0 ? `${safeIndex + 1}/${steps.length}` : null}
+          </div>
+        </div>
+
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-black/25">
+          <div
+            className="h-full rounded-full bg-[linear-gradient(90deg,#7fd6ad_0%,#cbeed9_100%)] shadow-[0_0_22px_rgba(127,214,173,0.35)] transition-[width] duration-700"
+            style={{ width: progress }}
+          />
+        </div>
+
+        <div className="mt-5 text-[11px] uppercase tracking-[0.22em] text-emerald-50/48">
+          {locale === "sk" ? "Akt\u00edvny krok" : "Aktivn\u00ed krok"}
+        </div>
+        <div className="mt-2 text-xl font-semibold tracking-[-0.03em] text-white sm:text-2xl">
+          {currentStep}
+        </div>
+
+        <div className="mt-5 space-y-3">
+          {steps.map((step, index) => {
+            const stepState = index < safeIndex ? "complete" : index === safeIndex ? "active" : "pending";
+
+            return (
+              <div
+                key={step}
+                className={`flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm transition-colors ${
+                  stepState === "complete"
+                    ? "border-[#8bc8a7]/32 bg-[#8bc8a7]/10 text-white"
+                    : stepState === "active"
+                      ? "border-[#b7e7cc]/40 bg-white/8 text-white shadow-[0_0_0_1px_rgba(183,231,204,0.06)]"
+                      : "border-white/8 bg-black/12 text-emerald-50/52"
+                }`}
+              >
+                <span
+                  className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-semibold ${
+                    stepState === "complete"
+                      ? "bg-[#9be3be] text-[#0d1d18]"
+                      : stepState === "active"
+                        ? "border border-[#9be3be]/60 bg-[#9be3be]/12 text-[#dff7e8]"
+                        : "border border-white/14 bg-transparent text-emerald-50/48"
+                  }`}
+                >
+                  {stepState === "complete" ? (
+                    <span className="h-2 w-2 rounded-full bg-[#0d1d18]" />
+                  ) : stepState === "active" ? (
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#dff7e8]/70" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-[#dff7e8]" />
+                    </span>
+                  ) : null}
+                </span>
+                <span>{step}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AuditBot({
   locale = "sk",
   variant = "default",
@@ -72,9 +174,12 @@ export default function AuditBot({
   subtext,
   description,
   benefits,
+  trustItems,
+  explainerLine,
   placeholder,
   submitLabel,
   loadingLabel,
+  loadingSteps,
   proposalTitle,
   proposalDescription,
   proposalButtonLabel,
@@ -91,6 +196,7 @@ export default function AuditBot({
       placeholder: placeholder ?? defaults.placeholder,
       submitLabel: submitLabel ?? defaults.submitLabel,
       loadingLabel: loadingLabel ?? defaults.loadingLabel,
+      loadingSteps: loadingSteps ?? defaults.loadingSteps,
       proposalTitle: proposalTitle ?? defaults.proposalTitle,
       proposalDescription: proposalDescription ?? defaults.proposalDescription,
       proposalButtonLabel: proposalButtonLabel ?? defaults.proposalButtonLabel,
@@ -100,6 +206,7 @@ export default function AuditBot({
       defaults,
       description,
       loadingLabel,
+      loadingSteps,
       placeholder,
       subtext,
       proposalButtonLabel,
@@ -110,6 +217,9 @@ export default function AuditBot({
     ],
   );
   const featuredBenefits = benefits ?? [];
+  const featuredTrustItems = trustItems ?? [];
+  const featuredExplainer = explainerLine ?? "";
+  const previewSteps = copy.loadingSteps.length > 0 ? copy.loadingSteps : defaults.loadingSteps;
 
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -121,6 +231,12 @@ export default function AuditBot({
   const [showProposalForm, setShowProposalForm] = useState(false);
   const fitLabel = audit ? copy.fitLabels[getFitLabelKeyFromScore(audit.score)] : null;
   const linkedAuditDomain = auditedUrl ? getNormalizedDomainFromUrl(auditedUrl) : null;
+  const previewActiveIndex =
+    previewSteps.length > 1
+      ? status === "loading"
+        ? Math.min(loadingIndex, previewSteps.length - 1)
+        : 1
+      : 0;
 
   useEffect(() => {
     if (status !== "loading") {
@@ -238,109 +354,172 @@ export default function AuditBot({
 
   return (
     <div
-      className={`glass-panel scanlines noise-mask relative overflow-hidden rounded-[36px] border p-6 sm:p-10 lg:p-12 ${
+      className={`scanlines noise-mask relative overflow-hidden rounded-[36px] border p-6 sm:p-10 lg:p-12 ${
         isFeatured
-          ? "border-[#8fb6a8]/55 bg-[linear-gradient(180deg,rgba(252,255,253,0.98),rgba(244,250,247,0.96))] shadow-[0_28px_80px_rgba(80,118,103,0.12)]"
-          : "border-black/8"
+          ? "border-[#48685b] bg-[radial-gradient(circle_at_top_right,rgba(94,151,123,0.24),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(62,102,84,0.22),transparent_28%),linear-gradient(135deg,#0b1512_0%,#12211d_54%,#1a2c27_100%)] shadow-[0_36px_90px_rgba(6,15,12,0.32)]"
+          : "glass-panel border-black/8"
       }`}
     >
       <div className="pointer-events-none absolute inset-0">
-        <div className={`grid-surface absolute inset-0 ${isFeatured ? "opacity-25" : "opacity-35"}`} />
+        <div className={`grid-surface absolute inset-0 ${isFeatured ? "opacity-12" : "opacity-35"}`} />
         {isFeatured ? (
           <>
-            <div className="absolute -right-12 top-10 h-36 w-36 rounded-full bg-[#d8f0e7] blur-3xl" />
-            <div className="absolute -left-10 bottom-6 h-28 w-28 rounded-full bg-[#edf7f2] blur-3xl" />
+            <div className="absolute -right-10 top-8 h-44 w-44 rounded-full bg-[#7ac69d]/18 blur-3xl" />
+            <div className="absolute -left-8 bottom-8 h-36 w-36 rounded-full bg-[#4e7f69]/22 blur-3xl" />
           </>
         ) : null}
-        <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-black/15 to-transparent" />
-        <div className="absolute inset-x-16 bottom-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+        <div
+          className={`absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent ${
+            isFeatured ? "via-white/18" : "via-black/15"
+          } to-transparent`}
+        />
+        <div
+          className={`absolute inset-x-16 bottom-0 h-px bg-gradient-to-r from-transparent ${
+            isFeatured ? "via-white/10" : "via-black/10"
+          } to-transparent`}
+        />
       </div>
 
       <div className="relative z-10">
-        <div className="mx-auto max-w-4xl text-center">
-          <div
-            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] ${
-              isFeatured
-                ? "border border-[#8fb6a8]/55 bg-white/86 text-neutral-700 shadow-[0_10px_24px_rgba(80,118,103,0.08)]"
-                : "border border-black/10 bg-black/[0.03] text-neutral-600"
-            }`}
-          >
-            {isFeatured ? (
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500/35" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-              </span>
-            ) : null}
-            {copy.badge}
-          </div>
-          <h3
-            className={`mt-4 font-semibold tracking-[-0.04em] text-neutral-950 ${
-              isFeatured ? "text-[2.2rem] leading-[1.02] sm:text-[3rem]" : "text-3xl sm:text-4xl"
-            }`}
-          >
-            {copy.title}
-          </h3>
-          {copy.subtext ? (
-            <p
-              className={`mx-auto mt-4 max-w-3xl leading-6 ${
-                isFeatured ? "text-base font-medium text-neutral-900" : "text-sm font-medium text-neutral-900"
-              }`}
-            >
-              {copy.subtext}
-            </p>
-          ) : null}
-          {isFeatured && featuredBenefits.length > 0 ? (
-            <div className="mx-auto mt-5 flex max-w-4xl flex-wrap justify-center gap-2.5 text-left">
-              {featuredBenefits.map((benefit) => (
-                <div
-                  key={benefit}
-                  className="rounded-full border border-[#8fb6a8]/45 bg-white/88 px-3.5 py-2 text-sm text-neutral-700 shadow-[0_10px_24px_rgba(80,118,103,0.06)]"
-                >
-                  {benefit}
-                </div>
-              ))}
-            </div>
-          ) : null}
-          {copy.description ? (
-            <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-neutral-600">
-              {copy.description}
-            </p>
-          ) : null}
-        </div>
+        {isFeatured ? (
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:items-center">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#d9eee1]/14 bg-[#dff3e6] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#11201c] shadow-[0_12px_28px_rgba(4,12,10,0.18)]">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1c3f34]/28" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#17342c]" />
+                </span>
+                {copy.badge}
+              </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto mt-8 grid max-w-4xl gap-4 lg:grid-cols-[minmax(0,1fr)_auto]"
-        >
-          <input
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            autoCapitalize="none"
-            autoCorrect="off"
-            spellCheck={false}
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            onBlur={normalizeFieldValue}
-            placeholder={copy.placeholder}
-            className={`min-h-14 rounded-[20px] px-5 text-neutral-950 outline-none ${
-              isFeatured
-                ? "border border-[#8fb6a8]/55 bg-white/96 shadow-[0_12px_30px_rgba(80,118,103,0.08)] focus:border-[#5f8a7b] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
-                : "border border-black/10 bg-white focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
-            }`}
-          />
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className={`rounded-[20px] px-6 py-4 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60 ${
-              isFeatured
-                ? "border border-[#17342c] bg-[#17342c] shadow-[0_18px_34px_rgba(23,52,44,0.18)] hover:bg-[#22483d]"
-                : "border border-black bg-black hover:bg-neutral-800"
-            }`}
-          >
-            {status === "loading" ? copy.loadingLabel : copy.submitLabel}
-          </button>
-        </form>
+              <h3 className="mt-5 text-[2.2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-white sm:text-[3rem]">
+                {copy.title}
+              </h3>
+
+              {copy.subtext ? (
+                <p className="mt-5 max-w-xl text-base font-medium leading-7 text-emerald-50/84 sm:text-[1.05rem]">
+                  {copy.subtext}
+                </p>
+              ) : null}
+
+              {featuredTrustItems.length > 0 ? (
+                <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-medium text-emerald-50/72">
+                  {featuredTrustItems.map((item, index) => (
+                    <div key={item} className="flex items-center gap-3">
+                      {index > 0 ? <span className="h-1 w-1 rounded-full bg-emerald-50/28" /> : null}
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
+              {featuredExplainer ? (
+                <div className="mt-5 rounded-[22px] border border-white/10 bg-white/6 px-4 py-3 text-sm leading-6 text-emerald-50/76 shadow-[0_12px_30px_rgba(4,12,10,0.14)]">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    {featuredExplainer.split("|").map((item, index) => (
+                      <div key={item} className="flex items-center gap-3">
+                        {index > 0 ? <span className="h-1 w-1 rounded-full bg-emerald-50/28" /> : null}
+                        <span>{item.trim()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : copy.description ? (
+                <p className="mt-5 max-w-xl text-sm leading-6 text-emerald-50/68">{copy.description}</p>
+              ) : null}
+
+              <form onSubmit={handleSubmit} className="mt-7 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <input
+                  type="text"
+                  inputMode="url"
+                  autoComplete="url"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  value={url}
+                  onChange={(event) => setUrl(event.target.value)}
+                  onBlur={normalizeFieldValue}
+                  placeholder={copy.placeholder}
+                  className="min-h-14 rounded-[20px] border border-[#d3e9de]/16 bg-white px-5 text-neutral-950 outline-none shadow-[0_18px_34px_rgba(4,12,10,0.14)] placeholder:text-neutral-400 focus:border-[#b8dfca] focus:shadow-[0_0_0_4px_rgba(184,223,202,0.18)]"
+                />
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="rounded-[20px] border border-[#dff3e6] bg-[#dff3e6] px-6 py-4 text-sm font-semibold text-[#11201c] shadow-[0_18px_34px_rgba(4,12,10,0.24)] transition-colors hover:bg-[#f0fbf4] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {status === "loading" ? copy.loadingLabel : copy.submitLabel}
+                </button>
+              </form>
+
+              {featuredBenefits.length > 0 && featuredTrustItems.length === 0 && !featuredExplainer ? (
+                <div className="mt-5 flex flex-wrap gap-2.5 text-left">
+                  {featuredBenefits.map((benefit) => (
+                    <div
+                      key={benefit}
+                      className="rounded-full border border-white/10 bg-white/6 px-3.5 py-2 text-sm text-emerald-50/76"
+                    >
+                      {benefit}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
+            <AuditPreviewPanel
+              locale={locale}
+              steps={previewSteps}
+              activeIndex={previewActiveIndex}
+              status={status}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="mx-auto max-w-4xl text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-neutral-600">
+                {copy.badge}
+              </div>
+              <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
+                {copy.title}
+              </h3>
+              {copy.subtext ? (
+                <p className="mx-auto mt-4 max-w-3xl text-sm font-medium leading-6 text-neutral-900">
+                  {copy.subtext}
+                </p>
+              ) : null}
+              {copy.description ? (
+                <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-neutral-600">
+                  {copy.description}
+                </p>
+              ) : null}
+            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="mx-auto mt-8 grid max-w-4xl gap-4 lg:grid-cols-[minmax(0,1fr)_auto]"
+            >
+              <input
+                type="text"
+                inputMode="url"
+                autoComplete="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                value={url}
+                onChange={(event) => setUrl(event.target.value)}
+                onBlur={normalizeFieldValue}
+                placeholder={copy.placeholder}
+                className="min-h-14 rounded-[20px] border border-black/10 bg-white px-5 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+              />
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="rounded-[20px] border border-black bg-black px-6 py-4 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {status === "loading" ? copy.loadingLabel : copy.submitLabel}
+              </button>
+            </form>
+          </>
+        )}
 
         {status === "idle" && !isFeatured ? (
           <div className="mx-auto mt-6 grid max-w-4xl gap-3 md:grid-cols-3">
@@ -359,7 +538,7 @@ export default function AuditBot({
           </div>
         ) : null}
 
-        {status === "loading" ? (
+        {status === "loading" && !isFeatured ? (
           <div className="mx-auto mt-6 max-w-4xl rounded-[24px] border border-black/10 bg-white/82 p-5">
             <div className="text-sm text-neutral-500">{copy.activeAuditLabel}</div>
             <div className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-neutral-950">

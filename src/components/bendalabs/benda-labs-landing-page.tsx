@@ -282,8 +282,11 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
                 subtext={auditBlock?.subtext}
                 description={auditBlock?.description}
                 benefits={auditBlock?.benefits}
+                trustItems={auditBlock?.trustItems}
+                explainerLine={auditBlock?.explainerLine}
                 placeholder={auditBlock?.placeholder}
                 submitLabel={auditBlock?.submitLabel}
+                loadingSteps={auditBlock?.loadingSteps}
               />
             </div>
           </div>
