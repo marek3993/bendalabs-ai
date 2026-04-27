@@ -69,6 +69,24 @@ function ResultCard({
   );
 }
 
+function renderFeaturedSubmitLabel(label: string) {
+  const arrow = "\u2192";
+  const trimmed = label.trim();
+
+  if (!trimmed.endsWith(arrow)) {
+    return label;
+  }
+
+  const text = trimmed.slice(0, -arrow.length).trimEnd();
+
+  return (
+    <>
+      <span>{text}</span>
+      <span className="transition-transform duration-200 group-hover:translate-x-1">{arrow}</span>
+    </>
+  );
+}
+
 function AuditPreviewPanel({
   locale,
   idleTitle,
@@ -476,9 +494,13 @@ export default function AuditBot({
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="rounded-[20px] border border-[#dff3e6] bg-[#dff3e6] px-6 py-4 text-sm font-semibold text-[#11201c] shadow-[0_18px_34px_rgba(4,12,10,0.24)] transition-colors hover:bg-[#f0fbf4] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group min-h-15 rounded-[22px] border border-[#46a06f] bg-[linear-gradient(180deg,#2f9a68_0%,#267c55_100%)] px-8 py-4 text-base font-semibold text-white shadow-[0_20px_40px_rgba(23,85,58,0.34),0_0_0_1px_rgba(191,242,214,0.08)_inset] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(180deg,#39ab75_0%,#2b8b5e_100%)] hover:shadow-[0_24px_46px_rgba(23,85,58,0.38),0_0_0_1px_rgba(216,247,229,0.14)_inset] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {status === "loading" ? copy.loadingLabel : copy.submitLabel}
+                  <span className="inline-flex items-center gap-2">
+                    {status === "loading"
+                      ? copy.loadingLabel
+                      : renderFeaturedSubmitLabel(copy.submitLabel)}
+                  </span>
                 </button>
               </form>
 
