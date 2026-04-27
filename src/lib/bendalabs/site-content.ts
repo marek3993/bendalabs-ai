@@ -36,6 +36,8 @@ type HomeAuditBlock = {
   benefits?: ReadonlyArray<string>;
   trustItems?: ReadonlyArray<string>;
   explainerLine?: string;
+  previewIdleTitle?: string;
+  previewIdleSteps?: ReadonlyArray<string>;
   loadingSteps?: ReadonlyArray<string>;
   placeholder: string;
   submitLabel: string;
@@ -322,6 +324,13 @@ const homeContent = {
       trustItems: ["\u2248 5 sek\u00fand", "bez e-mailu", "bez registr\u00e1cie"],
       explainerLine:
         "Na\u010d\u00edta homepage | prejde relevantn\u00e9 podstr\u00e1nky | uk\u00e1\u017ee slab\u00e9 miesta",
+      previewIdleTitle: "Zadajte URL a spustite audit",
+      previewIdleSteps: [
+        "Na\u010d\u00edta homepage",
+        "Prejde relevantn\u00e9 podstr\u00e1nky",
+        "Vyhodnot\u00ed navig\u00e1ciu",
+        "N\u00e1jde slab\u00e9 miesta v lead flow",
+      ],
       loadingSteps: [
         "Na\u010d\u00edtavam homepage...",
         "Prech\u00e1dzam relevantn\u00e9 podstr\u00e1nky...",

@@ -22,6 +22,8 @@ type AuditBotProps = {
   benefits?: ReadonlyArray<string>;
   trustItems?: ReadonlyArray<string>;
   explainerLine?: string;
+  previewIdleTitle?: string;
+  previewIdleSteps?: ReadonlyArray<string>;
   placeholder?: string;
   submitLabel?: string;
   loadingLabel?: string;
@@ -69,24 +71,34 @@ function ResultCard({
 
 function AuditPreviewPanel({
   locale,
+  idleTitle,
+  idleSteps,
   steps,
   activeIndex,
   status,
 }: {
   locale: SiteLocale;
+  idleTitle?: string;
+  idleSteps?: ReadonlyArray<string>;
   steps: ReadonlyArray<string>;
   activeIndex: number;
   status: Status;
 }) {
+  const isIdle = status === "idle";
   const safeIndex = Math.max(0, Math.min(activeIndex, Math.max(steps.length - 1, 0)));
+  const displaySteps = isIdle ? idleSteps ?? steps : steps;
   const progress = steps.length > 0 ? `${Math.max(14, ((safeIndex + 1) / steps.length) * 100)}%` : "14%";
-  const panelLabel =
-    status === "loading"
-      ? locale === "sk"
-        ? "Audit pr\u00e1ve be\u017e\u00ed"
-        : "Audit pr\u00e1v\u011b b\u011b\u017e\u00ed"
-      : "Live preview";
-  const currentStep = steps[safeIndex] ?? "";
+  const panelLabel = isIdle
+    ? locale === "sk"
+      ? "PRIPRAVENE NA AUDIT"
+      : "PRIPRAVENO NA AUDIT"
+    : locale === "sk"
+      ? "Audit pr\u00e1ve be\u017e\u00ed"
+      : "Audit pr\u00e1v\u011b b\u011b\u017e\u00ed";
+  const currentStep = isIdle
+    ? idleTitle ?? (locale === "sk" ? "Zadajte URL a spustite audit" : "Zadejte URL a spus\u0165te audit")
+    : steps[safeIndex] ?? "";
+  const progressLabel = isIdle ? null : steps.length > 0 ? `${safeIndex + 1}/${steps.length}` : null;
 
   return (
     <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(11,20,18,0.96),rgba(15,29,25,0.9))] p-5 text-white shadow-[0_28px_60px_rgba(3,10,8,0.35)] sm:p-6">
@@ -99,33 +111,47 @@ function AuditPreviewPanel({
         <div className="flex items-center justify-between gap-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-emerald-50/78">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#9be3be]/45" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#9be3be]" />
+              {!isIdle ? (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#9be3be]/45" />
+              ) : null}
+              <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${isIdle ? "bg-white/60" : "bg-[#9be3be]"}`} />
             </span>
             {panelLabel}
           </div>
-          <div className="text-xs font-medium text-emerald-50/56">
-            {steps.length > 0 ? `${safeIndex + 1}/${steps.length}` : null}
-          </div>
+          {progressLabel ? <div className="text-xs font-medium text-emerald-50/56">{progressLabel}</div> : null}
         </div>
 
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-black/25">
-          <div
-            className="h-full rounded-full bg-[linear-gradient(90deg,#7fd6ad_0%,#cbeed9_100%)] shadow-[0_0_22px_rgba(127,214,173,0.35)] transition-[width] duration-700"
-            style={{ width: progress }}
-          />
-        </div>
+        {!isIdle ? (
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-black/25">
+            <div
+              className="h-full rounded-full bg-[linear-gradient(90deg,#7fd6ad_0%,#cbeed9_100%)] shadow-[0_0_22px_rgba(127,214,173,0.35)] transition-[width] duration-700"
+              style={{ width: progress }}
+            />
+          </div>
+        ) : null}
 
         <div className="mt-5 text-[11px] uppercase tracking-[0.22em] text-emerald-50/48">
-          {locale === "sk" ? "Akt\u00edvny krok" : "Aktivn\u00ed krok"}
+          {isIdle
+            ? locale === "sk"
+              ? "Co audit spravi"
+              : "Co audit udela"
+            : locale === "sk"
+              ? "Akt\u00edvny krok"
+              : "Aktivn\u00ed krok"}
         </div>
         <div className="mt-2 text-xl font-semibold tracking-[-0.03em] text-white sm:text-2xl">
           {currentStep}
         </div>
 
         <div className="mt-5 space-y-3">
-          {steps.map((step, index) => {
-            const stepState = index < safeIndex ? "complete" : index === safeIndex ? "active" : "pending";
+          {displaySteps.map((step, index) => {
+            const stepState = isIdle
+              ? "pending"
+              : index < safeIndex
+                ? "complete"
+                : index === safeIndex
+                  ? "active"
+                  : "pending";
 
             return (
               <div
@@ -176,6 +202,8 @@ export default function AuditBot({
   benefits,
   trustItems,
   explainerLine,
+  previewIdleTitle,
+  previewIdleSteps,
   placeholder,
   submitLabel,
   loadingLabel,
@@ -220,6 +248,7 @@ export default function AuditBot({
   const featuredTrustItems = trustItems ?? [];
   const featuredExplainer = explainerLine ?? "";
   const previewSteps = copy.loadingSteps.length > 0 ? copy.loadingSteps : defaults.loadingSteps;
+  const previewIdleStepsResolved = previewIdleSteps ?? [];
 
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -235,7 +264,9 @@ export default function AuditBot({
     previewSteps.length > 1
       ? status === "loading"
         ? Math.min(loadingIndex, previewSteps.length - 1)
-        : 1
+        : status === "idle"
+          ? 0
+          : previewSteps.length - 1
       : 0;
 
   useEffect(() => {
@@ -467,6 +498,8 @@ export default function AuditBot({
 
             <AuditPreviewPanel
               locale={locale}
+              idleTitle={previewIdleTitle}
+              idleSteps={previewIdleStepsResolved}
               steps={previewSteps}
               activeIndex={previewActiveIndex}
               status={status}
