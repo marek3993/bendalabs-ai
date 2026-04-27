@@ -16,6 +16,7 @@ type AuditBotProps = {
   locale?: SiteLocale;
   badge?: string;
   title?: string;
+  subtext?: string;
   description?: string;
   submitLabel?: string;
   loadingLabel?: string;
@@ -64,6 +65,7 @@ export default function AuditBot({
   locale = "sk",
   badge,
   title,
+  subtext,
   description,
   submitLabel,
   loadingLabel,
@@ -77,6 +79,7 @@ export default function AuditBot({
       ...defaults,
       badge: badge ?? defaults.badge,
       title: title ?? defaults.title,
+      subtext: subtext ?? defaults.subtext,
       description: description ?? defaults.description,
       submitLabel: submitLabel ?? defaults.submitLabel,
       loadingLabel: loadingLabel ?? defaults.loadingLabel,
@@ -89,6 +92,7 @@ export default function AuditBot({
       defaults,
       description,
       loadingLabel,
+      subtext,
       proposalButtonLabel,
       proposalDescription,
       proposalTitle,
@@ -238,7 +242,12 @@ export default function AuditBot({
           <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-neutral-950 sm:text-4xl">
             {copy.title}
           </h3>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-neutral-600">
+          {copy.subtext ? (
+            <p className="mx-auto mt-4 max-w-3xl text-sm font-medium leading-6 text-neutral-900">
+              {copy.subtext}
+            </p>
+          ) : null}
+          <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-neutral-600">
             {copy.description}
           </p>
         </div>

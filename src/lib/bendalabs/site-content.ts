@@ -59,6 +59,7 @@ type HomePricingBlock = {
 type AuditBotCopy = {
   badge: string;
   title: string;
+  subtext: string;
   description: string;
   submitLabel: string;
   loadingLabel: string;
@@ -138,7 +139,7 @@ type ServicePageContent = {
   heroChips: ReadonlyArray<string>;
   auditBot: Pick<
     AuditBotCopy,
-    "badge" | "title" | "description" | "proposalTitle" | "proposalDescription" | "proposalButtonLabel"
+    "badge" | "proposalTitle" | "proposalDescription" | "proposalButtonLabel"
   >;
   sections: ReadonlyArray<ServicePageSection>;
   ctaTitle: string;
@@ -194,17 +195,18 @@ const chromeContent = {
 const auditBotDefaults = {
   sk: {
     badge: "AI audit bot",
-    title: "Zadajte URL a hneď uvidíte, kde by AI vrstva vedela zmeniť spôsob používania webu.",
+    title: "Zadajte adresu svojho webu a do 5 sekúnd uvidíte, kde vám unikajú zákazníci.",
+    subtext: "Bez registrácie. Bez zadávania e-mailu. Len rýchly audit webu.",
     description:
-      "Audit načíta homepage, prejde relevantné podstránky a vyhodnotí, kde by AI vrstva vedela zjednodušiť navigáciu, odporúčanie, lead flow a ďalší krok používateľa.",
-    submitLabel: "Analyzovať web",
+      "Audit načíta homepage aj relevantné podstránky a vyhodnotí, kde by AI vrstva vedela zjednodušiť navigáciu, odporúčanie a lead flow.",
+    submitLabel: "Spustiť bezplatný audit",
     loadingLabel: "Analyzujem web",
     loadingSteps: [
       "Načítavam stránku...",
       "Analyzujem štruktúru...",
       "Vyhodnocujem vhodnosť pre AI vrstvu...",
     ] as const,
-    placeholder: "napr. bendalabs.sk alebo https://bendalabs.sk",
+    placeholder: "napr. https://vasafirma.sk",
     invalidUrlMessage: "Zadajte platnú webovú adresu. Stačí aj doména ako bendalabs.sk.",
     genericErrorMessage: "Audit sa teraz nepodarilo vygenerovať.",
     activeAuditLabel: "Práve beží audit",
@@ -234,6 +236,7 @@ const auditBotDefaults = {
   cs: {
     badge: "AI audit bot",
     title: "Zadejte URL a hned uvidíte, kde by AI vrstva dokázala změnit způsob používání webu.",
+    subtext: "",
     description:
       "Audit načte homepage, projde relevantní podstránky a vyhodnotí, kde by AI vrstva dokázala zjednodušit navigaci, doporučení, lead flow a další krok uživatele.",
     submitLabel: "Analyzovat web",
@@ -621,9 +624,6 @@ const auditPageContent = {
     ],
     auditBot: {
       badge: "AI audit webu",
-      title: "Zadajte URL a spustite rýchly AI audit svojho webu.",
-      description:
-        "Audit preverí homepage aj kľúčové podstránky a ukáže, kde by AI vrstva vedela zjednodušiť navigáciu, odporúčanie, lead flow a ďalší krok používateľa.",
       proposalTitle: "Chcete plný audit a konkrétny návrh pre váš web?",
       proposalDescription:
         "Po rýchlom audite vieme prejsť na plný návrh AI vrstvy, prioritné miesta zásahu a realistickú prvú fázu nasadenia.",
@@ -721,9 +721,6 @@ const auditPageContent = {
     ],
     auditBot: {
       badge: "AI audit webu",
-      title: "Zadejte URL a spusťte rychlý AI audit svého webu.",
-      description:
-        "Audit prověří homepage i klíčové podstránky a ukáže, kde by AI vrstva dokázala zjednodušit navigaci, doporučení, lead flow a další krok uživatele.",
       proposalTitle: "Chcete plný audit a konkrétní návrh pro váš web?",
       proposalDescription:
         "Po rychlém auditu můžeme přejít na plný návrh AI vrstvy, prioritní místa zásahu a realistickou první fázi nasazení.",
@@ -824,9 +821,6 @@ const financePageContent = {
     ],
     auditBot: {
       badge: "AI audit webu",
-      title: "Zadajte URL a hneď uvidíte, kde sa na finančnom alebo poistnom webe láme cesta k dopytu.",
-      description:
-        "Audit preverí homepage aj kľúčové produktové vetvy a ukáže, kde by AI vrstva vedela rýchlejšie dostať návštevníka do správnej kalkulačky, formulára alebo kontaktu.",
       proposalTitle: "Chcete audit a konkrétny návrh AI vrstvy pre váš finančný alebo poistný web?",
       proposalDescription:
         "Po audite sa vieme pozrieť na miesta, kde dnes ľudia netrafia správny flow, odpadajú pred formulárom alebo končia vo všeobecnej sekcii bez dopytu.",
@@ -937,9 +931,6 @@ const financePageContent = {
     ],
     auditBot: {
       badge: "AI audit webu",
-      title: "Zadejte URL a hned uvidíte, kde se na finančním nebo pojistném webu láme cesta k poptávce.",
-      description:
-        "Audit prověří homepage i klíčové produktové větve a ukáže, kde by AI vrstva dokázala rychleji dostat návštěvníka do správné kalkulačky, formuláře nebo kontaktu.",
       proposalTitle: "Chcete audit a konkrétní návrh AI vrstvy pro váš finanční nebo pojistný web?",
       proposalDescription:
         "Po auditu se můžeme podívat na místa, kde dnes lidé netrefí správný flow, odpadají před formulářem nebo končí v obecné sekci bez poptávky.",
@@ -1053,9 +1044,6 @@ const marketplacePageContent = {
     ],
     auditBot: {
       badge: "AI audit webu",
-      title: "Zadajte URL a hneď uvidíte, kde sa na marketplace alebo rental webe predlžuje cesta k rezervácii.",
-      description:
-        "Audit preverí homepage aj kľúčové podstránky a ukáže, kde by AI vrstva vedela lepšie priradiť intent k produktu, ponuke alebo ďalšiemu kroku.",
       proposalTitle: "Chcete audit a konkrétny návrh AI vrstvy pre váš marketplace alebo rental web?",
       proposalDescription:
         "Po audite sa vieme pozrieť na miesta, kde dnes návštevník hľadá príliš dlho, netrafí správnu ponuku alebo odpadne pred rezerváciou.",
@@ -1166,9 +1154,6 @@ const marketplacePageContent = {
     ],
     auditBot: {
       badge: "AI audit webu",
-      title: "Zadejte URL a hned uvidíte, kde se na marketplace nebo rental webu prodlužuje cesta k rezervaci.",
-      description:
-        "Audit prověří homepage i klíčové podstránky a ukáže, kde by AI vrstva dokázala lépe přiřadit intent k produktu, nabídce nebo dalšímu kroku.",
       proposalTitle: "Chcete audit a konkrétní návrh AI vrstvy pro váš marketplace nebo rental web?",
       proposalDescription:
         "Po auditu se můžeme podívat na místa, kde dnes návštěvník hledá příliš dlouho, netrefí správnou nabídku nebo odpadne před rezervací.",

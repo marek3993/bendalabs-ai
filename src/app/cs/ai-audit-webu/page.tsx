@@ -22,8 +22,6 @@ export default function CzechAuditPage() {
         <AuditBot
           locale="cs"
           badge={content.auditBot.badge}
-          title={content.auditBot.title}
-          description={content.auditBot.description}
           proposalTitle={content.auditBot.proposalTitle}
           proposalDescription={content.auditBot.proposalDescription}
           proposalButtonLabel={content.auditBot.proposalButtonLabel}
