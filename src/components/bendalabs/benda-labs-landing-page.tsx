@@ -421,7 +421,7 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
 
         <section id={content.sections[5]?.id} data-section className="section-divider section-surface-white">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
-            <div data-reveal className="glass-panel rounded-[32px] p-8 sm:p-10">
+            <div data-reveal className="glass-panel mb-14 rounded-[32px] p-8 sm:mb-16 sm:p-10">
               <SectionTag>{content.flexibilityBlock.tag}</SectionTag>
               <h2
                 className="mt-5 max-w-3xl text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
