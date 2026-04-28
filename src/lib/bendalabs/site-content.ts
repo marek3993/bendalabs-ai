@@ -72,6 +72,13 @@ type HomePricingBlock = {
   tiers: ReadonlyArray<HomePricingTier>;
 };
 
+type HomeFlexibilityBlock = {
+  tag: string;
+  title: string;
+  body: string;
+  supportingLine?: string;
+};
+
 type AuditBotCopy = {
   badge: string;
   title: string;
@@ -135,6 +142,7 @@ type HomePageContent = {
   activeStepLabel: string;
   stepLabel: string;
   journeySteps: ReadonlyArray<JourneyStep>;
+  flexibilityBlock: HomeFlexibilityBlock;
   pricingTag: string;
   pricingTitle: string;
   pricing: HomePricingBlock;
@@ -300,9 +308,8 @@ const homeContent = {
     sections: [
       { id: "hero", label: "Hero" },
       { id: "audit", label: "Audit" },
-      { id: "pre-koho", label: "Pre koho" },
-      { id: "co-robi", label: "Čo robí" },
       { id: "priklady", label: "Príklady" },
+      { id: "pre-koho", label: "Pre koho" },
       { id: "ako-to-funguje", label: "Ako to funguje" },
       { id: "cennik", label: "Cenník" },
       { id: "kontakt", label: "Kontakt" },
@@ -314,7 +321,7 @@ const homeContent = {
     heroChips: [
       "Komplexné weby s viacerými cestami ku konverzii",
       "Jeden vstup pre intent, navigáciu a odporúčanie",
-      "Audit bot ukáže reálne miesta, kde sa láme konverzia",
+      "Nasadenie nad existujúci web bez prerábky celej stránky",
     ],
     heroPrimaryCta: "Spustiť rýchly audit",
     heroSecondaryCta: "Kontakt / CTA",
@@ -349,9 +356,9 @@ const homeContent = {
       variant: "featured",
     },
     audiencesTag: "Pre koho to je",
-    audiencesTitle: "Pre weby, kde je silná ponuka, ale človek sa pred výsledkom stále stráca.",
+    audiencesTitle: "Pre weby, kde je silná ponuka, ale návštevník sa k správnemu výsledku nemusí dostať hneď.",
     audiencesDescription:
-      "Funguje naprieč rôznymi biznis use-case-mi. Nielen pre financie. Dôležitá je komplexita ponuky, množstvo ciest a moment, keď návštevník nevie, kam presne patrí.",
+      "Funguje naprieč rôznymi biznis use-case-mi. Nielen pre financie. Dôležitá je komplexita ponuky, množstvo ciest a moment, keď návštevník potrebuje rýchlo nájsť správny ďalší krok.",
     audiences: [
       {
         title: "Marketplace a service weby",
@@ -411,7 +418,7 @@ const homeContent = {
     journeyTag: "Ako to funguje",
     journeyTitle: "Stabilný flow od intentu po insighty, bez preskakovania krokov.",
     journeyDescription:
-      "Na desktope sa aktívny krok určuje podľa triggeru, ktorý je najbližšie stredu viewportu. Na mobile a tablete sa sekcia prepne do jednoduchého stacked layoutu bez sticky správania.",
+      "Návštevník napíše, čo chce vyriešiť. AI vrstva nad webom pochopí jeho zámer, zohľadní kontext webu a navedie ho na správny ďalší krok bez prerábky celej stránky.",
     activeStepLabel: "Aktívny krok",
     stepLabel: "Krok",
     journeySteps: [
@@ -440,6 +447,13 @@ const homeContent = {
         text: "Každá konverzácia ukazuje, kde je web nejasný, kde sa ľudia strácajú a ktoré trasy vedú najspoľahlivejšie ku konverzii.",
       },
     ],
+    flexibilityBlock: {
+      tag: "FLEXIBILITA RIEŠENIA",
+      title: "Možnosti sú prakticky neobmedzené.",
+      body:
+        "AI vrstvu vieme navrhnúť presne podľa vášho webu, ponuky a cieľov. Nemusíte prerábať celú stránku. Pridáme novú vrstvu nad existujúci web a nastavíme ju tak, aby sedela vášmu flowu.",
+      supportingLine: "Bez prerábky webu. Bez zložitej migrácie. Presne podľa vášho use-case.",
+    },
     pricingTag: "Cenník",
     pricingTitle: "Jasný pricing pre prvú fázu aj priebežné doladenie.",
     pricing: {
@@ -495,9 +509,8 @@ const homeContent = {
     sections: [
       { id: "hero", label: "Hero" },
       { id: "audit", label: "Audit" },
-      { id: "pro-koho", label: "Pro koho" },
-      { id: "co-dela", label: "Co dělá" },
       { id: "priklady", label: "Příklady" },
+      { id: "pro-koho", label: "Pro koho" },
       { id: "jak-to-funguje", label: "Jak to funguje" },
       { id: "cenik", label: "Ceník" },
       { id: "kontakt", label: "Kontakt" },
@@ -509,14 +522,14 @@ const homeContent = {
     heroChips: [
       "Komplexní weby s více cestami ke konverzi",
       "Jeden vstup pro intent, navigaci a doporučení",
-      "Audit bot ukáže reálná místa, kde se láme konverze",
+      "Nasazení nad existující web bez předělávání celé stránky",
     ],
     heroPrimaryCta: "Spustit rychlý audit",
     heroSecondaryCta: "Kontakt / CTA",
     audiencesTag: "Pro koho to je",
-    audiencesTitle: "Pro weby, kde je silná nabídka, ale člověk se před výsledkem pořád ztrácí.",
+    audiencesTitle: "Pro weby, kde je silná nabídka, ale návštěvník se ke správnému výsledku nemusí dostat hned.",
     audiencesDescription:
-      "Funguje napříč různými business use-case-y. Nejen pro finance. Důležitá je komplexita nabídky, množství cest a moment, kdy návštěvník neví, kam přesně patří.",
+      "Funguje napříč různými business use-case-y. Nejen pro finance. Důležitá je komplexita nabídky, množství cest a moment, kdy návštěvník potřebuje rychle najít správný další krok.",
     audiences: [
       {
         title: "Marketplace a service weby",
@@ -576,7 +589,7 @@ const homeContent = {
     journeyTag: "Jak to funguje",
     journeyTitle: "Stabilní flow od intentu po insighty, bez přeskakování kroků.",
     journeyDescription:
-      "Na desktopu se aktivní krok určuje podle triggeru, který je nejblíž středu viewportu. Na mobilu a tabletu se sekce přepne do jednoduchého stacked layoutu bez sticky chování.",
+      "Návštěvník napíše, co chce vyřešit. AI vrstva nad webem pochopí jeho záměr, zohlední kontext webu a navede ho na správný další krok bez předělávání celé stránky.",
     activeStepLabel: "Aktivní krok",
     stepLabel: "Krok",
     journeySteps: [
@@ -605,6 +618,13 @@ const homeContent = {
         text: "Každá konverzace ukazuje, kde je web nejasný, kde se lidé ztrácejí a které trasy vedou nejspolehlivěji ke konverzi.",
       },
     ],
+    flexibilityBlock: {
+      tag: "FLEXIBILITA ŘEŠENÍ",
+      title: "Možnosti jsou prakticky neomezené.",
+      body:
+        "AI vrstvu umíme navrhnout přesně podle vašeho webu, nabídky a cílů. Nemusíte předělávat celý web. Přidáme novou vrstvu nad existující web a nastavíme ji tak, aby seděla vašemu flow.",
+      supportingLine: "Bez předělávky webu. Bez složité migrace. Přesně podle vašeho use-case.",
+    },
     pricingTag: "Ceník",
     pricingTitle: "Jasný pricing pro první fázi i průběžné ladění.",
     pricing: {

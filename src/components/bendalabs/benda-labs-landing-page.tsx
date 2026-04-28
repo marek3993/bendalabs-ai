@@ -294,69 +294,7 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
           </div>
         </section>
 
-        <section id={content.sections[2]?.id} data-section className="section-divider section-surface-tint">
-          <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
-            <div data-reveal className="max-w-3xl">
-              <SectionTag>{content.audiencesTag}</SectionTag>
-              <h2
-                className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {content.audiencesTitle}
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-neutral-600">{content.audiencesDescription}</p>
-            </div>
-
-            <div className="mt-10 grid gap-4 md:grid-cols-2">
-              {content.audiences.map((item) => (
-                <AudienceCard key={item.title} title={item.title} text={item.text} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id={content.sections[3]?.id} data-section className="section-divider section-surface-white">
-          <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
-            <div className="grid gap-12 lg:grid-cols-[0.88fr_1.12fr]">
-              <div data-reveal>
-                <SectionTag>{content.featuresTag}</SectionTag>
-                <h2
-                  className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {content.featuresTitle}
-                </h2>
-                <p className="mt-5 text-lg leading-8 text-neutral-600">{content.featuresDescription}</p>
-
-                <div className="mt-8 grid gap-3">
-                  {content.outcomes.map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-[22px] border border-black/8 bg-white/72 px-4 py-4 text-sm text-neutral-700 shadow-[0_12px_36px_rgba(17,17,17,0.04)]"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {content.features.map((item, index) => (
-                  <div key={item} data-reveal className="glass-panel rounded-[28px] p-6">
-                    <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                      0{index + 1}
-                    </div>
-                    <div className="mt-4 text-xl font-semibold tracking-[-0.03em] text-neutral-950">
-                      {item}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id={content.sections[4]?.id} data-section className="section-divider section-surface-soft">
+        <section id={content.sections[2]?.id} data-section className="section-divider section-surface-white">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div data-reveal className="max-w-3xl">
               <SectionTag>{content.examplesTag}</SectionTag>
@@ -389,9 +327,30 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
           </div>
         </section>
 
-        <section id={content.sections[5]?.id} data-section className="section-divider section-surface-tint">
+        <section id={content.sections[3]?.id} data-section className="section-divider section-surface-tint">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div data-reveal className="max-w-3xl">
+              <SectionTag>{content.audiencesTag}</SectionTag>
+              <h2
+                className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {content.audiencesTitle}
+              </h2>
+              <p className="mt-5 text-lg leading-8 text-neutral-600">{content.audiencesDescription}</p>
+            </div>
+
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              {content.audiences.map((item) => (
+                <AudienceCard key={item.title} title={item.title} text={item.text} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id={content.sections[4]?.id} data-section className="section-divider section-surface-soft">
+          <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+            <div data-reveal className="mt-12 max-w-3xl">
               <SectionTag>{content.journeyTag}</SectionTag>
               <h2
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
@@ -460,8 +419,26 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
           </div>
         </section>
 
-        <section id={content.sections[6]?.id} data-section className="section-divider section-surface-white">
+        <section id={content.sections[5]?.id} data-section className="section-divider section-surface-white">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+            <div data-reveal className="glass-panel rounded-[32px] p-8 sm:p-10">
+              <SectionTag>{content.flexibilityBlock.tag}</SectionTag>
+              <h2
+                className="mt-5 max-w-3xl text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-5xl"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {content.flexibilityBlock.title}
+              </h2>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-neutral-600">
+                {content.flexibilityBlock.body}
+              </p>
+              {content.flexibilityBlock.supportingLine ? (
+                <p className="mt-4 text-sm leading-7 text-neutral-500">
+                  {content.flexibilityBlock.supportingLine}
+                </p>
+              ) : null}
+            </div>
+
             <div data-reveal className="max-w-3xl">
               <SectionTag>{content.pricingTag}</SectionTag>
               <h2
