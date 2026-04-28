@@ -74,6 +74,7 @@ export default function LeadCaptureForm({
         <input type="hidden" name="successPath" value={getSuccessPath(locale)} />
         <input type="hidden" name="errorPath" value={getErrorPath(locale)} />
         <input type="hidden" name="linkedAuditDomain" value={linkedAuditDomain ?? ""} />
+        <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="grid gap-2 text-sm text-neutral-700">

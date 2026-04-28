@@ -3,6 +3,7 @@ import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import { getLeadFormCopy } from "@/lib/bendalabs/lead-form-content";
 import { getContactRequestFieldErrors, parseContactRequestSubmission } from "@/lib/leads/contact-request";
 import { persistContactRequest } from "@/lib/leads/repository";
+import { hasFilledHoneypot, isLikelyContactRequestSpam } from "@/lib/leads/spam-detection";
 import { isLeadStorageConfigured } from "@/lib/leads/supabase";
 
 export const runtime = "nodejs";
@@ -107,6 +108,7 @@ export async function POST(request: Request) {
   const successPath = sanitizeRelativePath(formData.get("successPath"), getDefaultSuccessPath(locale));
   const errorPath = sanitizeRelativePath(formData.get("errorPath"), getDefaultErrorPath(locale));
   const backPath = sanitizeRelativePath(formData.get("returnPath"), getDefaultBackPath(locale));
+  const honeypotValue = formData.get("company");
   const payload = Object.fromEntries(formData.entries());
   const submission = parseContactRequestSubmission(payload);
 
@@ -122,6 +124,15 @@ export async function POST(request: Request) {
       getLocalizedMessage(locale, "invalid"),
       details,
     );
+  }
+
+  if (hasFilledHoneypot(honeypotValue) || isLikelyContactRequestSpam(submission.data)) {
+    console.warn("Contact request dropped as spam.", {
+      email: submission.data.email,
+      normalizedDomain: submission.data.normalizedDomain,
+    });
+
+    return NextResponse.redirect(new URL(successPath, request.url), { status: 303 });
   }
 
   if (!isLeadStorageConfigured()) {
