@@ -1,5 +1,10 @@
 import { isAdminAuthenticated, isAdminProtectionConfigured } from "@/lib/leads/auth";
-import { getLeadRollups, getRecentAudits, getRecentContactRequests } from "@/lib/leads/repository";
+import {
+  getLeadRollups,
+  getRecentAuditFailures,
+  getRecentAudits,
+  getRecentContactRequests,
+} from "@/lib/leads/repository";
 import { isLeadStorageConfigured } from "@/lib/leads/supabase";
 import type { LeadSort, LeadStatusFilter } from "@/lib/leads/types";
 
@@ -103,6 +108,30 @@ function getLeadSourceText(value: string | null | undefined) {
   }
 
   return safeText(value, "-");
+}
+
+function getAuditFailureReasonText(value: string | null | undefined) {
+  if (value === "crawler_blocked") {
+    return "crawler_blocked";
+  }
+
+  if (value === "load_failed") {
+    return "load_failed";
+  }
+
+  return safeText(value, "-");
+}
+
+function getAuditFailureClassificationText(value: string | null | undefined) {
+  if (value === "crawler_blocked" || value === "fetch_blocked" || value === "protected_site") {
+    return value;
+  }
+
+  return "-";
+}
+
+function formatHttpStatus(value: number | null | undefined) {
+  return Number.isFinite(value) ? String(value) : "-";
 }
 
 function DateTimeValue({ value }: { value: string | null | undefined }) {
@@ -265,17 +294,22 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
     return <SetupCard />;
   }
 
-  const [leads, recentAudits, recentContactRequests] = await Promise.all([
+  const [leads, recentAudits, recentAuditFailures, recentContactRequests] = await Promise.all([
     getLeadRollups({ query, sort, status }),
     getRecentAudits({ query, limit: 25 }),
+    getRecentAuditFailures({ query, limit: 25 }),
     getRecentContactRequests({ query, limit: 25 }),
   ]);
   const leadItems = safeArray(leads);
   const recentAuditItems = safeArray(recentAudits);
+  const recentAuditFailureItems = safeArray(recentAuditFailures);
   const recentContactRequestItems = safeArray(recentContactRequests);
   const leadRows = leadItems.filter((lead): lead is NonNullable<(typeof leadItems)[number]> => lead != null);
   const recentAuditRows = recentAuditItems.filter(
     (audit): audit is NonNullable<(typeof recentAuditItems)[number]> => audit != null,
+  );
+  const recentAuditFailureRows = recentAuditFailureItems.filter(
+    (failure): failure is NonNullable<(typeof recentAuditFailureItems)[number]> => failure != null,
   );
   const recentContactRequestRows = recentContactRequestItems.filter(
     (contactRequest): contactRequest is NonNullable<(typeof recentContactRequestItems)[number]> =>
@@ -513,6 +547,81 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
                   <tr>
                     <td colSpan={6} className="px-6 py-10 text-center text-neutral-500">
                       Zatial nebol ulozeny ziaden audit.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="glass-panel overflow-hidden rounded-[32px]">
+          <div className="border-b border-black/8 px-6 py-5">
+            <h2 className="text-xl font-semibold tracking-[-0.03em] text-neutral-950">
+              Posledne blokovane audity
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead className="bg-black/[0.03] text-neutral-500">
+                <tr>
+                  <th className="px-6 py-4 font-medium">Cas</th>
+                  <th className="px-6 py-4 font-medium">Domena</th>
+                  <th className="px-6 py-4 font-medium">Web</th>
+                  <th className="px-6 py-4 font-medium">Reason</th>
+                  <th className="px-6 py-4 font-medium">Classification</th>
+                  <th className="px-6 py-4 font-medium">HTTP</th>
+                  <th className="px-6 py-4 font-medium">Referrer</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentAuditFailureRows.map((failure, index) => {
+                  const auditFailureHref = getSafeHref(failure.input_url);
+
+                  return (
+                    <tr
+                      key={getRecentAuditKey(failure.id, `audit-failure-${index}`)}
+                      className="border-t border-black/6 align-top"
+                    >
+                      <td className="px-6 py-5 text-neutral-800">
+                        <DateTimeValue value={failure.created_at} />
+                      </td>
+                      <td className="px-6 py-5 text-neutral-950">
+                        <EmptyDash value={failure.normalized_domain} />
+                      </td>
+                      <td className="px-6 py-5">
+                        {auditFailureHref ? (
+                          <a
+                            href={auditFailureHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-neutral-900 underline decoration-black/20 underline-offset-4"
+                          >
+                            {getAuditUrlText(failure.input_url)}
+                          </a>
+                        ) : (
+                          <span className="text-neutral-500">{getAuditUrlText(failure.input_url)}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        {getAuditFailureReasonText(failure.reason)}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        {getAuditFailureClassificationText(failure.classification)}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-800">
+                        {formatHttpStatus(failure.http_status)}
+                      </td>
+                      <td className="px-6 py-5 text-neutral-500">
+                        {getReferrerText(failure.referrer)}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {recentAuditFailureRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-10 text-center text-neutral-500">
+                      Zatial nebol ulozeny ziaden blokovany audit.
                     </td>
                   </tr>
                 ) : null}

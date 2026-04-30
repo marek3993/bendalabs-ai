@@ -1,16 +1,86 @@
 import { extractPageSnapshot, type LinkCandidate, type PageSnapshot } from "@/lib/site-audit/extract";
+import {
+  createSiteAuditError,
+  type AuditErrorType,
+  SiteAuditError,
+} from "@/lib/site-audit/error";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
 
 const FETCH_TIMEOUT_MS = 8000;
 const MAX_PAGES = 5;
 const MAX_HTML_LENGTH = 200_000;
 const MAX_SUMMARY_LENGTH = 14_000;
+const BLOCKED_STATUS_CODES = new Set([401, 403, 429]);
+const PROTECTED_PAGE_PATTERNS = [
+  /captcha/i,
+  /verify you are human/i,
+  /security check/i,
+  /access denied/i,
+  /attention required/i,
+  /robot check/i,
+  /bot detection/i,
+  /request blocked/i,
+  /blocked by/i,
+  /cloudflare/i,
+  /datadome/i,
+  /perimeterx/i,
+  /challenge/i,
+  /enable javascript.*continue/i,
+];
+const JS_SHELL_PATTERNS = [
+  /id=(["'])__next\1/i,
+  /id=(["'])app\1/i,
+  /<script\b/gi,
+  /window\.__/i,
+  /hydration/i,
+];
 
 export type CrawledSite = {
   normalizedUrl: string;
   pages: PageSnapshot[];
   siteSummary: string;
 };
+
+function stripHtmlToText(html: string) {
+  return html
+    .replace(/<(script|style|noscript|svg|iframe)[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function matchesProtectedPage(text: string) {
+  return PROTECTED_PAGE_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+function countPatternMatches(html: string, pattern: RegExp) {
+  const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+  const matcher = new RegExp(pattern.source, flags);
+  return Array.from(html.matchAll(matcher)).length;
+}
+
+function classifyBlockedHtml(html: string): AuditErrorType | null {
+  const visibleText = stripHtmlToText(html);
+
+  if (matchesProtectedPage(visibleText)) {
+    return "protected_site";
+  }
+
+  if (!visibleText) {
+    return "crawler_blocked";
+  }
+
+  const scriptMatchCount = JS_SHELL_PATTERNS.reduce(
+    (total, pattern) => total + countPatternMatches(html, pattern),
+    0,
+  );
+
+  if (visibleText.length < 120 && scriptMatchCount >= 3) {
+    return "crawler_blocked";
+  }
+
+  return null;
+}
 
 async function fetchHtml(url: string) {
   const controller = new AbortController();
@@ -26,20 +96,54 @@ async function fetchHtml(url: string) {
       redirect: "follow",
     });
 
-    if (!response.ok) {
-      throw new Error(`Stranku sa nepodarilo nacitat (${response.status}).`);
-    }
-
     const contentType = response.headers.get("content-type") ?? "";
+    const isHtmlResponse = contentType.includes("text/html");
+    const responseText = isHtmlResponse ? (await response.text()).slice(0, MAX_HTML_LENGTH) : "";
 
-    if (!contentType.includes("text/html")) {
-      throw new Error("Zadana URL nevracia HTML stranku.");
+    if (!response.ok) {
+      if (BLOCKED_STATUS_CODES.has(response.status)) {
+        throw createSiteAuditError(
+          "fetch_blocked",
+          `Cielovy web odmietol automaticke nacitanie (${response.status}).`,
+          { statusCode: response.status },
+        );
+      }
+
+      const blockedType = responseText ? classifyBlockedHtml(responseText) : null;
+
+      if (blockedType) {
+        throw createSiteAuditError(
+          blockedType,
+          `Cielovy web vratil ochrannu alebo blokovaciu stranku (${response.status}).`,
+          { statusCode: response.status },
+        );
+      }
+
+      throw createSiteAuditError(
+        "load_failed",
+        `Stranku sa nepodarilo nacitat (${response.status}).`,
+        { statusCode: response.status },
+      );
     }
 
-    const html = (await response.text()).slice(0, MAX_HTML_LENGTH);
+    if (!isHtmlResponse) {
+      throw createSiteAuditError("load_failed", "Zadana URL nevracia HTML stranku.");
+    }
+
+    const html = responseText;
 
     if (!html.trim()) {
-      throw new Error("Stranka vratila prazdny HTML obsah.");
+      throw createSiteAuditError("crawler_blocked", "Stranka vratila prazdny HTML obsah.");
+    }
+
+    const blockedType = classifyBlockedHtml(html);
+
+    if (blockedType) {
+      throw createSiteAuditError(
+        blockedType,
+        "Stranka vyzera ako ochranna, challenge alebo blokovacia odpoved.",
+        { statusCode: response.status },
+      );
     }
 
     return {
@@ -47,8 +151,30 @@ async function fetchHtml(url: string) {
       html,
     };
   } catch (error) {
+    if (error instanceof SiteAuditError) {
+      throw error;
+    }
+
     if (error instanceof Error && error.name === "AbortError") {
-      throw new Error("Cas na nacitanie stranky vyprsal.");
+      throw createSiteAuditError("fetch_blocked", "Cas na nacitanie stranky vyprsal.", {
+        cause: error,
+      });
+    }
+
+    if (error instanceof Error) {
+      const errorText = `${error.name} ${error.message}`.toLowerCase();
+
+      if (/redirect|too many redirects|redirect loop/.test(errorText)) {
+        throw createSiteAuditError(
+          "fetch_blocked",
+          "Web presmerovava poziadavku do nekonecneho cyklu.",
+          { cause: error },
+        );
+      }
+
+      if (/captcha|challenge|access denied|blocked|forbidden|cloudflare|datadome/.test(errorText)) {
+        throw createSiteAuditError("protected_site", error.message, { cause: error });
+      }
     }
 
     throw error;

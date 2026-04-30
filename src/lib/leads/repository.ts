@@ -1,8 +1,11 @@
 import type { SiteAudit } from "@/lib/site-audit/schema";
+import type { AuditErrorType } from "@/lib/site-audit/error";
 import { getClientIp, getNormalizedDomain, hashLeadIdentifier, matchesLeadStatus } from "@/lib/leads/domain";
 import { sendHotLeadAlert } from "@/lib/leads/alert";
 import { isLeadStorageConfigured, parseCountHeader, supabaseRestFetch } from "@/lib/leads/supabase";
 import type {
+  AuditFailureInsert,
+  AuditFailureRecord,
   AuditInsert,
   AuditRecord,
   ContactRequestInsert,
@@ -28,6 +31,18 @@ type SnapshotAuditRecord = {
   created_at: string;
   fit_score: number;
 };
+
+type RecentAuditFailureListItem = Pick<
+  AuditFailureRecord,
+  | "id"
+  | "created_at"
+  | "input_url"
+  | "normalized_domain"
+  | "reason"
+  | "classification"
+  | "http_status"
+  | "referrer"
+>;
 
 type RecentAuditListItem = Pick<
   AuditRecord,
@@ -156,6 +171,18 @@ function normalizeSnapshotAuditRecord(value: unknown): SnapshotAuditRecord {
   };
 }
 
+function normalizeAuditFailureReason(value: unknown): AuditFailureRecord["reason"] {
+  return value === "crawler_blocked" ? "crawler_blocked" : "load_failed";
+}
+
+function normalizeAuditFailureClassification(
+  value: unknown,
+): AuditFailureRecord["classification"] {
+  return value === "crawler_blocked" || value === "fetch_blocked" || value === "protected_site"
+    ? value
+    : null;
+}
+
 export function normalizeAuditRecord(value: unknown): AuditRecord {
   const record = asRecord(value);
 
@@ -210,6 +237,45 @@ export function normalizeRecentAuditRecord(value: unknown): RecentAuditListItem 
     recommended_ai_type: audit.recommended_ai_type,
     summary: audit.summary,
     referrer: audit.referrer ?? "",
+  };
+}
+
+export function normalizeAuditFailureRecord(value: unknown): AuditFailureRecord {
+  const record = asRecord(value);
+  const httpStatus =
+    typeof record.http_status === "number"
+      ? record.http_status
+      : typeof record.http_status === "string"
+        ? Number(record.http_status)
+        : Number.NaN;
+
+  return {
+    id: safeText(record.id),
+    created_at: safeText(record.created_at),
+    input_url: safeText(record.input_url),
+    normalized_domain: safeText(record.normalized_domain),
+    reason: normalizeAuditFailureReason(record.reason),
+    classification: normalizeAuditFailureClassification(record.classification),
+    http_status: Number.isFinite(httpStatus) ? httpStatus : null,
+    technical_message: safeText(record.technical_message),
+    user_agent: safeNullableText(record.user_agent),
+    ip_hash: safeNullableText(record.ip_hash),
+    referrer: safeNullableText(record.referrer),
+  };
+}
+
+export function normalizeRecentAuditFailureRecord(value: unknown): RecentAuditFailureListItem {
+  const failure = normalizeAuditFailureRecord(value);
+
+  return {
+    id: failure.id,
+    created_at: failure.created_at,
+    input_url: failure.input_url,
+    normalized_domain: failure.normalized_domain,
+    reason: failure.reason,
+    classification: failure.classification,
+    http_status: failure.http_status,
+    referrer: failure.referrer ?? "",
   };
 }
 
@@ -276,6 +342,35 @@ function mapAuditInsert(audit: SiteAudit, inputUrl: string, request: Request): A
   };
 }
 
+function mapAuditFailureInsert(
+  inputUrl: string,
+  request: Request,
+  failure: {
+    reason: AuditFailureInsert["reason"];
+    classification: AuditErrorType | null;
+    httpStatus?: number | null;
+    technicalMessage: string;
+  },
+): AuditFailureInsert | null {
+  const normalizedDomain = getNormalizedDomain(inputUrl);
+
+  if (!normalizedDomain) {
+    return null;
+  }
+
+  return {
+    inputUrl,
+    normalizedDomain,
+    reason: failure.reason,
+    classification: failure.classification,
+    httpStatus: failure.httpStatus ?? null,
+    technicalMessage: failure.technicalMessage,
+    userAgent: request.headers.get("user-agent"),
+    ipHash: hashLeadIdentifier(getClientIp(request)),
+    referrer: request.headers.get("referer") ?? request.headers.get("referrer"),
+  };
+}
+
 async function insertAudit(payload: AuditInsert) {
   const response = await supabaseRestFetch("site_audits", {
     method: "POST",
@@ -302,6 +397,29 @@ async function insertAudit(payload: AuditInsert) {
 
   const rows = safeArray(await response.json());
   return rows[0] ? normalizeAuditRecord(rows[0]) : null;
+}
+
+async function insertAuditFailure(payload: AuditFailureInsert) {
+  const response = await supabaseRestFetch("audit_failures", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      input_url: payload.inputUrl,
+      normalized_domain: payload.normalizedDomain,
+      reason: payload.reason,
+      classification: payload.classification,
+      http_status: payload.httpStatus,
+      technical_message: payload.technicalMessage,
+      user_agent: payload.userAgent,
+      ip_hash: payload.ipHash,
+      referrer: payload.referrer,
+    }),
+  });
+
+  const rows = safeArray(await response.json());
+  return rows[0] ? normalizeAuditFailureRecord(rows[0]) : null;
 }
 
 async function insertContactRequest(payload: ContactRequestInsert) {
@@ -395,6 +513,30 @@ export async function persistSuccessfulAudit(request: Request, inputUrl: string,
   return savedAudit;
 }
 
+export async function persistAuditFailure(
+  request: Request,
+  inputUrl: string,
+  failure: {
+    reason: AuditFailureInsert["reason"];
+    classification: AuditErrorType | null;
+    httpStatus?: number | null;
+    technicalMessage: string;
+  },
+) {
+  if (!isLeadStorageConfigured()) {
+    console.warn("Audit failure log preskoceny: chyba Supabase konfiguracia.");
+    return null;
+  }
+
+  const payload = mapAuditFailureInsert(inputUrl, request, failure);
+
+  if (!payload) {
+    return null;
+  }
+
+  return insertAuditFailure(payload);
+}
+
 export async function persistContactRequest(
   request: Request,
   payload: Omit<ContactRequestInsert, "userAgent" | "referrer">,
@@ -464,6 +606,36 @@ export async function getRecentAudits({ query, limit = 25 }: RecentAuditQuery = 
   });
 
   return safeArray(await response.json(), normalizeRecentAuditRecord);
+}
+
+export async function getRecentAuditFailures({ query, limit = 25 }: RecentAuditQuery = {}) {
+  if (!isLeadStorageConfigured()) {
+    return [];
+  }
+
+  const searchParams = new URLSearchParams({
+    select:
+      "id,created_at,input_url,normalized_domain,reason,classification,http_status,referrer",
+    order: "created_at.desc",
+    limit: String(limit),
+  });
+
+  const sanitizedQuery = query ? sanitizeSearchQuery(query) : "";
+
+  if (sanitizedQuery) {
+    searchParams.set("normalized_domain", `ilike.*${sanitizedQuery}*`);
+  }
+
+  try {
+    const response = await supabaseRestFetch("audit_failures", {
+      searchParams,
+    });
+
+    return safeArray(await response.json(), normalizeRecentAuditFailureRecord);
+  } catch (error) {
+    console.error("Audit failure list load failed:", error);
+    return [];
+  }
 }
 
 export async function getRecentContactRequests({ query, limit = 25 }: RecentAuditQuery = {}) {

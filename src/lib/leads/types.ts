@@ -1,4 +1,5 @@
 import type { SiteAudit } from "@/lib/site-audit/schema";
+import type { AuditErrorType } from "@/lib/site-audit/error";
 
 export type ExampleUserFlowRecord = SiteAudit["example_user_flows"][number];
 
@@ -33,6 +34,34 @@ export type AuditRecord = {
   upsell_opportunities: string[];
   phase_one_plan: string[];
   example_user_flows: ExampleUserFlowRecord[];
+  user_agent: string | null;
+  ip_hash: string | null;
+  referrer: string | null;
+};
+
+export type AuditFailureReason = "crawler_blocked" | "load_failed";
+
+export type AuditFailureInsert = {
+  inputUrl: string;
+  normalizedDomain: string;
+  reason: AuditFailureReason;
+  classification: AuditErrorType | null;
+  httpStatus: number | null;
+  technicalMessage: string;
+  userAgent: string | null;
+  ipHash: string | null;
+  referrer: string | null;
+};
+
+export type AuditFailureRecord = {
+  id: string;
+  created_at: string;
+  input_url: string;
+  normalized_domain: string;
+  reason: AuditFailureReason;
+  classification: AuditErrorType | null;
+  http_status: number | null;
+  technical_message: string;
   user_agent: string | null;
   ip_hash: string | null;
   referrer: string | null;

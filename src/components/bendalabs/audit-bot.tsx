@@ -5,7 +5,9 @@ import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
 import { getAuditBotCopy, type SiteLocale } from "@/lib/bendalabs/site-content";
 import { getNormalizedDomainFromUrl } from "@/lib/leads/domain-utils";
 import {
+  getCrawlerBlockedMessage,
   getGenericAuditErrorMessage,
+  type AuditErrorType,
   type AuditErrorSuggestion,
 } from "@/lib/site-audit/error";
 import { getFitLabelKeyFromScore } from "@/lib/site-audit/normalize";
@@ -40,8 +42,19 @@ type Status = "idle" | "loading" | "success" | "error";
 type AuditApiResponse = {
   audit?: SiteAudit;
   error?: string;
+  message?: string;
+  error_type?: AuditErrorType | null;
+  classification?: AuditErrorType | null;
   suggestion?: AuditErrorSuggestion | null;
 };
+
+function getBlockedAuditErrorType(payload: AuditApiResponse | null) {
+  const value = payload?.classification ?? payload?.error_type ?? null;
+
+  return value === "crawler_blocked" || value === "fetch_blocked" || value === "protected_site"
+    ? value
+    : null;
+}
 
 function waitForDuration(durationMs: number) {
   return new Promise<void>((resolve) => {
@@ -370,10 +383,15 @@ export default function AuditBot({
       await minimumLoadingPromise;
 
       if (!response.ok || !payload?.audit) {
+        const blockedErrorType = getBlockedAuditErrorType(payload);
+        const errorMessage = blockedErrorType
+          ? getCrawlerBlockedMessage(locale)
+          : payload?.message ?? payload?.error ?? getGenericAuditErrorMessage(locale);
+
         setStatus("error");
         setAudit(null);
-        setError(payload?.error || getGenericAuditErrorMessage(locale));
-        setErrorSuggestion(payload?.suggestion ?? null);
+        setError(errorMessage);
+        setErrorSuggestion(blockedErrorType ? null : payload?.suggestion ?? null);
         return;
       }
 

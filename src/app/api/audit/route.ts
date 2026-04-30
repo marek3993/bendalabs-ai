@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
-import { persistSuccessfulAudit } from "@/lib/leads/repository";
+import { persistAuditFailure, persistSuccessfulAudit } from "@/lib/leads/repository";
 import { generateSiteAudit } from "@/lib/site-audit/analyze";
 import { crawlSite } from "@/lib/site-audit/crawl";
 import {
+  getAuditErrorType,
+  getAuditFailureReason,
   getBendaLabsSuggestion,
+  getCrawlerBlockedMessage,
   getGenericAuditErrorMessage,
   getInvalidUrlMessage,
   getUrlLoadFailedMessage,
   isAuditLoadFailure,
+  SiteAuditError,
 } from "@/lib/site-audit/error";
 import { getDomainAuditOverride } from "@/lib/site-audit/overrides";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
@@ -39,8 +43,14 @@ export async function POST(request: Request) {
     const normalizedUrl = normalizeWebsiteUrl(inputUrl);
 
     if (!normalizedUrl) {
+      const invalidUrlMessage = getInvalidUrlMessage(locale);
+
       return NextResponse.json(
-        { error: getInvalidUrlMessage(locale) },
+        {
+          error: invalidUrlMessage,
+          message: invalidUrlMessage,
+          classification: null,
+        },
         { status: 400 },
       );
     }
@@ -82,19 +92,57 @@ export async function POST(request: Request) {
     console.error("Audit request failed:", error);
 
     if (isAuditLoadFailure(error)) {
-      const suggestion = getBendaLabsSuggestion(inputUrl, locale);
+      const errorType = getAuditErrorType(error);
+      const failureReason = getAuditFailureReason(error);
+
+      if (errorType) {
+        const blockedMessage = getCrawlerBlockedMessage(locale);
+
+        try {
+          await persistAuditFailure(request, inputUrl, {
+            reason: "crawler_blocked",
+            classification: errorType,
+            httpStatus: error instanceof SiteAuditError ? error.statusCode : null,
+            technicalMessage: error instanceof Error ? error.message : String(error),
+          });
+        } catch (auditFailureLogError) {
+          console.error("Audit failure save failed:", auditFailureLogError);
+        }
+
+        return NextResponse.json(
+          {
+            error: blockedMessage,
+            message: blockedMessage,
+            error_type: errorType,
+            classification: errorType,
+          },
+          { status: 422 },
+        );
+      }
+
+      const suggestion =
+        failureReason === "load_failed" ? getBendaLabsSuggestion(inputUrl, locale) : null;
+      const loadFailedMessage = getUrlLoadFailedMessage(locale);
 
       return NextResponse.json(
         {
-          error: getUrlLoadFailedMessage(locale),
+          error: loadFailedMessage,
+          message: loadFailedMessage,
+          classification: null,
           suggestion,
         },
         { status: 422 },
       );
     }
 
+    const genericErrorMessage = getGenericAuditErrorMessage(locale);
+
     return NextResponse.json(
-      { error: getGenericAuditErrorMessage(locale) },
+      {
+        error: genericErrorMessage,
+        message: genericErrorMessage,
+        classification: null,
+      },
       { status: 500 },
     );
   }
