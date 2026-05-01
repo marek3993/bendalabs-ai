@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import appleTouchIcon from "./apple-touch-icon.png";
+import appIcon from "./icon.png";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,8 +9,11 @@ export const metadata: Metadata = {
   description:
     "BendaLabs prináša AI vrstvu, ktorá návštevníka dovedie k správnemu výsledku rýchlejšie a mení spôsob, akým ľudia používajú váš web.",
   icons: {
-    icon: [{ url: "/bendalabs-logo.png", type: "image/png" }],
-    apple: [{ url: "/bendalabs-logo.png", type: "image/png" }],
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: appIcon.src, type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: appleTouchIcon.src, type: "image/png", sizes: "180x180" }],
   },
 };
 
