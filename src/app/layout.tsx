@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: "BendaLabs | AI vrstva, ktorá mení spôsob používania webu",
   description:
     "BendaLabs prináša AI vrstvu, ktorá návštevníka dovedie k správnemu výsledku rýchlejšie a mení spôsob, akým ľudia používajú váš web.",
+  icons: {
+    icon: [{ url: "/bendalabs-logo.png", type: "image/png" }],
+    apple: [{ url: "/bendalabs-logo.png", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({

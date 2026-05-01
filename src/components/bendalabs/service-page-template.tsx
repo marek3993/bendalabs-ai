@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import SiteBrand from "@/components/bendalabs/site-brand";
 import {
   getSiteChrome,
   getSitePaths,
@@ -102,12 +103,7 @@ export default function ServicePageTemplate({
     <div className="site-shell min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-black/8 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
-          <div>
-            <Link href={sitePaths.home} className="text-lg font-semibold tracking-[-0.04em] text-neutral-950">
-              BendaLabs
-            </Link>
-            <div className="text-xs text-neutral-500">{chrome.brandTagline}</div>
-          </div>
+          <SiteBrand href={sitePaths.home} tagline={chrome.brandTagline} />
 
           <nav className="hidden items-center gap-6 text-sm text-neutral-500 xl:flex">
             {pageLinks.map((link) => (

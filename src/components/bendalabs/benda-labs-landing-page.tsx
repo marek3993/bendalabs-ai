@@ -4,6 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import AuditBot from "@/components/bendalabs/audit-bot";
 import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
+import SiteBrand from "@/components/bendalabs/site-brand";
 import {
   getHomePageContent,
   type SiteCard,
@@ -39,6 +40,7 @@ type BendaLabsLandingPageProps = {
 export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPageProps) {
   const content = getHomePageContent(locale);
   const auditBlock = locale === "sk" ? content.auditBlock : undefined;
+  const homeHref = locale === "cs" ? "/cs" : "/";
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [activeStep, setActiveStep] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -174,10 +176,7 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
 
       <header className="sticky top-0 z-40 border-b border-black/8 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div>
-            <div className="text-lg font-semibold tracking-[-0.04em] text-neutral-950">BendaLabs</div>
-            <div className="text-xs text-neutral-500">{content.brandTagline}</div>
-          </div>
+          <SiteBrand href={homeHref} tagline={content.brandTagline} />
 
           <nav className="hidden items-center gap-6 text-sm text-neutral-500 lg:flex">
             {content.sections.slice(1).map((section) => (
