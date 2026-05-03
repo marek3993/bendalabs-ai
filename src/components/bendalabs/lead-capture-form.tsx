@@ -1,17 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { trackGoogleAdsConversion } from "@/lib/analytics/google-ads";
 import { getLeadFormCopy } from "@/lib/bendalabs/lead-form-content";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import type { ContactRequestSource } from "@/lib/leads/types";
 
+const CALL_REQUEST_FALLBACK_EMAIL = "no-email-call@bendalabs.invalid";
+
 type LeadCaptureFormProps = {
   locale: SiteLocale;
   source: ContactRequestSource;
   linkedAuditDomain?: string | null;
   initialWebsite?: string;
-  variant: "audit" | "contact";
+  variant: "audit" | "contact" | "call";
 };
 
 function getSuccessPath(locale: SiteLocale) {
@@ -20,6 +23,34 @@ function getSuccessPath(locale: SiteLocale) {
 
 function getErrorPath(locale: SiteLocale) {
   return locale === "cs" ? "/cs/odeslani-selhalo" : "/odoslanie-zlyhalo";
+}
+
+function buildCallRequestMessage({
+  locale,
+  phone,
+  preferredTime,
+  email,
+  website,
+  note,
+}: {
+  locale: SiteLocale;
+  phone: string;
+  preferredTime: string;
+  email: string;
+  website: string;
+  note: string;
+}) {
+  const emptyEmail = locale === "cs" ? "nezadany" : "nezadany";
+  const emptyNote = locale === "cs" ? "bez poznamky" : "bez poznamky";
+
+  return [
+    locale === "cs" ? "Typ pozadavku: kratky call" : "Typ poziadavky: kratky call",
+    `${locale === "cs" ? "Telefon" : "Telefon"}: ${phone.trim()}`,
+    `${locale === "cs" ? "Preferovany cas" : "Preferovany cas"}: ${preferredTime.trim()}`,
+    `${locale === "cs" ? "Email" : "Email"}: ${email.trim() || emptyEmail}`,
+    `${locale === "cs" ? "Web" : "Web"}: ${website.trim() || "-"}`,
+    `${locale === "cs" ? "Poznamka" : "Poznamka"}: ${note.trim() || emptyNote}`,
+  ].join("\n");
 }
 
 export default function LeadCaptureForm({
@@ -33,6 +64,12 @@ export default function LeadCaptureForm({
   const copy = getLeadFormCopy(locale);
   const variantCopy = copy[variant];
   const isContactVariant = variant === "contact";
+  const isCallVariant = variant === "call";
+  const isAuditProposalVariant = variant === "audit";
+  const [callEmail, setCallEmail] = useState("");
+  const [callPhone, setCallPhone] = useState("");
+  const [callPreferredTime, setCallPreferredTime] = useState("");
+  const [callNote, setCallNote] = useState("");
 
   function handleSubmit() {
     trackGoogleAdsConversion();
@@ -62,6 +99,13 @@ export default function LeadCaptureForm({
         {variantCopy.description}
       </p>
 
+      {isCallVariant && initialWebsite ? (
+        <div className="mt-4 rounded-[18px] border border-black/8 bg-black/[0.03] px-4 py-3 text-sm text-neutral-700">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">{copy.callFields.website}</div>
+          <div className="mt-1 font-medium text-neutral-950">{initialWebsite}</div>
+        </div>
+      ) : null}
+
       <form
         action="/api/contact-requests"
         method="post"
@@ -76,76 +120,188 @@ export default function LeadCaptureForm({
         <input type="hidden" name="linkedAuditDomain" value={linkedAuditDomain ?? ""} />
         <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-2 text-sm text-neutral-700">
-            <span>{copy.fields.name}</span>
+        {isCallVariant ? (
+          <>
+            <input type="hidden" name="requestType" value="call_request" />
+            <input type="hidden" name="website" value={initialWebsite} />
+            <input type="hidden" name="email" value={callEmail.trim() || CALL_REQUEST_FALLBACK_EMAIL} />
             <input
-              type="text"
-              name="name"
-              autoComplete="name"
-              required
-              maxLength={120}
-              className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
-                isContactVariant
-                  ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
-                  : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
-              }`}
-              placeholder={copy.placeholders.name}
+              type="hidden"
+              name="message"
+              value={buildCallRequestMessage({
+                locale,
+                phone: callPhone,
+                preferredTime: callPreferredTime,
+                email: callEmail,
+                website: initialWebsite,
+                note: callNote,
+              })}
             />
-          </label>
 
-          <label className="grid gap-2 text-sm text-neutral-700">
-            <span>{copy.fields.email}</span>
-            <input
-              type="email"
-              name="email"
-              autoComplete="email"
-              required
-              maxLength={180}
-              className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
-                isContactVariant
-                  ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
-                  : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
-              }`}
-              placeholder={copy.placeholders.email}
-            />
-          </label>
-        </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.fields.name}</span>
+                <input
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  maxLength={120}
+                  className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  placeholder={copy.placeholders.name}
+                />
+              </label>
 
-        <label className="grid gap-2 text-sm text-neutral-700">
-          <span>{copy.fields.website}</span>
-          <input
-            type="text"
-            name="website"
-            inputMode="url"
-            autoComplete="url"
-            required
-            defaultValue={initialWebsite}
-            className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
-              isContactVariant
-                ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
-                : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
-            }`}
-            placeholder={copy.placeholders.website}
-          />
-        </label>
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.callFields.phone}</span>
+                <input
+                  type="tel"
+                  name="callPhone"
+                  autoComplete="tel"
+                  required
+                  maxLength={80}
+                  value={callPhone}
+                  onChange={(event) => setCallPhone(event.target.value)}
+                  className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  placeholder={copy.placeholders.phone}
+                />
+              </label>
+            </div>
 
-        <label className="grid gap-2 text-sm text-neutral-700">
-          <span>{copy.fields.message}</span>
-          <textarea
-            name="message"
-            rows={4}
-            required
-            minLength={10}
-            maxLength={4000}
-            className={`rounded-[18px] bg-white px-4 py-3 text-neutral-950 outline-none ${
-              isContactVariant
-                ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
-                : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
-            }`}
-            placeholder={copy.placeholders.message}
-          />
-        </label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.callFields.preferredTime}</span>
+                <input
+                  type="text"
+                  name="callPreferredTime"
+                  required
+                  maxLength={160}
+                  value={callPreferredTime}
+                  onChange={(event) => setCallPreferredTime(event.target.value)}
+                  className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  placeholder={copy.placeholders.preferredTime}
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.callFields.emailOptional}</span>
+                <input
+                  type="email"
+                  name="callEmail"
+                  autoComplete="email"
+                  maxLength={180}
+                  value={callEmail}
+                  onChange={(event) => setCallEmail(event.target.value)}
+                  className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  placeholder={copy.placeholders.email}
+                />
+              </label>
+            </div>
+
+            {!initialWebsite ? (
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.callFields.websiteFallback}</span>
+                <input
+                  type="text"
+                  name="website"
+                  inputMode="url"
+                  autoComplete="url"
+                  required
+                  className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  placeholder={copy.placeholders.website}
+                />
+              </label>
+            ) : null}
+
+            <label className="grid gap-2 text-sm text-neutral-700">
+              <span>{copy.callFields.note}</span>
+              <textarea
+                name="callNote"
+                rows={4}
+                maxLength={1200}
+                value={callNote}
+                onChange={(event) => setCallNote(event.target.value)}
+                className="rounded-[18px] border border-black/10 bg-white px-4 py-3 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                placeholder={copy.placeholders.note}
+              />
+            </label>
+          </>
+        ) : (
+          <>
+            {isAuditProposalVariant ? <input type="hidden" name="requestType" value="proposal_request" /> : null}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.fields.name}</span>
+                <input
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  maxLength={120}
+                  className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
+                    isContactVariant
+                      ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                      : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  }`}
+                  placeholder={copy.placeholders.name}
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm text-neutral-700">
+                <span>{copy.fields.email}</span>
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                  maxLength={180}
+                  className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
+                    isContactVariant
+                      ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                      : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                  }`}
+                  placeholder={copy.placeholders.email}
+                />
+              </label>
+            </div>
+
+            <label className="grid gap-2 text-sm text-neutral-700">
+              <span>{copy.fields.website}</span>
+              <input
+                type="text"
+                name="website"
+                inputMode="url"
+                autoComplete="url"
+                required
+                defaultValue={initialWebsite}
+                className={`min-h-12 rounded-[18px] bg-white px-4 text-neutral-950 outline-none ${
+                  isContactVariant
+                    ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                    : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                }`}
+                placeholder={copy.placeholders.website}
+              />
+            </label>
+
+            <label className="grid gap-2 text-sm text-neutral-700">
+              <span>{copy.fields.message}</span>
+              <textarea
+                name="message"
+                rows={4}
+                required
+                minLength={10}
+                maxLength={4000}
+                className={`rounded-[18px] bg-white px-4 py-3 text-neutral-950 outline-none ${
+                  isContactVariant
+                    ? "border border-[#b7d2c5] shadow-[0_8px_24px_rgba(80,118,103,0.06)] focus:border-[#6c9a86] focus:shadow-[0_0_0_4px_rgba(143,182,168,0.16)]"
+                    : "border border-black/10 focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
+                }`}
+                placeholder={copy.placeholders.message}
+              />
+            </label>
+          </>
+        )}
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className={`text-xs uppercase tracking-[0.18em] ${isContactVariant ? "text-[#5d7c6f]" : "text-neutral-400"}`}>

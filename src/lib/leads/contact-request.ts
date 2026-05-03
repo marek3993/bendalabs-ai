@@ -24,6 +24,7 @@ export type ContactRequestFieldErrors = Partial<Record<ContactRequestField, Cont
 
 const contactRequestSourceValues = ["audit_result", "contact_section"] as const satisfies readonly ContactRequestSource[];
 const localeValues = ["sk", "cs"] as const satisfies readonly SiteLocale[];
+const requestTypeValues = ["call_request", "proposal_request"] as const;
 
 function normalizeLocale(input: unknown): SiteLocale {
   return localeValues.includes(input as SiteLocale) ? (input as SiteLocale) : "sk";
@@ -99,6 +100,7 @@ const contactRequestSchema = z
           contactRequestSourceValues.includes(value as ContactRequestSource),
         "invalid_source",
       ),
+    requestType: z.enum(requestTypeValues).optional(),
     linkedAuditDomain: z.unknown().optional(),
   })
   .transform((value): ContactRequestSubmission => {
@@ -113,7 +115,7 @@ const contactRequestSchema = z
       name: value.name,
       email: value.email,
       website: value.website,
-      message: value.message,
+      message: value.requestType ? `request_type: ${value.requestType}\n\n${value.message}` : value.message,
       source: value.source,
       normalizedDomain,
       linkedAuditDomain: normalizeAuditDomainValue(value.linkedAuditDomain),

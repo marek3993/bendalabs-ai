@@ -110,6 +110,10 @@ function getLeadSourceText(value: string | null | undefined) {
   return safeText(value, "-");
 }
 
+function isSyntheticCallEmail(value: string | null | undefined) {
+  return safeText(value).endsWith("@bendalabs.invalid");
+}
+
 function getAuditFailureReasonText(value: string | null | undefined) {
   if (value === "crawler_blocked") {
     return "crawler_blocked";
@@ -664,12 +668,16 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
                         <EmptyDash value={contactRequest.name} />
                       </td>
                       <td className="px-6 py-5 text-neutral-800">
-                        <a
-                          href={`mailto:${contactRequest.email}`}
-                          className="underline decoration-black/20 underline-offset-4"
-                        >
-                          <EmptyDash value={contactRequest.email} />
-                        </a>
+                        {isSyntheticCallEmail(contactRequest.email) ? (
+                          <span className="text-neutral-500">Nezadany email (call request)</span>
+                        ) : (
+                          <a
+                            href={`mailto:${contactRequest.email}`}
+                            className="underline decoration-black/20 underline-offset-4"
+                          >
+                            <EmptyDash value={contactRequest.email} />
+                          </a>
+                        )}
                       </td>
                       <td className="px-6 py-5">
                         {contactRequestHref ? (

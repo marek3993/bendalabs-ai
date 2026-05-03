@@ -19,11 +19,23 @@ type LeadFormSharedCopy = {
     email: string;
     website: string;
     message: string;
+    phone: string;
+    preferredTime: string;
+    note: string;
+  };
+  callFields: {
+    phone: string;
+    preferredTime: string;
+    emailOptional: string;
+    note: string;
+    website: string;
+    websiteFallback: string;
   };
   validation: Record<ContactRequestErrorCode, string>;
   genericErrorMessage: string;
   audit: LeadFormVariantCopy;
   contact: LeadFormVariantCopy;
+  call: LeadFormVariantCopy;
   sourceLabels: Record<ContactRequestSource, string>;
 };
 
@@ -41,6 +53,17 @@ const leadFormCopy = {
       email: "vas@email.sk",
       website: "https://vasweb.sk",
       message: "Strucne popiste, kde sa dnes lame konverzia alebo co ma byt jednoduchsie.",
+      phone: "+421 9xx xxx xxx",
+      preferredTime: "Napriklad utorok 10:00-12:00",
+      note: "Volitelne doplnte kratky kontext alebo otazku.",
+    },
+    callFields: {
+      phone: "Telefon",
+      preferredTime: "Preferovany cas",
+      emailOptional: "Email (volitelne)",
+      note: "Kratka poznamka (volitelne)",
+      website: "Auditovany web",
+      websiteFallback: "Web",
     },
     validation: {
       required_name: "Zadajte meno.",
@@ -56,9 +79,9 @@ const leadFormCopy = {
     genericErrorMessage: "Odoslanie sa nepodarilo. Skuste to este raz.",
     audit: {
       badge: "Konkretny navrh",
-      title: "Poziadat o konkretny navrh pre moj web",
+      title: "Poslat kontakt / ziskat navrh",
       description:
-        "Poslite kontakt a ciel zmeny. Vratim sa s konkretnym navrhom AI vrstvy pre vas web.",
+        "Poslite kontakt a zamer. Vratim sa s konkretnym navrhom, kde by AI vrstva na tomto webe davala najvacsi zmysel.",
       submitLabel: "Odoslat dopyt",
       submittingLabel: "Odosielam...",
       successTitle: "Dakujem, dopyt je odoslany.",
@@ -73,6 +96,16 @@ const leadFormCopy = {
       submittingLabel: "Odosielam...",
       successTitle: "Dakujem, dopyt je odoslany.",
       successMessage: "Ozvem sa s dalsim konkretnym krokom.",
+    },
+    call: {
+      badge: "Kratky call",
+      title: "Dohodnut kratky call",
+      description:
+        "Nechajte nam kontakt a preferovany cas. Ozveme sa vam s kratkym navrhom, kde by AI vrstva davala najvacsi zmysel.",
+      submitLabel: "Poziadat o call",
+      submittingLabel: "Odosielam...",
+      successTitle: "Dakujem, call poziadavka je odoslana.",
+      successMessage: "Ozveme sa s dalsim krokom.",
     },
     sourceLabels: {
       audit_result: "Po audite",
@@ -92,6 +125,17 @@ const leadFormCopy = {
       email: "vas@email.cz",
       website: "https://vasweb.cz",
       message: "Strucne popiste, kde se dnes lame konverze nebo co ma byt jednodussi.",
+      phone: "+420 7xx xxx xxx",
+      preferredTime: "Napriklad utery 10:00-12:00",
+      note: "Volitelne doplnte kratky kontext nebo otazku.",
+    },
+    callFields: {
+      phone: "Telefon",
+      preferredTime: "Preferovany cas",
+      emailOptional: "Email (volitelne)",
+      note: "Kratka poznamka (volitelne)",
+      website: "Auditovany web",
+      websiteFallback: "Web",
     },
     validation: {
       required_name: "Zadejte jmeno.",
@@ -107,9 +151,9 @@ const leadFormCopy = {
     genericErrorMessage: "Odeslani se nepodarilo. Zkuste to znovu.",
     audit: {
       badge: "Konkretni navrh",
-      title: "Pozadat o konkretni navrh pro muj web",
+      title: "Poslat kontakt / ziskat navrh",
       description:
-        "Poslete kontakt a cil zmeny. Vratim se s konkretnim navrhem AI vrstvy pro vas web.",
+        "Poslete kontakt a zamer. Vratim se s konkretnim navrhem, kde by AI vrstva na tomto webu davala nejvetsi smysl.",
       submitLabel: "Odeslat poptavku",
       submittingLabel: "Odesilam...",
       successTitle: "Dekuji, poptavka je odeslana.",
@@ -124,6 +168,16 @@ const leadFormCopy = {
       submittingLabel: "Odesilam...",
       successTitle: "Dekuji, poptavka je odeslana.",
       successMessage: "Ozvu se s dalsim konkretnim krokem.",
+    },
+    call: {
+      badge: "Kratky call",
+      title: "Domluvit kratky call",
+      description:
+        "Nechte nam kontakt a preferovany cas. Ozveme se vam s kratkym navrhem, kde by AI vrstva davala nejvetsi smysl.",
+      submitLabel: "Pozadat o call",
+      submittingLabel: "Odesilam...",
+      successTitle: "Dekuji, call pozadavek je odeslan.",
+      successMessage: "Ozveme se s dalsim krokem.",
     },
     sourceLabels: {
       audit_result: "Po auditu",
