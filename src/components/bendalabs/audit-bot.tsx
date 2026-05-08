@@ -2,7 +2,10 @@
 
 import { startTransition, useEffect, useMemo, useState } from "react";
 import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
-import { getDashboardPreviewCopy } from "@/lib/bendalabs/dashboard-preview";
+import {
+  getDashboardPreviewCopy,
+  isHealthcareDashboardPreviewSegment,
+} from "@/lib/bendalabs/dashboard-preview";
 import { getAuditBotCopy, type SiteLocale } from "@/lib/bendalabs/site-content";
 import { getNormalizedDomainFromUrl } from "@/lib/leads/domain-utils";
 import {
@@ -448,12 +451,30 @@ function getStructuredLeadMeta(audit: SiteAudit, locale: SiteLocale) {
   return ["čo človek rieši", "rozpočet / lokalita / typ služby", "kontakt pre obchod"];
 }
 
-function getResolvedLoadingSteps(locale: SiteLocale, steps: ReadonlyArray<string>) {
+function isHealthcareUrlCandidate(input: string) {
+  const normalized = input.toLowerCase();
+
+  return /(vitadent|dent|zub|stom|klinika|clinic|medical|medic|health|zdrav|derma|laser|ocn|eye|optic|oftal)/.test(
+    normalized,
+  );
+}
+
+function getResolvedLoadingSteps(locale: SiteLocale, steps: ReadonlyArray<string>, inputUrl: string) {
   if (steps.length === 0) {
     return [];
   }
 
   const resolved = [...steps];
+  if (resolved.length > 1) {
+    resolved[1] = isHealthcareUrlCandidate(inputUrl)
+      ? locale === "cs"
+        ? "Vyhodnocuji, jak by AI vrstva pomohla s vyberem sluzby a pripravu objednani..."
+        : "Vyhodnocujem, ako by AI vrstva pomohla s vyberom sluzby a pripravou objednania..."
+      : locale === "cs"
+        ? "Vyhodnocuji, kde by AI vrstva dokazala urychlit vyber sluzby..."
+        : "Vyhodnocujem, kde by AI vrstva vedela urychlit vyber sluzby...";
+  }
+
   resolved[resolved.length - 1] =
     locale === "cs"
       ? "Připravujeme ukázku AI vrstvy a dashboardu. Může to trvat přibližně 15 sekund."
@@ -1277,14 +1298,6 @@ export default function AuditBot({
   );
   const featuredBenefits = benefits ?? [];
   const featuredExplainer = explainerLine ?? "";
-  const resolvedLoadingSteps = useMemo(
-    () => getResolvedLoadingSteps(locale, copy.loadingSteps.length > 0 ? copy.loadingSteps : defaults.loadingSteps),
-    [copy.loadingSteps, defaults.loadingSteps, locale],
-  );
-  const previewSteps = resolvedLoadingSteps;
-  const previewIdleStepsResolved = previewIdleSteps ?? [];
-  const dashboardCopy = useMemo(() => getSalesDashboardCopy(locale), [locale]);
-
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -1293,8 +1306,29 @@ export default function AuditBot({
   const [loadingIndex, setLoadingIndex] = useState(0);
   const [auditedUrl, setAuditedUrl] = useState("");
   const [activeLeadForm, setActiveLeadForm] = useState<AuditLeadFormVariant | null>(null);
+  const resolvedLoadingSteps = useMemo(
+    () => getResolvedLoadingSteps(locale, copy.loadingSteps.length > 0 ? copy.loadingSteps : defaults.loadingSteps, url),
+    [copy.loadingSteps, defaults.loadingSteps, locale, url],
+  );
+  const previewSteps = resolvedLoadingSteps;
+  const previewIdleStepsResolved = previewIdleSteps ?? [];
+  const dashboardCopy = useMemo(() => getSalesDashboardCopy(locale), [locale]);
   const fitLabel = audit ? copy.fitLabels[getFitLabelKeyFromScore(audit.score)] : null;
   const linkedAuditDomain = auditedUrl ? getNormalizedDomainFromUrl(auditedUrl) : null;
+  const dashboardPreview = useMemo(
+    () => (audit && auditedUrl ? getDashboardPreviewCopy(audit, auditedUrl, locale) : null),
+    [audit, auditedUrl, locale],
+  );
+  const healthcareAuditCopyActive = dashboardPreview
+    ? isHealthcareDashboardPreviewSegment(dashboardPreview.segment)
+    : false;
+  const resolvedFrictionTitle = healthcareAuditCopyActive
+    ? locale === "cs"
+      ? "Kde by AI vrstva pomohla pred objednanim"
+      : "Kde by AI vrstva pomohla pred objednanim"
+    : copy.frictionTitle;
+  const resolvedFrictionItems =
+    healthcareAuditCopyActive && dashboardPreview ? dashboardPreview.reasons : audit?.friction_points ?? [];
   const previewActiveIndex =
     previewSteps.length > 1
       ? status === "loading"
@@ -1705,8 +1739,8 @@ export default function AuditBot({
               <ResultCard title={copy.whyFitTitle}>
                 <ResultList items={audit.why_fit} />
               </ResultCard>
-              <ResultCard title={copy.frictionTitle}>
-                <ResultList items={audit.friction_points} />
+              <ResultCard title={resolvedFrictionTitle}>
+                <ResultList items={resolvedFrictionItems} />
               </ResultCard>
               <ResultCard title={copy.upsellTitle} className="lg:col-span-2">
                 <ResultList items={audit.upsell_opportunities} />

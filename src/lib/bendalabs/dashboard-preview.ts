@@ -7,6 +7,10 @@ export type DashboardPreviewSegment =
   | "finance_insurance"
   | "ecommerce"
   | "marketplace_services"
+  | "healthcare_clinic"
+  | "dental_clinic"
+  | "aesthetic_dermatology_clinic"
+  | "eye_clinic"
   | "rental"
   | "b2b_industrial"
   | "generic_business";
@@ -144,6 +148,53 @@ const SEGMENT_KEYWORDS: Record<DashboardPreviewSegment, string[]> = {
     "porovnav",
     "porovn",
     "quote",
+  ],
+  healthcare_clinic: [
+    "clinic",
+    "klin",
+    "ambul",
+    "zdrav",
+    "medical",
+    "medic",
+    "pacient",
+    "vysetren",
+    "objedn",
+    "recep",
+    "konzult",
+  ],
+  dental_clinic: [
+    "dent",
+    "zub",
+    "stomat",
+    "implant",
+    "hygien",
+    "ortodon",
+    "preventiv",
+    "bolest",
+    "kazen",
+    "korunka",
+  ],
+  aesthetic_dermatology_clinic: [
+    "dermat",
+    "plet",
+    "koza",
+    "laser",
+    "estet",
+    "zakrok",
+    "pigment",
+    "akne",
+    "vrask",
+  ],
+  eye_clinic: [
+    "ocn",
+    "oko",
+    "zrak",
+    "dioptri",
+    "oftal",
+    "laserov",
+    "operacia",
+    "sietnic",
+    "vysetrenie zraku",
   ],
   rental: [
     "rental",
@@ -635,6 +686,478 @@ const SEGMENT_TEMPLATES: Record<DashboardPreviewSegment, SegmentTemplate> = {
       ],
     },
   },
+  healthcare_clinic: {
+    label: {
+      sk: "zdravotnicka klinika",
+      cs: "zdravotnicka klinika",
+    },
+    topTheme: {
+      sk: "Vyber sluzby",
+      cs: "Vyber sluzby",
+    },
+    questions: {
+      sk: [
+        "Ktora sluzba alebo vysetrenie je pre moj problem vhodne?",
+        "Da sa objednat termin bez dlheho telefonatu?",
+        "Co ma recepcia vediet este pred objednanim?",
+      ],
+      cs: [
+        "Ktera sluzba nebo vysetreni je pro muj problem vhodne?",
+        "Da se objednat termin bez dlouheho telefonatu?",
+        "Co ma recepce vedet jeste pred objednanim?",
+      ],
+    },
+    leads: {
+      sk: [
+        {
+          intent: "Vyber sluzby",
+          detail: "Potrebuje rozlisit vhodne vysetrenie, konzultaciu alebo kontrolu",
+          quality: "high",
+          nextStep: "Odporucit spravnu sluzbu",
+        },
+        {
+          intent: "Objednanie terminu",
+          detail: "Pyta sa na termin a dalsi postup",
+          quality: "high",
+          nextStep: "Navrhnut objednanie",
+        },
+        {
+          intent: "Konzultacia",
+          detail: "Chce vediet, co je vhodne pred zakrokom alebo kontrolou",
+          quality: "medium",
+          nextStep: "Pripravit konzultaciu",
+        },
+        {
+          intent: "Otazka pre recepciu",
+          detail: "Este si overuje, ake udaje treba doplnit",
+          quality: "medium",
+          nextStep: "Predtriedit dopyt",
+        },
+      ],
+      cs: [
+        {
+          intent: "Vyber sluzby",
+          detail: "Potrebuje rozlisit vhodne vysetreni, konzultaci nebo kontrolu",
+          quality: "high",
+          nextStep: "Doporucit spravnou sluzbu",
+        },
+        {
+          intent: "Objednani terminu",
+          detail: "Pta se na termin a dalsi postup",
+          quality: "high",
+          nextStep: "Navrhnout objednani",
+        },
+        {
+          intent: "Konzultace",
+          detail: "Chce vedet, co je vhodne pred zakrokem nebo kontrolou",
+          quality: "medium",
+          nextStep: "Pripravit konzultaci",
+        },
+        {
+          intent: "Otazka pro recepci",
+          detail: "Jeste si overuje, jake udaje je treba doplnit",
+          quality: "medium",
+          nextStep: "Predtridit poptavku",
+        },
+      ],
+    },
+    reasons: {
+      sk: [
+        "Nevedeli, aku sluzbu maju zvolit pred objednanim.",
+        "Chybal im jasny dalsi krok k terminu.",
+        "Najprv si chceli overit vhodne vysetrenie alebo konzultaciu.",
+        "Recepcia by bez doplnenia dostala neuplny dopyt.",
+      ],
+      cs: [
+        "Nevedeli, jakou sluzbu maji zvolit pred objednanim.",
+        "Chybel jim jasny dalsi krok k terminu.",
+        "Nejdriv si chteli overit vhodne vysetreni nebo konzultaci.",
+        "Recepce by bez doplneni dostala neuplnou poptavku.",
+      ],
+    },
+    nextSteps: {
+      sk: [
+        "Pridat AI vyber sluzby pred formular.",
+        "Zbierat preferovany termin a typ problemu.",
+        "Rozlisit urgentne a neurgentne pripady.",
+        "Pripravit recepcii lepsie predtriedeny dopyt.",
+      ],
+      cs: [
+        "Pridat AI vyber sluzby pred formular.",
+        "Sbírat preferovany termin a typ problemu.",
+        "Rozlisit urgentni a neurgentni pripady.",
+        "Pripravit recepci lepe predtridenou poptavku.",
+      ],
+    },
+    insights: {
+      sk: [
+        "S akymi problemami pacienti prichadzaju este pred telefonatom.",
+        "Ktore sluzby si pacienti najcastejsie mylia alebo spajaju.",
+        "Kedy pacient potrebuje rychly termin a kedy staci konzultacia.",
+        "Ake otazky sa opakuju pred objednanim.",
+      ],
+      cs: [
+        "S jakymi problemy pacienti prichazeji jeste pred telefonatem.",
+        "Ktere sluzby si pacienti nejcasteji pletou nebo spojuji.",
+        "Kdy pacient potrebuje rychly termin a kdy staci konzultace.",
+        "Jake otazky se opakuji pred objednanim.",
+      ],
+    },
+  },
+  dental_clinic: {
+    label: {
+      sk: "zubna klinika",
+      cs: "zubni klinika",
+    },
+    topTheme: {
+      sk: "Vyber sluzby",
+      cs: "Vyber sluzby",
+    },
+    questions: {
+      sk: [
+        "Je vhodnejsia preventivka, hygiena alebo vysetrenie?",
+        "Da sa objednat co najskor pri bolesti?",
+        "Kedy ma zmysel konzultacia k implantatu alebo strojceku?",
+      ],
+      cs: [
+        "Je vhodnejsi preventivni zakrok, hygiena nebo vysetreni?",
+        "Da se objednat co nejdrive pri bolesti?",
+        "Kdy dava smysl konzultace k implantatu nebo rovnatkum?",
+      ],
+    },
+    leads: {
+      sk: [
+        {
+          intent: "Bolest zuba",
+          detail: "Potrebuje rychly termin alebo odporucanie sluzby",
+          quality: "high",
+          nextStep: "Prioritny kontakt recepcie",
+        },
+        {
+          intent: "Dentalna hygiena",
+          detail: "Chce vediet termin, cenu alebo vhodnost",
+          quality: "medium",
+          nextStep: "Navrhnut objednanie",
+        },
+        {
+          intent: "Implantat / konzultacia",
+          detail: "Riesi moznosti a dalsi postup",
+          quality: "high",
+          nextStep: "Konzultacia",
+        },
+        {
+          intent: "Ortodoncia",
+          detail: "Pyta sa na strojcek alebo vysetrenie",
+          quality: "medium",
+          nextStep: "Vstupne vysetrenie",
+        },
+      ],
+      cs: [
+        {
+          intent: "Bolest zubu",
+          detail: "Potrebuje rychly termin nebo doporuceni sluzby",
+          quality: "high",
+          nextStep: "Prioritni kontakt recepce",
+        },
+        {
+          intent: "Dentalni hygiena",
+          detail: "Chce vedet termin, cenu nebo vhodnost",
+          quality: "medium",
+          nextStep: "Navrhnout objednani",
+        },
+        {
+          intent: "Implantat / konzultace",
+          detail: "Resi moznosti a dalsi postup",
+          quality: "high",
+          nextStep: "Konzultace",
+        },
+        {
+          intent: "Ortodoncie",
+          detail: "Pta se na rovnatka nebo vysetreni",
+          quality: "medium",
+          nextStep: "Vstupni vysetreni",
+        },
+      ],
+    },
+    reasons: {
+      sk: [
+        "Nevedeli, ci potrebuju vysetrenie, hygienu alebo konzultaciu.",
+        "Chybal im jasny dalsi krok pred objednanim.",
+        "Chceli si najprv overit vhodnu sluzbu.",
+        "Nevedeli, ake udaje ma recepcia dostat.",
+      ],
+      cs: [
+        "Nevedeli, zda potrebuji vysetreni, hygienu nebo konzultaci.",
+        "Chybel jim jasny dalsi krok pred objednanim.",
+        "Chteli si nejdriv overit vhodnou sluzbu.",
+        "Nevedeli, jake udaje ma recepce dostat.",
+      ],
+    },
+    nextSteps: {
+      sk: [
+        "Pridat AI vyber sluzby pred formular.",
+        "Zbierat preferovany termin a typ problemu.",
+        "Rozlisit urgentne a neurgentne pripady.",
+        "Pripravit recepcii lepsie predtriedeny dopyt.",
+      ],
+      cs: [
+        "Pridat AI vyber sluzby pred formular.",
+        "Sbírat preferovany termin a typ problemu.",
+        "Rozlisit urgentni a neurgentni pripady.",
+        "Pripravit recepci lepe predtridenou poptavku.",
+      ],
+    },
+    insights: {
+      sk: [
+        "S ktorymi problemami pacienti prichadzaju este pred telefonatom.",
+        "Ktore sluzby si pacienti najcastejsie mylia alebo spajaju.",
+        "Kedy pacient potrebuje rychly termin a kedy staci konzultacia.",
+        "Ake otazky sa opakuju pred objednanim.",
+      ],
+      cs: [
+        "S jakymi problemy pacienti prichazeji jeste pred telefonatem.",
+        "Ktere sluzby si pacienti nejcasteji pletou nebo spojuji.",
+        "Kdy pacient potrebuje rychly termin a kdy staci konzultace.",
+        "Jake otazky se opakuji pred objednanim.",
+      ],
+    },
+  },
+  aesthetic_dermatology_clinic: {
+    label: {
+      sk: "klinika estetickej dermatologie",
+      cs: "klinika esteticke dermatologie",
+    },
+    topTheme: {
+      sk: "Vhodna sluzba",
+      cs: "Vhodna sluzba",
+    },
+    questions: {
+      sk: [
+        "Je pre moj problem alebo ciel vhodnejsia konzultacia, pletove osetrenie alebo laser?",
+        "Da sa objednat termin na esteticku dermatologiu bez dlhej komunikacie?",
+        "Kedy ma zmysel ist rovno na zakrok a kedy najprv na konzultaciu?",
+      ],
+      cs: [
+        "Je pro muj problem nebo cil vhodnejsi konzultace, pletove osetreni nebo laser?",
+        "Da se objednat termin na estetickou dermatologii bez dlouhe komunikace?",
+        "Kdy dava smysl jit rovnou na zakrok a kdy nejdriv na konzultaci?",
+      ],
+    },
+    leads: {
+      sk: [
+        {
+          intent: "Problem / ciel",
+          detail: "Popisuje problem pleti alebo esteticky ciel",
+          quality: "high",
+          nextStep: "Odporucit vhodnu sluzbu",
+        },
+        {
+          intent: "Laser",
+          detail: "Pyta sa na vhodnost laseroveho zakroku",
+          quality: "medium",
+          nextStep: "Konzultacia",
+        },
+        {
+          intent: "Esteticka dermatologia",
+          detail: "Chce vediet rozdiel medzi osetreniami",
+          quality: "high",
+          nextStep: "Vyber sluzby",
+        },
+        {
+          intent: "Objednanie",
+          detail: "Chce termin a vie, co priblizne riesi",
+          quality: "medium",
+          nextStep: "Navrhnut objednanie",
+        },
+      ],
+      cs: [
+        {
+          intent: "Problem / cil",
+          detail: "Popisuje problem pleti nebo esteticky cil",
+          quality: "high",
+          nextStep: "Doporucit vhodnou sluzbu",
+        },
+        {
+          intent: "Laser",
+          detail: "Pta se na vhodnost laseroveho zakroku",
+          quality: "medium",
+          nextStep: "Konzultace",
+        },
+        {
+          intent: "Esteticka dermatologie",
+          detail: "Chce vedet rozdil mezi osetrenimi",
+          quality: "high",
+          nextStep: "Vyber sluzby",
+        },
+        {
+          intent: "Objednani",
+          detail: "Chce termin a vi, co priblizne resi",
+          quality: "medium",
+          nextStep: "Navrhnout objednani",
+        },
+      ],
+    },
+    reasons: {
+      sk: [
+        "Nevedeli, ktora sluzba je vhodna pre ich problem alebo ciel.",
+        "Chybal im jasny dalsi krok medzi konzultaciou a zakrokom.",
+        "Najprv si chceli overit vhodnost laseru alebo osetrenia.",
+        "Pred objednanim si potrebovali ujasnit ocakavany vysledok.",
+      ],
+      cs: [
+        "Nevedeli, ktera sluzba je vhodna pro jejich problem nebo cil.",
+        "Chybel jim jasny dalsi krok mezi konzultaci a zakrokem.",
+        "Nejdriv si chteli overit vhodnost laseru nebo osetreni.",
+        "Pred objednanim si potrebovali ujasnit ocekavany vysledek.",
+      ],
+    },
+    nextSteps: {
+      sk: [
+        "Pridat AI vyber vhodnej sluzby podla problemu alebo ciela.",
+        "Zbierat preferovany termin a typ osetrenia.",
+        "Oddelit konzultaciu od priameho objednania zakroku.",
+        "Pripravit timu jasnejsie predtriedeny dopyt.",
+      ],
+      cs: [
+        "Pridat AI vyber vhodne sluzby podle problemu nebo cile.",
+        "Sbírat preferovany termin a typ osetreni.",
+        "Oddelit konzultaci od primeho objednani zakroku.",
+        "Pripravit tymu jasneji predtridenou poptavku.",
+      ],
+    },
+    insights: {
+      sk: [
+        "Ktore problemy pleti sa opakuju este pred objednanim.",
+        "Kedy ludia riesia laser, konzultaciu alebo konkretny zakrok.",
+        "Ktore sluzby si klienti najcastejsie mylia.",
+        "Ake otazky sa vracaju pred potvrdenim terminu.",
+      ],
+      cs: [
+        "Ktere problemy pleti se opakuji jeste pred objednanim.",
+        "Kdy lide resi laser, konzultaci nebo konkretni zakrok.",
+        "Ktere sluzby si klienti nejcasteji pletou.",
+        "Jake otazky se vraceji pred potvrzenim terminu.",
+      ],
+    },
+  },
+  eye_clinic: {
+    label: {
+      sk: "ocna klinika",
+      cs: "ocni klinika",
+    },
+    topTheme: {
+      sk: "Vysetrenie alebo konzultacia",
+      cs: "Vysetreni nebo konzultace",
+    },
+    questions: {
+      sk: [
+        "Potrebujem vysetrenie, konzultaciu alebo termin k ocnemu problemu?",
+        "Riesim dioptrie, kontrolu alebo laserovu operaciu?",
+        "Da sa objednat termin bez zbytocneho telefonatu?",
+      ],
+      cs: [
+        "Potrebuji vysetreni, konzultaci nebo termin k ocnimu problemu?",
+        "Resim dioptrie, kontrolu nebo laserovou operaci?",
+        "Da se objednat termin bez zbytecneho telefonatu?",
+      ],
+    },
+    leads: {
+      sk: [
+        {
+          intent: "Vysetrenie",
+          detail: "Potrebuje posudit ocny problem alebo kontrolu",
+          quality: "high",
+          nextStep: "Navrhnut termin",
+        },
+        {
+          intent: "Dioptrie",
+          detail: "Pyta sa na meranie, okuliare alebo dalsi postup",
+          quality: "medium",
+          nextStep: "Vstupne vysetrenie",
+        },
+        {
+          intent: "Laserova operacia",
+          detail: "Zistuje vhodnost zakroku a konzultacie",
+          quality: "high",
+          nextStep: "Konzultacia",
+        },
+        {
+          intent: "Ocny problem",
+          detail: "Chce vediet, ci potrebuje rychly termin",
+          quality: "medium",
+          nextStep: "Priorita recepcie",
+        },
+      ],
+      cs: [
+        {
+          intent: "Vysetreni",
+          detail: "Potrebuje posoudit ocni problem nebo kontrolu",
+          quality: "high",
+          nextStep: "Navrhnout termin",
+        },
+        {
+          intent: "Dioptrie",
+          detail: "Pta se na mereni, bryle nebo dalsi postup",
+          quality: "medium",
+          nextStep: "Vstupni vysetreni",
+        },
+        {
+          intent: "Laserova operace",
+          detail: "Zjistuje vhodnost zakroku a konzultace",
+          quality: "high",
+          nextStep: "Konzultace",
+        },
+        {
+          intent: "Ocni problem",
+          detail: "Chce vedet, zda potrebuje rychly termin",
+          quality: "medium",
+          nextStep: "Priorita recepce",
+        },
+      ],
+    },
+    reasons: {
+      sk: [
+        "Nevedeli, ci maju ist na vysetrenie, kontrolu alebo konzultaciu.",
+        "Chybal im jasny dalsi krok k terminu.",
+        "Najprv si chceli overit dioptrie alebo vhodnost zakroku.",
+        "Pred objednanim si potrebovali ujasnit ocny problem.",
+      ],
+      cs: [
+        "Nevedeli, zda maji jit na vysetreni, kontrolu nebo konzultaci.",
+        "Chybel jim jasny dalsi krok k terminu.",
+        "Nejdriv si chteli overit dioptrie nebo vhodnost zakroku.",
+        "Pred objednanim si potrebovali ujasnit ocni problem.",
+      ],
+    },
+    nextSteps: {
+      sk: [
+        "Pridat AI vyber medzi vysetrenim, konzultaciou a zakrokom.",
+        "Zbierat ocny problem a preferovany termin.",
+        "Oddelit bezne vysetrenie od laserovej operacie.",
+        "Pripravit recepcii presnejsie predtriedeny dopyt.",
+      ],
+      cs: [
+        "Pridat AI vyber mezi vysetrenim, konzultaci a zakrokem.",
+        "Sbírat ocni problem a preferovany termin.",
+        "Oddelit bezne vysetreni od laserove operace.",
+        "Pripravit recepci presneji predtridenou poptavku.",
+      ],
+    },
+    insights: {
+      sk: [
+        "Ktore ocne problemy sa opakuju este pred kontaktom.",
+        "Kedy ludia riesia dioptrie, termin alebo laserovu operaciu.",
+        "Ktore otazky sa vracaju pred vysetrenim.",
+        "Ako casto treba doplnat kontext pred objednanim.",
+      ],
+      cs: [
+        "Ktere ocni problemy se opakuji jeste pred kontaktem.",
+        "Kdy lide resi dioptrie, termin nebo laserovou operaci.",
+        "Ktere otazky se vraceji pred vysetrenim.",
+        "Jak casto je treba doplnovat kontext pred objednanim.",
+      ],
+    },
+  },
   rental: {
     label: {
       sk: "rental alebo rezervacny web",
@@ -1115,6 +1638,15 @@ function buildDerivedInsights(audit: DashboardPreviewAuditSource) {
   );
 }
 
+export function isHealthcareDashboardPreviewSegment(segment: DashboardPreviewSegment) {
+  return (
+    segment === "healthcare_clinic" ||
+    segment === "dental_clinic" ||
+    segment === "aesthetic_dermatology_clinic" ||
+    segment === "eye_clinic"
+  );
+}
+
 function buildLeadRows(
   audit: DashboardPreviewAuditSource,
   locale: DashboardPreviewLocale,
@@ -1142,8 +1674,13 @@ function buildLeadRows(
 function buildReasons(
   audit: DashboardPreviewAuditSource,
   locale: DashboardPreviewLocale,
+  segment: DashboardPreviewSegment,
   template: SegmentTemplate,
 ) {
+  if (isHealthcareDashboardPreviewSegment(segment)) {
+    return template.reasons[locale].slice(0, 4);
+  }
+
   const derived = audit.friction_points
     .slice(0, 2)
     .map((item) => shortenPreviewText(item, 72))
@@ -1155,8 +1692,13 @@ function buildReasons(
 function buildNextSteps(
   audit: DashboardPreviewAuditSource,
   locale: DashboardPreviewLocale,
+  segment: DashboardPreviewSegment,
   template: SegmentTemplate,
 ) {
+  if (isHealthcareDashboardPreviewSegment(segment)) {
+    return template.nextSteps[locale].slice(0, 4);
+  }
+
   const derived = audit.phase_one_plan
     .slice(0, 2)
     .map((item) => shortenPreviewText(item, 72))
@@ -1166,10 +1708,15 @@ function buildNextSteps(
 }
 
 function buildTopTheme(
+  segment: DashboardPreviewSegment,
   locale: DashboardPreviewLocale,
   template: SegmentTemplate,
   questions: string[],
 ) {
+  if (isHealthcareDashboardPreviewSegment(segment)) {
+    return template.topTheme[locale];
+  }
+
   if (!questions[0]) {
     return template.topTheme[locale];
   }
@@ -1182,15 +1729,40 @@ export function resolveDashboardPreviewSegment(
   auditedUrl: string,
 ): DashboardPreviewSegment {
   const haystack = normalizeText(getAuditTextPool(audit, auditedUrl).join(" "));
+  const domain = normalizeText(getDomainLabel(auditedUrl, audit));
   const scores = {
     real_estate: scoreSegment(haystack, SEGMENT_KEYWORDS.real_estate),
     finance_insurance: scoreSegment(haystack, SEGMENT_KEYWORDS.finance_insurance),
     ecommerce: scoreSegment(haystack, SEGMENT_KEYWORDS.ecommerce),
     marketplace_services: scoreSegment(haystack, SEGMENT_KEYWORDS.marketplace_services),
+    healthcare_clinic: scoreSegment(haystack, SEGMENT_KEYWORDS.healthcare_clinic),
+    dental_clinic: scoreSegment(haystack, SEGMENT_KEYWORDS.dental_clinic),
+    aesthetic_dermatology_clinic: scoreSegment(haystack, SEGMENT_KEYWORDS.aesthetic_dermatology_clinic),
+    eye_clinic: scoreSegment(haystack, SEGMENT_KEYWORDS.eye_clinic),
     rental: scoreSegment(haystack, SEGMENT_KEYWORDS.rental),
     b2b_industrial: scoreSegment(haystack, SEGMENT_KEYWORDS.b2b_industrial),
     generic_business: 0,
   } satisfies Record<DashboardPreviewSegment, number>;
+
+  if (domain.includes("vitadent")) {
+    return "dental_clinic";
+  }
+
+  if (/(dent|zub|stom)/.test(domain)) {
+    scores.dental_clinic += 3;
+  }
+
+  if (/(clinic|klinika|medical|medic|health|zdrav)/.test(domain)) {
+    scores.healthcare_clinic += 2;
+  }
+
+  if (/(derma|skin|laser|aesthetic|estet)/.test(domain)) {
+    scores.aesthetic_dermatology_clinic += 3;
+  }
+
+  if (/(eye|ocn|optic|oftal|zrak)/.test(domain)) {
+    scores.eye_clinic += 3;
+  }
 
   if (scores.real_estate > 0) {
     scores.rental = Math.max(0, scores.rental - 1);
@@ -1198,6 +1770,25 @@ export function resolveDashboardPreviewSegment(
 
   if (scores.marketplace_services > 0 && scores.ecommerce > 0) {
     scores.marketplace_services += 1;
+  }
+
+  if (scores.dental_clinic > 0) {
+    scores.dental_clinic += 3;
+    scores.marketplace_services = Math.max(0, scores.marketplace_services - 3);
+  }
+
+  if (scores.aesthetic_dermatology_clinic > 0) {
+    scores.aesthetic_dermatology_clinic += 2;
+    scores.marketplace_services = Math.max(0, scores.marketplace_services - 2);
+  }
+
+  if (scores.eye_clinic > 0) {
+    scores.eye_clinic += 2;
+    scores.marketplace_services = Math.max(0, scores.marketplace_services - 2);
+  }
+
+  if (scores.healthcare_clinic > 0) {
+    scores.marketplace_services = Math.max(0, scores.marketplace_services - 2);
   }
 
   const winner = Object.entries(scores)
@@ -1217,14 +1808,18 @@ export function getDashboardPreviewCopy(
   const domainLabel = getDomainLabel(auditedUrl, audit);
   const questionItems = template.questions[locale].slice(0, 4);
   const leadRows = buildLeadRows(audit, locale, segment, template);
-  const topTheme = buildTopTheme(locale, template, questionItems);
+  const topTheme = buildTopTheme(segment, locale, template, questionItems);
   const interactions = clamp(26 + audit.score * 2 + audit.example_user_flows.length * 4 + audit.upsell_opportunities.length * 2, 32, 58);
   const qualified = clamp(Math.round(interactions * 0.43), 12, 24);
   const highIntent = clamp(Math.round(qualified * 0.36 + audit.score / 5), 4, 9);
   const previewNote =
-    locale === "cs"
-      ? `Model pro ${domainLabel} sklada produktovy nahled leadu, otazek a obchodnich signalu podle typu webu: ${template.label[locale]}.`
-      : `Model pre ${domainLabel} sklada produktovy nahlad leadov, otazok a obchodnych signalov podla typu webu: ${template.label[locale]}.`;
+    isHealthcareDashboardPreviewSegment(segment)
+      ? locale === "cs"
+        ? `Model pro ${domainLabel} sklada nahled pacientskych otazek, objednani a signalu podle typu webu: ${template.label[locale]}.`
+        : `Model pre ${domainLabel} sklada nahlad pacientskych otazok, objednani a signalov podla typu webu: ${template.label[locale]}.`
+      : locale === "cs"
+        ? `Model pro ${domainLabel} sklada produktovy nahled leadu, otazek a obchodnich signalu podle typu webu: ${template.label[locale]}.`
+        : `Model pre ${domainLabel} sklada produktovy nahlad leadov, otazok a obchodnych signalov podla typu webu: ${template.label[locale]}.`;
 
   return {
     segment,
@@ -1233,34 +1828,103 @@ export function getDashboardPreviewCopy(
     previewBadge: "AI dashboard preview",
     simulatedBadge: locale === "cs" ? "Simulovana data" : "Simulovane data",
     previewNote,
-    metrics: [
-      {
-        label: locale === "cs" ? "Zachycene zamery" : "Zachytene zamery",
-        value: locale === "cs" ? `${interactions} modelovych interakci` : `${interactions} modelovych interakcii`,
-        hint: locale === "cs" ? "preview toho, co by AI zachytila na webu" : "preview toho, co by AI zachytila na webe",
-      },
-      {
-        label: locale === "cs" ? "Kvalifikovane poptavky" : "Kvalifikovane dopyty",
-        value: locale === "cs" ? `${qualified} kvalifikovanych leadu` : `${qualified} kvalifikovanych leadov`,
-        hint: locale === "cs" ? "pripraveno pro rychly follow-up" : "pripravene pre rychly follow-up",
-      },
-      {
-        label: locale === "cs" ? "Nejcastejsi tema" : "Najcastejsia tema",
-        value: topTheme,
-        hint: locale === "cs" ? "opakujici se motiv v simulaci" : "opakujuci sa motiv v simulacii",
-      },
-      {
-        label: locale === "cs" ? "Potencial na call / kontakt" : "Potencial na call / kontakt",
-        value: locale === "cs" ? `${highIntent} vysoky zajem` : `${highIntent} vysoky zaujem`,
-        hint: locale === "cs" ? "navstevnici nejbliz ke kontaktu" : "navstevnici najblizsie ku kontaktu",
-      },
-    ],
+    metrics:
+      segment === "dental_clinic"
+        ? [
+            {
+              label: locale === "cs" ? "Zachycene zamery" : "Zachytene zamery",
+              value: locale === "cs" ? "58 modelovych pacientskych otazek" : "58 modelovych pacientskych otazok",
+              hint: locale === "cs" ? "preview toho, co by AI zachytila pred objednanim" : "preview toho, co by AI zachytila pred objednanim",
+            },
+            {
+              label: locale === "cs" ? "Kvalifikovana objednani" : "Kvalifikovane objednania",
+              value: locale === "cs" ? "24 pripravenych poptavek" : "24 pripravenych dopytov",
+              hint: locale === "cs" ? "pripraveno pro recepci" : "pripravene pre recepciu",
+            },
+            {
+              label: locale === "cs" ? "Nejcastejsi tema" : "Najcastejsia tema",
+              value: locale === "cs" ? "Vyber sluzby" : "Vyber sluzby",
+              hint: locale === "cs" ? "nejcastejsi opakovany motiv" : "najcastejsi opakovany motiv",
+            },
+            {
+              label: locale === "cs" ? "Potencial na kontakt" : "Potencial na kontakt",
+              value: locale === "cs" ? "9 vysoky zajem" : "9 vysoky zaujem",
+              hint: locale === "cs" ? "pacienti nejbliz objednani" : "pacienti najblizsie k objednaniu",
+            },
+          ]
+        : isHealthcareDashboardPreviewSegment(segment)
+          ? [
+              {
+                label: locale === "cs" ? "Zachycene zamery" : "Zachytene zamery",
+                value:
+                  locale === "cs"
+                    ? `${interactions} modelovych pacientskych otazek`
+                    : `${interactions} modelovych pacientskych otazok`,
+                hint:
+                  locale === "cs"
+                    ? "preview toho, co by AI zachytila pred objednanim"
+                    : "preview toho, co by AI zachytila pred objednanim",
+              },
+              {
+                label: locale === "cs" ? "Kvalifikovana objednani" : "Kvalifikovane objednania",
+                value:
+                  locale === "cs"
+                    ? `${qualified} pripravenych poptavek`
+                    : `${qualified} pripravenych dopytov`,
+                hint: locale === "cs" ? "pripraveno pro recepci" : "pripravene pre recepciu",
+              },
+              {
+                label: locale === "cs" ? "Nejcastejsi tema" : "Najcastejsia tema",
+                value: topTheme,
+                hint: locale === "cs" ? "opakujici se motiv v simulaci" : "opakujuci sa motiv v simulacii",
+              },
+              {
+                label: locale === "cs" ? "Potencial na kontakt" : "Potencial na kontakt",
+                value: locale === "cs" ? `${highIntent} vysoky zajem` : `${highIntent} vysoky zaujem`,
+                hint:
+                  locale === "cs"
+                    ? "pacienti nejbliz objednani nebo konzultaci"
+                    : "pacienti najblizsie k objednaniu alebo konzultacii",
+              },
+            ]
+          : [
+              {
+                label: locale === "cs" ? "Zachycene zamery" : "Zachytene zamery",
+                value: locale === "cs" ? `${interactions} modelovych interakci` : `${interactions} modelovych interakcii`,
+                hint: locale === "cs" ? "preview toho, co by AI zachytila na webu" : "preview toho, co by AI zachytila na webe",
+              },
+              {
+                label: locale === "cs" ? "Kvalifikovane poptavky" : "Kvalifikovane dopyty",
+                value: locale === "cs" ? `${qualified} kvalifikovanych leadu` : `${qualified} kvalifikovanych leadov`,
+                hint: locale === "cs" ? "pripraveno pro rychly follow-up" : "pripravene pre rychly follow-up",
+              },
+              {
+                label: locale === "cs" ? "Nejcastejsi tema" : "Najcastejsia tema",
+                value: topTheme,
+                hint: locale === "cs" ? "opakujici se motiv v simulaci" : "opakujuci sa motiv v simulacii",
+              },
+              {
+                label: locale === "cs" ? "Potencial na call / kontakt" : "Potencial na call / kontakt",
+                value: locale === "cs" ? `${highIntent} vysoky zajem` : `${highIntent} vysoky zaujem`,
+                hint: locale === "cs" ? "navstevnici nejbliz ke kontaktu" : "navstevnici najblizsie ku kontaktu",
+              },
+            ],
     leadTableTitle:
-      locale === "cs" ? "Modelove leady a doporuceny dalsi krok" : "Modelove leady a odporucany dalsi krok",
+      isHealthcareDashboardPreviewSegment(segment)
+        ? locale === "cs"
+          ? "Modelove objednani a doporuceny dalsi krok"
+          : "Modelove objednania a odporucany dalsi krok"
+        : locale === "cs"
+          ? "Modelove leady a doporuceny dalsi krok"
+          : "Modelove leady a odporucany dalsi krok",
     leadTableCaption:
-      locale === "cs"
-        ? "Nejde o realna data. Je to simulace toho, co by obchod videl po nasazeni AI vrstvy."
-        : "Nejde o realne data. Je to simulacia toho, co by obchod videl po nasadeni AI vrstvy.",
+      isHealthcareDashboardPreviewSegment(segment)
+        ? locale === "cs"
+          ? "Nejde o realna data. Je to simulace toho, co by po nasazeni AI vrstvy videla recepce."
+          : "Nejde o realne data. Je to simulacia toho, co by po nasadeni AI vrstvy videla recepcia."
+        : locale === "cs"
+          ? "Nejde o realna data. Je to simulace toho, co by obchod videl po nasazeni AI vrstvy."
+          : "Nejde o realne data. Je to simulacia toho, co by obchod videl po nasadeni AI vrstvy.",
     leadColumnLabels: {
       intent: locale === "cs" ? "Zamer" : "Zamer",
       detail: locale === "cs" ? "Detail" : "Detail",
@@ -1282,13 +1946,21 @@ export function getDashboardPreviewCopy(
     insightsTitle: locale === "cs" ? "Co byste dnes bezne nevideli" : "Co by ste dnes bezne nevideli",
     insights: template.insights[locale].slice(0, 4),
     reasonsTitle: locale === "cs" ? "Proc neodeslali poptavku" : "Preco neodoslali dopyt",
-    reasons: buildReasons(audit, locale, template),
+    reasons: buildReasons(audit, locale, segment, template),
     nextStepsTitle: locale === "cs" ? "Co zlepsit jako dalsi krok" : "Co zlepsit ako dalsi krok",
-    nextSteps: buildNextSteps(audit, locale, template),
+    nextSteps: buildNextSteps(audit, locale, segment, template),
     highlightTitle: locale === "cs" ? "Co tim ziskate" : "Co tym ziskate",
     highlightText:
-      locale === "cs"
-        ? "Vice kvalifikovanych poptavek, mene ztracenych navstevniku a prehled o tom, co lide na vasem webu realne potrebuji - jeste predtim, nez vas kontaktuji."
-        : "Viac kvalifikovanych dopytov, menej stratenych navstevnikov a prehlad o tom, co ludia na vasom webe realne potrebuju - este predtym, nez vas kontaktuju.",
+      segment === "dental_clinic"
+        ? locale === "cs"
+          ? "Mene nejasnych otazek pro recepci, vice lepe pripravenych objednani a prehled o tom, jake problemy pacienti resi jeste pred kontaktem."
+          : "Menej nejasnych otazok pre recepciu, viac lepsie pripravenych objednani a prehlad o tom, ake problemy pacienti riesia este pred kontaktom."
+        : isHealthcareDashboardPreviewSegment(segment)
+          ? locale === "cs"
+            ? "Vice lepe pripravenych objednani, mene nejasnych otazek pro recepci a prehled o tom, co pacienti resi jeste pred kontaktem."
+            : "Viac lepsie pripravenych objednani, menej nejasnych otazok pre recepciu a prehlad o tom, co pacienti riesia este pred kontaktom."
+          : locale === "cs"
+            ? "Vice kvalifikovanych poptavek, mene ztracenych navstevniku a prehled o tom, co lide na vasem webu realne potrebuji - jeste predtim, nez vas kontaktuji."
+            : "Viac kvalifikovanych dopytov, menej stratenych navstevnikov a prehlad o tom, co ludia na vasom webe realne potrebuju - este predtym, nez vas kontaktuju.",
   };
 }
