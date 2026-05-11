@@ -8,8 +8,49 @@ import {
 import { persistContactRequest } from "@/lib/leads/repository";
 import { isLikelyContactRequestSpam } from "@/lib/leads/spam-detection";
 import { isLeadStorageConfigured } from "@/lib/leads/supabase";
+import type { ContactRequestSource } from "@/lib/leads/types";
 
 export const runtime = "nodejs";
+
+type SafeErrorCode = "validation_failed" | "missing_env" | "db_save_failed" | "constraint_failed";
+
+function canExposeErrorCode() {
+  return process.env.NODE_ENV !== "production";
+}
+
+function withSafeCode<T extends Record<string, unknown>>(payload: T, code: SafeErrorCode) {
+  return canExposeErrorCode() ? { ...payload, code } : payload;
+}
+
+function getErrorDetails(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    };
+  }
+
+  return {
+    message: String(error),
+  };
+}
+
+function classifySaveError(error: unknown): SafeErrorCode {
+  const details = getErrorDetails(error);
+  const message = details.message.toLowerCase();
+
+  if (
+    message.includes("contact_requests_source_check") ||
+    message.includes("check constraint") ||
+    message.includes("violates check constraint") ||
+    message.includes("23514")
+  ) {
+    return "constraint_failed";
+  }
+
+  return "db_save_failed";
+}
 
 function getValidationErrorMessage(issueMessage: string) {
   const map: Record<string, string> = {
@@ -36,8 +77,12 @@ export async function POST(request: Request) {
 
   try {
     payload = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Neplatny request." }, { status: 400 });
+  } catch (error) {
+    console.error("AI custom proposal request JSON parsing failed.", getErrorDetails(error));
+    return NextResponse.json(
+      withSafeCode({ error: "Neplatny request." }, "validation_failed"),
+      { status: 400 },
+    );
   }
 
   const submission = parseAiCustomProposalSubmission(payload);
@@ -48,57 +93,145 @@ export async function POST(request: Request) {
       : "Skontrolujte vyplnene udaje.";
 
     return NextResponse.json(
-      {
+      withSafeCode({
         error: message,
         issues: submission.error.issues.map((issue) => ({
           path: issue.path.join("."),
           message: issue.message,
         })),
-      },
+      }, "validation_failed"),
       { status: 400 },
     );
   }
 
+  const submissionData = submission.data;
+  const recommendation = generateAiCustomProposalRecommendation(submissionData);
+  const message = buildAiCustomProposalLeadMessage(submissionData, recommendation);
+
   if (!isLeadStorageConfigured()) {
+    console.error("AI custom proposal lead save skipped: missing Supabase environment variables.", {
+      normalizedDomain: submissionData.normalizedDomain,
+    });
+
     return NextResponse.json(
-      { error: "Ukladanie leadov este nie je nakonfigurovane." },
-      { status: 503 },
+      withSafeCode(
+        {
+          success: true,
+          leadSaved: false,
+          recommendation,
+          error: "Kontakt sa nepodarilo ulozit.",
+        },
+        "missing_env",
+      ),
     );
   }
 
-  const recommendation = generateAiCustomProposalRecommendation(submission.data);
-  const message = buildAiCustomProposalLeadMessage(submission.data, recommendation);
-
   if (
     isLikelyContactRequestSpam({
-      ...submission.data,
+      ...submissionData,
       locale: "sk",
       message,
       source: AI_CUSTOM_PROPOSAL_SOURCE,
       linkedAuditDomain: null,
     })
   ) {
-    return NextResponse.json({ success: true, recommendation });
+    return NextResponse.json({ success: true, leadSaved: false, recommendation });
+  }
+
+  if (canExposeErrorCode() && request.headers.get("x-bendalabs-simulate-save-fail") === "1") {
+    console.error("AI custom proposal lead save intentionally simulated as failed.", {
+      normalizedDomain: submissionData.normalizedDomain,
+    });
+
+    return NextResponse.json(
+      withSafeCode(
+        {
+          success: true,
+          leadSaved: false,
+          recommendation,
+          error: "Kontakt sa nepodarilo ulozit.",
+        },
+        "db_save_failed",
+      ),
+    );
+  }
+
+  async function saveContactRequest(source: ContactRequestSource) {
+    return persistContactRequest(request, {
+      name: submissionData.name,
+      email: submissionData.email,
+      website: submissionData.website,
+      message,
+      source,
+      normalizedDomain: submissionData.normalizedDomain,
+      linkedAuditDomain: null,
+    });
   }
 
   try {
-    const savedRequest = await persistContactRequest(request, {
-      name: submission.data.name,
-      email: submission.data.email,
-      website: submission.data.website,
-      message,
-      source: AI_CUSTOM_PROPOSAL_SOURCE,
-      normalizedDomain: submission.data.normalizedDomain,
-      linkedAuditDomain: null,
-    });
+    const savedRequest = await saveContactRequest(AI_CUSTOM_PROPOSAL_SOURCE);
 
     if (!savedRequest) {
-      return NextResponse.json({ error: "Lead sa nepodarilo ulozit." }, { status: 500 });
+      console.error("AI custom proposal lead save returned no row.", {
+        normalizedDomain: submissionData.normalizedDomain,
+        source: AI_CUSTOM_PROPOSAL_SOURCE,
+      });
+
+      return NextResponse.json(
+        withSafeCode(
+          {
+            success: true,
+            leadSaved: false,
+            recommendation,
+            error: "Kontakt sa nepodarilo ulozit.",
+          },
+          "db_save_failed",
+        ),
+      );
     }
 
-    return NextResponse.json({ success: true, recommendation });
+    return NextResponse.json({ success: true, leadSaved: true, recommendation });
   } catch (error) {
-    console.error("AI custom proposal save failed.", error);
-    return NextResponse.json({ error: "Lead sa nepodarilo ulozit." }, { status: 500 });
+    const errorCode = classifySaveError(error);
+
+    console.error("AI custom proposal lead save failed.", {
+      code: errorCode,
+      normalizedDomain: submissionData.normalizedDomain,
+      source: AI_CUSTOM_PROPOSAL_SOURCE,
+      error: getErrorDetails(error),
+    });
+
+    if (errorCode === "constraint_failed") {
+      try {
+        const fallbackSavedRequest = await saveContactRequest("contact_section");
+
+        if (fallbackSavedRequest) {
+          console.error("AI custom proposal lead saved with fallback source after constraint failure.", {
+            normalizedDomain: submissionData.normalizedDomain,
+            fallbackSource: "contact_section",
+          });
+
+          return NextResponse.json({ success: true, leadSaved: true, recommendation });
+        }
+      } catch (fallbackError) {
+        console.error("AI custom proposal fallback lead save failed.", {
+          normalizedDomain: submissionData.normalizedDomain,
+          fallbackSource: "contact_section",
+          error: getErrorDetails(fallbackError),
+        });
+      }
+    }
+
+    return NextResponse.json(
+      withSafeCode(
+        {
+          success: true,
+          leadSaved: false,
+          recommendation,
+          error: "Kontakt sa nepodarilo ulozit.",
+        },
+        errorCode,
+      ),
+    );
   }
 }

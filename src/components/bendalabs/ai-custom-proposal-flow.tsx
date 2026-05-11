@@ -10,7 +10,9 @@ import {
   type AiCustomProposalMainGoal,
   type AiCustomProposalRecommendation,
   type AiCustomProposalVisitorNextStep,
+  generateAiCustomProposalRecommendation,
   mainGoalOptions,
+  parseAiCustomProposalSubmission,
   visitorNextStepOptions,
 } from "@/lib/bendalabs/ai-custom-proposal";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
@@ -175,6 +177,7 @@ export default function AiCustomProposalFlow() {
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [stepError, setStepError] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [saveWarning, setSaveWarning] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recommendation, setRecommendation] = useState<AiCustomProposalRecommendation | null>(null);
   const [emailRequested, setEmailRequested] = useState(false);
@@ -185,6 +188,7 @@ export default function AiCustomProposalFlow() {
     setFormState((current) => ({ ...current, [field]: value }));
     setStepError("");
     setSubmitError("");
+    setSaveWarning("");
   }
 
   function handleNext() {
@@ -229,6 +233,22 @@ export default function AiCustomProposalFlow() {
     setIsSubmitting(true);
     setSubmitError("");
     setStepError("");
+    setSaveWarning("");
+
+    const submission = parseAiCustomProposalSubmission(formState);
+
+    if (!submission.success) {
+      setSubmitError("Navrh sa teraz nepodarilo pripravit. Skontrolujte vyplnene udaje.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const localRecommendation = generateAiCustomProposalRecommendation(submission.data);
+
+    setRecommendation(localRecommendation);
+    setEmailRequested(false);
+    setIsSubmitting(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     try {
       const response = await fetch("/api/ai-custom-proposal", {
@@ -241,21 +261,20 @@ export default function AiCustomProposalFlow() {
 
       const payload = (await response.json()) as {
         error?: string;
+        leadSaved?: boolean;
         recommendation?: AiCustomProposalRecommendation;
       };
 
-      if (!response.ok || !payload.recommendation) {
-        setSubmitError(payload.error ?? "Navrh sa teraz nepodarilo pripravit.");
+      if (!response.ok || payload.leadSaved === false) {
+        setSaveWarning(
+          "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Skúste nám napísať na info@bendalabs.sk.",
+        );
         return;
       }
-
-      setRecommendation(payload.recommendation);
-      setEmailRequested(false);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
-      setSubmitError("Navrh sa teraz nepodarilo pripravit.");
-    } finally {
-      setIsSubmitting(false);
+      setSaveWarning(
+        "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Skúste nám napísať na info@bendalabs.sk.",
+      );
     }
   }
 
@@ -302,6 +321,12 @@ export default function AiCustomProposalFlow() {
               {emailRequested ? (
                 <div className="mt-4 rounded-[18px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-900">
                   Navrh posleme aj na {formState.email.trim()} a nadviazeme s dalsim krokom.
+                </div>
+              ) : null}
+
+              {saveWarning ? (
+                <div className="mt-4 rounded-[18px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                  {saveWarning}
                 </div>
               ) : null}
             </div>
