@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { startTransition, useEffect, useMemo, useState } from "react";
 import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
+import { AI_CUSTOM_PROPOSAL_PATH } from "@/lib/bendalabs/ai-custom-proposal";
 import {
   getDashboardPreviewCopy,
   isHealthcareDashboardPreviewSegment,
@@ -1807,6 +1809,15 @@ export default function AuditBot({
                   {dashboardCopy.formButtonLabel ?? copy.proposalButtonLabel}
                 </button>
                 <div className="text-sm leading-6 text-white/60">{dashboardCopy.formHelper}</div>
+                <div className="rounded-[20px] border border-white/12 bg-white/6 px-4 py-4 text-sm leading-6 text-white/72">
+                  <div>Chcete presnejsi navrh podla vasich cielov?</div>
+                  <Link
+                    href={AI_CUSTOM_PROPOSAL_PATH}
+                    className="mt-3 inline-flex rounded-full border border-white bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-200"
+                  >
+                    Vyplnit AI navrh na mieru
+                  </Link>
+                </div>
               </div>
             </div>
 

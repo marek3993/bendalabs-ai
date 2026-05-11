@@ -90,7 +90,7 @@ export type DomainLeadSnapshot = {
   isReturningInterest: boolean;
 };
 
-export type ContactRequestSource = "audit_result" | "contact_section";
+export type ContactRequestSource = "audit_result" | "contact_section" | "ai_navrh_na_mieru";
 
 export type ContactRequestInsert = {
   name: string;

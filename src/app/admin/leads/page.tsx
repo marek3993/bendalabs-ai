@@ -107,6 +107,10 @@ function getLeadSourceText(value: string | null | undefined) {
     return "Kontakt sekcia";
   }
 
+  if (value === "ai_navrh_na_mieru") {
+    return "AI navrh na mieru";
+  }
+
   return safeText(value, "-");
 }
 

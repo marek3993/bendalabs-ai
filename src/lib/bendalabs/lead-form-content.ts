@@ -110,6 +110,7 @@ const leadFormCopy = {
     sourceLabels: {
       audit_result: "Po audite",
       contact_section: "Kontakt sekcia",
+      ai_navrh_na_mieru: "AI navrh na mieru",
     },
   },
   cs: {
@@ -182,6 +183,7 @@ const leadFormCopy = {
     sourceLabels: {
       audit_result: "Po auditu",
       contact_section: "Kontaktni sekce",
+      ai_navrh_na_mieru: "AI navrh na miru",
     },
   },
 } as const satisfies Record<SiteLocale, LeadFormSharedCopy>;
