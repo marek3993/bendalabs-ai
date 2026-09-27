@@ -54,8 +54,8 @@ export function ArmDetails({ cs }: { cs: boolean }) {
     <div className="bl-part-sources"><a className="bl-text-link" href="https://www.hiwonder.com/products/hts-25l" target="_blank" rel="noreferrer">Hiwonder HTS-25L<Arrow diagonal /></a><a className="bl-text-link" href="https://allegro.pl/oferta/podstawa-obrotowa-360-lozysko-obrotowe-obrotowego-krzesla-mebli-obracajace-15707167147" target="_blank" rel="noreferrer">{cs ? "Použité otočné ložisko" : "Použité otočné ložisko"}<Arrow diagonal /></a></div>
     <ProjectPhoto src="/projects/robot-arm-controller.png" width={2499} height={606} caption={cs ? "Webové ovládání s 2D modelem, posuvníky a záznamem pohybu." : "Webové ovládanie s 2D modelom, posuvníkmi a záznamom pohybu."} className="bl-controller-photo" />
     <div className="bl-photo-grid">
-      <ProjectPhoto src="/projects/finished/robot-arm-base.webp" width={1500} height={1600} caption={cs ? "Vlastní základna ramene během sestavování." : "Vlastná základňa ramena počas zostavovania."} />
-      <ProjectPhoto src="/projects/finished/robot-arm-bus-servo.webp" width={1200} height={1600} caption={cs ? "Detail sériového serva v konstrukci ramene." : "Detail sériového serva v konštrukcii ramena."} />
+      <ProjectPhoto src="/projects/finished/robot-arm-base-v2.webp" width={1500} height={1600} caption={cs ? "Vlastní základna ramene během sestavování." : "Vlastná základňa ramena počas zostavovania."} />
+      <ProjectPhoto src="/projects/finished/robot-arm-bus-servo-v2.webp" width={1200} height={1600} caption={cs ? "Detail sériového serva v konstrukci ramene." : "Detail sériového serva v konštrukcii ramena."} />
     </div>
   </ProjectDetails>;
 }
@@ -66,8 +66,8 @@ export function MecanumDetails({ cs }: { cs: boolean }) {
     <p>{cs ? "Motorové řízení, hlas a dotyková komunikace fungují. První verze vznikla na ručně vyrobené desce plošných spojů. Nový návrh desky je hotový a připravený na leptání. Živý kamerový přenos je další krok vývoje." : "Motorové riadenie, hlas a dotyková komunikácia fungujú. Prvá verzia vznikla na ručne vyrobenej doske plošných spojov. Nový návrh dosky je hotový a pripravený na leptanie. Živý kamerový prenos je ďalší krok vývoja."}</p>
     <h4>{cs ? "První verze: ruční výroba" : "Prvá verzia: ručná výroba"}</h4>
     <div className="bl-photo-grid">
-      <ProjectPhoto src="/projects/finished/mecanum-pcb-components.webp" width={1200} height={1600} caption={cs ? "První prototyp: osazená, ručně vyrobená deska." : "Prvý prototyp: osadená, ručne vyrobená doska."} />
-      <ProjectPhoto src="/projects/finished/mecanum-pcb-traces.webp" width={1152} height={1536} caption={cs ? "Detail měděných cest a pájených spojů první verze." : "Detail medených ciest a spájkovaných spojov prvej verzie."} />
+      <ProjectPhoto src="/projects/finished/mecanum-pcb-components-v2.webp" width={1200} height={1600} caption={cs ? "První prototyp: osazená, ručně vyrobená deska." : "Prvý prototyp: osadená, ručne vyrobená doska."} />
+      <ProjectPhoto src="/projects/finished/mecanum-pcb-traces-v2.webp" width={1152} height={1536} caption={cs ? "Detail měděných cest a pájených spojů první verze." : "Detail medených ciest a spájkovaných spojov prvej verzie."} />
     </div>
     <div className="bl-pcb-update">
       <span className="bl-status">{cs ? "Nová deska · připravená na leptání" : "Nová doska · pripravená na leptanie"}</span>
@@ -83,8 +83,8 @@ export function MecanumDetails({ cs }: { cs: boolean }) {
 export function FeederDetails({ cs }: { cs: boolean }) {
   return <ProjectDetails title={cs ? "Od 3D návrhu po vážení" : "Od 3D návrhu po váženie"}>
     <div className="bl-photo-grid">
-      <ProjectPhoto src="/projects/finished/feeder-design.webp" width={1441} height={1600} caption={cs ? "Příprava nádoby pro 3D tisk." : "Príprava nádoby na 3D tlač."} />
-      <ProjectPhoto src="/projects/finished/feeder-weighing.webp" width={1600} height={1200} caption={cs ? "Miska a ovládání během stavby prototypu." : "Miska a ovládanie počas stavby prototypu."} />
+      <ProjectPhoto src="/projects/finished/feeder-design-v2.webp" width={1441} height={1600} caption={cs ? "Příprava nádoby pro 3D tisk." : "Príprava nádoby na 3D tlač."} />
+      <ProjectPhoto src="/projects/finished/feeder-weighing-v2.webp" width={1600} height={1200} caption={cs ? "Miska a ovládání během stavby prototypu." : "Miska a ovládanie počas stavby prototypu."} />
     </div>
   </ProjectDetails>;
 }

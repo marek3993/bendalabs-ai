@@ -60,14 +60,14 @@ export function RoboticsProjects({ locale = "sk", standalone = false }: Props) {
     <article className="bl-arm-project" id="roboticka-ruka"><div className="bl-arm-copy">
       <span className="bl-status">{prototype}</span><h3>Robotická ruka</h3><p className="bl-project-lead">{cs ? "Šest kanálů. Vlastní řízení." : "Šesť kanálov. Vlastné riadenie."}</p>
       <p>{cs ? "Vývoj začal webovým ovládáním se záznamem a přehráním pohybu. Novější sestava používá sériová serva Hiwonder HTS-25L, tři joysticky a vlastní displej. Tištěná základna s velkým ložiskem podpírá ruku; spodní servo zajišťuje její otáčení." : "Vývoj začal webovým ovládaním so záznamom a prehratím pohybu. Novšia zostava používa sériové servá Hiwonder HTS-25L, tri joysticky a vlastný displej. Tlačená základňa s veľkým ložiskom podopiera ruku; spodné servo zabezpečuje jej otáčanie."}</p>
-      <ProjectPhoto src="/projects/finished/robot-arm.webp" width={1490} height={1444} caption={cs ? "Ruka se sériovými servy a vlastní kruhovou základnou." : "Ruka so sériovými servami a vlastnou kruhovou základňou."} className="bl-arm-photo" />
+      <ProjectPhoto src="/projects/finished/robot-arm-v2.webp" width={1254} height={1254} caption={cs ? "Ruka se sériovými servy a vlastní kruhovou základnou." : "Ruka so sériovými servami a vlastnou kruhovou základňou."} className="bl-arm-photo" />
       <a href="#ovladanie-ruky" className="bl-text-link">{cs ? "Vyzkoušet simulaci pohybu" : "Vyskúšať simuláciu pohybu"}<Arrow /></a></div><div id="ovladanie-ruky"><MotionStudy locale={locale} /></div>
     </article>
     <ArmDetails cs={cs} />
     <ProjectDemo kind="platform" cs={cs} />
     <article id="mecanum" className="bl-robot-project bl-mecanum-project">
       <div className="bl-mecanum-overview">
-        <ProjectPhoto src="/projects/finished/mecanum.webp" width={1244} height={1600} caption={cs ? "První verze Mecanum robota s ručně vyrobenou deskou." : "Prvá verzia Mecanum robota s ručne vyrobenou doskou."} className="bl-prototype-photo" />
+        <ProjectPhoto src="/projects/finished/mecanum-v2.webp" width={1086} height={1448} caption={cs ? "První verze Mecanum robota s ručně vyrobenou deskou." : "Prvá verzia Mecanum robota s ručne vyrobenou doskou."} className="bl-prototype-photo" />
         <div className="bl-robot-project-copy"><span className="bl-status">{prototype}</span><h3>Mecanum robot</h3>
           <p>{cs ? "Čtyři kola umožňují pohyb vpřed, do stran i otáčení na místě. Robot přijímá povely přes Wi-Fi, nahlas přečte text operátora a přes dotykový displej mu vrátí odpověď člověka u robota." : "Štyri kolesá umožňujú pohyb vpred, do strán aj otáčanie na mieste. Robot prijíma povely cez Wi-Fi, nahlas prečíta text operátora a cez dotykový displej mu vráti odpoveď človeka pri robotovi."}</p>
           <p className="bl-project-detail">{cs ? "První desku jsem vyrobil ručně. Nový návrh už je připravený na leptání." : "Prvú dosku som vyrobil ručne. Nový návrh už je pripravený na leptanie."}</p>
@@ -83,7 +83,7 @@ export function RoboticsProjects({ locale = "sk", standalone = false }: Props) {
       </MoreProject>
       <MoreProject id="krmicka" title={cs ? "Inteligentní krmítko" : "Inteligentná krmička"} summary={cs ? "Doplní misku podle její skutečné hmotnosti." : "Doplní misku podľa jej skutočnej hmotnosti."} status={prototype}>
         <div className="bl-more-project-overview">
-          <ProjectPhoto src="/projects/finished/feeder.webp" width={998} height={1505} caption={cs ? "Sestavený prototyp krmítka s tištěnými díly." : "Zostavený prototyp krmičky s tlačenými dielmi."} className="bl-more-project-photo" />
+          <ProjectPhoto src="/projects/finished/feeder-v2.webp" width={1086} height={1448} caption={cs ? "Sestavený prototyp krmítka s tištěnými díly." : "Zostavený prototyp krmičky s tlačenými dielmi."} className="bl-more-project-photo" />
           <div className="bl-more-project-copy">
             <p>{cs ? "Zváží obsah misky a doplní krmivo do cílové hmotnosti. Údaje zobrazuje na displeji; dávkování se ovládá tlačítky, po síti nebo přes Telegram." : "Odváži obsah misky a doplní krmivo do cieľovej hmotnosti. Údaje zobrazuje na displeji; dávkovanie sa ovláda tlačidlami, po sieti alebo cez Telegram."}</p>
             <p className="bl-project-detail">{cs ? "Mechanické díly jsem navrhl a vytiskl na 3D tiskárně. Funkční prototyp vznikl za 17 dní." : "Mechanické diely som navrhol a vytlačil na 3D tlačiarni. Funkčný prototyp vznikol za 17 dní."}</p>
