@@ -1,3 +1,4 @@
+import { isIndexableDeployment, siteOrigin } from "@/lib/bendalabs/seo";
 import type { Metadata } from "next";
 import Script from "next/script";
 import appleTouchIcon from "./apple-touch-icon.png";
@@ -7,6 +8,8 @@ import "./brand.css";
 import "./arm-task.css";
 
 export const metadata: Metadata = {
+  metadataBase: siteOrigin,
+  robots: { index: isIndexableDeployment, follow: true },
   title: "BendaLabs — aplikácie, AI a robotika",
   description:
     "Projekty Mareka Bendu: Fakturomat, TrendAtlas, robotická ruka a ďalšie digitálne produkty a fyzické prototypy. Spoznajte BendaLabs a BendaRobotics.",

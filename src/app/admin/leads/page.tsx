@@ -1,3 +1,7 @@
+import { privatePageMetadata } from "@/lib/bendalabs/seo";
+
+export const metadata = privatePageMetadata("Správa kontaktov | BendaLabs");
+
 import { isAdminAuthenticated, isAdminProtectionConfigured } from "@/lib/leads/auth";
 import {
   getLeadRollups,

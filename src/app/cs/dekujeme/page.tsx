@@ -1,3 +1,7 @@
+import { privatePageMetadata } from "@/lib/bendalabs/seo";
+
+export const metadata = privatePageMetadata("Děkujeme | BendaLabs");
+
 import ContactRequestSuccessState from "@/components/bendalabs/contact-request-success-state";
 import { contactReturnPath } from "@/lib/bendalabs/contact-return";
 

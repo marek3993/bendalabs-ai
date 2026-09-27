@@ -1,14 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/bendalabs/seo";
 import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
 import { getFinancePageContent } from "@/lib/bendalabs/site-content";
 
 const content = getFinancePageContent("sk");
 
-export const metadata: Metadata = {
-  title: content.metadataTitle,
-  description: content.metadataDescription,
-};
+export const metadata = pageMetadata("/ai-vrstva-pre-financne-a-poistne-weby", content.metadataTitle, content.metadataDescription);
 
 export default function FinanceAndInsurancePage() {
   return (

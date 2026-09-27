@@ -1,14 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/bendalabs/seo";
 import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
 import { getMarketplacePageContent } from "@/lib/bendalabs/site-content";
 
 const content = getMarketplacePageContent("cs");
 
-export const metadata: Metadata = {
-  title: content.metadataTitle,
-  description: content.metadataDescription,
-};
+export const metadata = pageMetadata("/cs/ai-vrstva-pro-marketplace-a-rental-weby", content.metadataTitle, content.metadataDescription);
 
 export default function CzechMarketplaceAndRentalPage() {
   return (
