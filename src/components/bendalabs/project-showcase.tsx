@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import { Arrow } from "./brand-shell";
@@ -49,7 +48,6 @@ export function LabsProjects({ locale = "sk", standalone = false }: Props) {
         <p className="bl-tech-line">Python · Pydantic · API</p>
       </MoreProject>
     </div>
-    <article className="bl-ai-project" id="ai"><div><span className="bl-status">{cs ? "Dostupné na bendalabs.sk" : "Dostupné na bendalabs.sk"}</span><h3>BendaLabs AI vrstva</h3><p>{cs ? "Pomáhá návštěvníkovi vybrat správnou službu a další krok. Připraví kvalitnější poptávku a firmě přiblíží, co lidé na webu hledají." : "Pomáha návštevníkovi vybrať správnu službu a ďalší krok. Pripraví kvalitnejší dopyt a firme priblíži, čo ľudia na webe hľadajú."}</p></div><div className="bl-ai-links"><Link href={cs ? "/cs/ai-audit-webu" : "/ai-audit-webu"}>{cs ? "Vyzkoušet AI audit" : "Vyskúšať AI audit"}<Arrow /></Link><Link href="/ai-navrh-na-mieru">{cs ? "AI návrh na míru (SK)" : "AI návrh na mieru"}<Arrow /></Link><a href="https://bendalabs.sk">bendalabs.sk<Arrow diagonal /></a></div></article>
   </section>;
 }
 

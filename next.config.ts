@@ -8,9 +8,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: "/ai", destination: "/labs#ai", permanent: true },
+      { source: "/ai", destination: "/labs", permanent: true },
       { source: "/studio", destination: "/labs", permanent: true },
-      { source: "/cs/ai", destination: "/cs/labs#ai", permanent: true },
+      { source: "/cs/ai", destination: "/cs/labs", permanent: true },
       { source: "/cs/studio", destination: "/cs/labs", permanent: true },
     ];
   },

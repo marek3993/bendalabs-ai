@@ -91,12 +91,6 @@
 .bl-supplied-visual { margin-top: 24px; }
 .bl-supplied-visual img { width: 100%; height: auto; border-radius: 6px; }
 .bl-supplied-visual figcaption { font-size: 12px; margin-top: 10px; color: var(--bl-muted); }
-.bl-ai-project { margin-top: 34px; background: #f1f6f2; border-radius: 9px; padding: 30px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 64px; align-items: center; }
-.bl-ai-project h3 { font-size: 24px; margin: 10px 0 12px; }
-.bl-ai-project p { font-size: 14px; }
-.bl-ai-links a { min-height: 46px; display: flex; justify-content: space-between; align-items: center; gap: 15px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #cddbcf; }
-.bl-ai-links a:hover { color: var(--bl-green); }
-.bl-ai-links a:last-child { border-bottom: 0; }
 .bl-robotics { --bl-ink: #f1f5f2; --bl-muted: #b6c1ba; --bl-line: #39473e; --bl-green: #93e7bb; background: #19211d; color: var(--bl-ink); }
 .bl-robotics :is(a, input, summary, button, select):focus-visible { outline: 2px solid #93e7bb; outline-offset: 4px; }
 .bl-arm-project { display: grid; grid-template-columns: .85fr 1.25fr; gap: 48px; align-items: start; }
@@ -241,7 +235,6 @@
   .bl-arm-project, .bl-contact-grid { gap: 35px; }
   .bl-entrance { padding: 24px; }
   .bl-entrance h2 { font-size: 28px; }
-  .bl-ai-project { gap: 30px; }
   .bl-form-submit { flex-wrap: wrap; }
 }
 @media (max-width: 900px) {
@@ -269,7 +262,7 @@
   .bl-section-heading { grid-template-columns: 1fr; gap: 20px; margin-bottom: 30px; }
   .bl-section-heading :is(h1, h2) { font-size: clamp(33px, 8.5vw, 44px); }
   .bl-section-heading > p { font-size: 15px; max-width: 520px; }
-  .bl-labs-featured, .bl-arm-project, .bl-robot-projects, .bl-mecanum-overview, .bl-more-project-overview, .bl-contact-grid, .bl-ai-project, .bl-detail-columns { grid-template-columns: minmax(0, 1fr); }
+  .bl-labs-featured, .bl-arm-project, .bl-robot-projects, .bl-mecanum-overview, .bl-more-project-overview, .bl-contact-grid, .bl-detail-columns { grid-template-columns: minmax(0, 1fr); }
   .bl-more-project-overview { gap: 23px; }
   .bl-mecanum-overview .bl-prototype-photo { padding-bottom: 0; }
   .bl-mecanum-project > .bl-project-demo { padding: 0 14px 14px; }
@@ -283,8 +276,6 @@
   .bl-showcase h3 { font-size: 27px; }
   .bl-more-project summary h3 { font-size: 18px; }
   .bl-more-project summary p { font-size: 13px; }
-  .bl-ai-project { padding: 24px; gap: 20px; }
-  .bl-ai-project h3 { font-size: 24px; }
   .bl-arm-project { gap: 28px; }
   .bl-arm-copy > h3 { font-size: 31px; }
   .bl-arm-copy > p { font-size: 15px; }
