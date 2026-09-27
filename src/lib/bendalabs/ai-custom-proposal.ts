@@ -7,48 +7,48 @@ export const AI_CUSTOM_PROPOSAL_REQUEST_TYPE = "ai_custom_proposal";
 export const AI_CUSTOM_PROPOSAL_SOURCE = "ai_navrh_na_mieru";
 
 export const businessTypeOptions = [
-  { value: "real_estate", label: "Realitny web / realitna kancelaria" },
-  { value: "finance", label: "Financne sluzby / poistenie / hypoteky" },
-  { value: "clinic", label: "Klinika / zdravotne alebo esteticke sluzby" },
-  { value: "marketplace", label: "Inzertny alebo marketplace portal" },
-  { value: "recruitment", label: "Recruitment / HR / pracovny portal" },
-  { value: "b2b_services", label: "B2B sluzby / poradenstvo" },
-  { value: "ecommerce", label: "E-shop alebo katalog produktov" },
-  { value: "other", label: "Ine" },
+  { value: "real_estate", label: "Realitný web / realitná kancelária" },
+  { value: "finance", label: "Finančné služby / poistenie / hypotéky" },
+  { value: "clinic", label: "Klinika / zdravotné alebo estetické služby" },
+  { value: "marketplace", label: "Inzertný alebo marketplace portál" },
+  { value: "recruitment", label: "Recruitment / HR / pracovný portál" },
+  { value: "b2b_services", label: "B2B služby / poradenstvo" },
+  { value: "ecommerce", label: "E-shop alebo katalóg produktov" },
+  { value: "other", label: "Iné" },
 ] as const;
 
 export const mainGoalOptions = [
   {
     value: "choose_right_offer",
-    label: "Pomoct navstevnikovi vybrat spravnu sluzbu alebo ponuku",
+    label: "Pomôcť návštevníkovi vybrať správnu službu alebo ponuku",
   },
-  { value: "better_leads", label: "Ziskat lepsie pripravene dopyty" },
-  { value: "simplify_contact", label: "Zjednodusit objednanie alebo kontakt" },
-  { value: "discover_intent", label: "Zistit, co ludia na webe realne hladaju" },
-  { value: "reduce_unclear_questions", label: "Znizit pocet nejasnych otazok pre tim/recepciu" },
-  { value: "increase_existing_traffic_value", label: "Zvysit hodnotu existujucej navstevnosti" },
-  { value: "other", label: "Ine" },
+  { value: "better_leads", label: "Získať lepšie pripravené dopyty" },
+  { value: "simplify_contact", label: "Zjednodušiť objednanie alebo kontakt" },
+  { value: "discover_intent", label: "Zistiť, čo ľudia na webe reálne hľadajú" },
+  { value: "reduce_unclear_questions", label: "Znížiť počet nejasných otázok pre tím/recepciu" },
+  { value: "increase_existing_traffic_value", label: "Zvýšiť hodnotu existujúcej návštevnosti" },
+  { value: "other", label: "Iné" },
 ] as const;
 
 export const visitorNextStepOptions = [
-  { value: "send_inquiry", label: "Odoslat dopyt" },
-  { value: "book_appointment", label: "Objednat termin" },
-  { value: "choose_service", label: "Vybrat sluzbu" },
-  { value: "find_offer", label: "Najst vhodnu ponuku / inzerat / produkt" },
-  { value: "contact_right_person", label: "Kontaktovat spravneho cloveka" },
-  { value: "fill_form", label: "Vyplnit formular" },
-  { value: "other", label: "Ine" },
+  { value: "send_inquiry", label: "Odoslať dopyt" },
+  { value: "book_appointment", label: "Objednať termín" },
+  { value: "choose_service", label: "Vybrať službu" },
+  { value: "find_offer", label: "Nájsť vhodnú ponuku / inzerát / produkt" },
+  { value: "contact_right_person", label: "Kontaktovať správneho človeka" },
+  { value: "fill_form", label: "Vyplniť formulár" },
+  { value: "other", label: "Iné" },
 ] as const;
 
 export const dashboardDataOptions = [
-  { value: "top_questions", label: "Najcastejsie otazky navstevnikov" },
-  { value: "interest_types", label: "Typy sluzieb / produktov / ponuk, o ktore je zaujem" },
-  { value: "contact_reasons", label: "Dovody, preco ludia kontaktuju firmu" },
-  { value: "unfinished_inquiries", label: "Neodoslane alebo nedokoncene dopyty" },
+  { value: "top_questions", label: "Najčastejšie otázky návštevníkov" },
+  { value: "interest_types", label: "Typy služieb / produktov / ponúk, o ktoré je záujem" },
+  { value: "contact_reasons", label: "Dôvody, prečo ľudia kontaktujú firmu" },
+  { value: "unfinished_inquiries", label: "Neodoslané alebo nedokončené dopyty" },
   { value: "lead_quality", label: "Kvalita leadov / dopytov" },
-  { value: "timing_or_urgency", label: "Preferovane terminy alebo urgentnost" },
-  { value: "customer_segments", label: "Segmenty zakaznikov" },
-  { value: "other", label: "Ine" },
+  { value: "timing_or_urgency", label: "Preferované termíny alebo urgentnosť" },
+  { value: "customer_segments", label: "Segmenty zákazníkov" },
+  { value: "other", label: "Iné" },
 ] as const;
 
 const businessTypeValues = [
@@ -175,52 +175,52 @@ function getBusinessLens(value: AiCustomProposalBusinessType) {
     }
   > = {
     real_estate: {
-      audienceTarget: "spravnu ponuku, inzerat alebo maklera",
-      teamOutput: "presnejsie realitne dopyty a jasnejsi kontext pred kontaktom",
-      suggestion: "AI vrstva pre vyber ponuky a pripravu kvalitnejsieho dopytu",
-      phaseEntry: "na homepage, listingoch alebo pri dopytovom formulari",
+      audienceTarget: "správnu ponuku, inzerát alebo maklera",
+      teamOutput: "presnejšie realitné dopyty a jasnejší kontext pred kontaktom",
+      suggestion: "AI vrstva pre výber ponuky a prípravu kvalitnejšieho dopytu",
+      phaseEntry: "na homepage, listingoch alebo pri dopytovom formulári",
     },
     finance: {
-      audienceTarget: "spravne financne riesenie alebo dalsi konzultacny krok",
-      teamOutput: "lepsie pripravene dopyty pre obchod a menej vseobecnych otazok",
-      suggestion: "AI vrstva pre vyber spravnej sluzby a kvalifikaciu dopytu",
-      phaseEntry: "na produktovych vetvach, kalkulackach alebo pred formularom",
+      audienceTarget: "správne finančné riešenie alebo ďalší konzultačný krok",
+      teamOutput: "lepšie pripravené dopyty pre obchod a menej všeobecných otázok",
+      suggestion: "AI vrstva pre výber správnej služby a kvalifikáciu dopytu",
+      phaseEntry: "na produktových vetvách, kalkulačkách alebo pred formulárom",
     },
     clinic: {
-      audienceTarget: "spravnu sluzbu, zakrok alebo termin",
-      teamOutput: "menej nejasnych otazok pre recepciu a viac pripravenych objednani",
-      suggestion: "AI vrstva pre vyber sluzby a zjednodusenie objednania",
-      phaseEntry: "na strankach sluzieb alebo pred objednanim terminu",
+      audienceTarget: "správnu službu, zakrok alebo termín",
+      teamOutput: "menej nejasných otázok pre recepciu a viac pripravených objednaní",
+      suggestion: "AI vrstva pre výber služby a zjednodušenie objednania",
+      phaseEntry: "na stránkach služieb alebo pred objednaním termínu",
     },
     marketplace: {
-      audienceTarget: "spravnu ponuku, inzerat alebo kategoriu",
-      teamOutput: "viac relevantnych dopytov a lepsie obchodne data o zaujme",
-      suggestion: "AI vrstva pre vyber spravnej ponuky a dalsieho kroku",
-      phaseEntry: "nad katalogom, vyhladavanim alebo pri detailoch ponuk",
+      audienceTarget: "správnu ponuku, inzerát alebo kategóriu",
+      teamOutput: "viac relevantných dopytov a lepšie obchodné dáta o záujme",
+      suggestion: "AI vrstva pre výber správnej ponuky a ďalšieho kroku",
+      phaseEntry: "nad katalógom, vyhľadávaním alebo pri detailoch ponúk",
     },
     recruitment: {
-      audienceTarget: "spravnu poziciu, sluzbu alebo kontakt",
-      teamOutput: "lepsie kvalifikovane leady od firiem aj kandidatov",
-      suggestion: "AI vrstva pre smerovanie navstevnika a pripravu dopytu",
-      phaseEntry: "na kariernych strankach, pri kontaktnych bodoch alebo formuleroch",
+      audienceTarget: "správnu pozíciu, službu alebo kontakt",
+      teamOutput: "lepšie kvalifikované leady od firiem aj kandidátov",
+      suggestion: "AI vrstva pre smerovanie návštevníka a prípravu dopytu",
+      phaseEntry: "na kariérnych stránkach, pri kontaktných bodoch alebo formulároch",
     },
     b2b_services: {
-      audienceTarget: "spravnu sluzbu, konzultaciu alebo dalsi krok",
-      teamOutput: "cistejsie leady s kontextom a jasnejsim zadanim",
-      suggestion: "AI vrstva pre vyber sluzby a lepsie pripraveny dopyt",
-      phaseEntry: "na klucovych sluzbovych strankach alebo pred kontaktom",
+      audienceTarget: "správnu službu, konzultáciu alebo ďalší krok",
+      teamOutput: "čistejšie leady s kontextom a jasnejším zadaním",
+      suggestion: "AI vrstva pre výber služby a lepšie pripravený dopyt",
+      phaseEntry: "na kľúčových službových stránkach alebo pred kontaktom",
     },
     ecommerce: {
-      audienceTarget: "spravny produkt, kategoriu alebo formular",
-      teamOutput: "vyssiu hodnotu existujucej navstevnosti a menej opakujucich sa otazok",
-      suggestion: "AI vrstva pre vyber produktu a odporucenie dalsieho kroku",
-      phaseEntry: "na kategoriach, detailoch produktov alebo v kontaktnom flowe",
+      audienceTarget: "správny produkt, kategóriu alebo formulár",
+      teamOutput: "vyššiu hodnotu existujúcej návštevnosti a menej opakujúcich sa otázok",
+      suggestion: "AI vrstva pre výber produktu a odporúčanie ďalšieho kroku",
+      phaseEntry: "na kategóriách, detailoch produktov alebo v kontaktnom flowe",
     },
     other: {
-      audienceTarget: "spravny dalsi krok bez zbytocneho hladania",
-      teamOutput: "lepsie pripraveny inbound a nove obchodne data",
-      suggestion: "AI vrstva pre smerovanie navstevnika a pripravu kvalitnejsieho dopytu",
-      phaseEntry: "na miestach, kde sa dnes rozhoduje o dalsom kroku",
+      audienceTarget: "správny ďalší krok bez zbytočného hľadania",
+      teamOutput: "lepšie pripravený inbound a nové obchodné dáta",
+      suggestion: "AI vrstva pre smerovanie návštevníka a prípravu kvalitnejšieho dopytu",
+      phaseEntry: "na miestach, kde sa dnes rozhoduje o ďalšom kroku",
     },
   };
 
@@ -238,46 +238,46 @@ function getGoalLens(value: AiCustomProposalMainGoal) {
     }
   > = {
     choose_right_offer: {
-      title: "AI vrstva pre vyber spravnej sluzby alebo ponuky",
-      visitorLine: "Pomohla by cloveku rychlo sa zorientovat a netlacit ho do nespravnej vetvy webu.",
-      teamLine: "Do timu by chodili ludia, ktori uz vedia, o aku oblast maju zaujem.",
-      phaseLine: "Nastavit otazky, ktore rychlo rozlisuju, co je pre navstevnika najrelevantnejsie.",
+      title: "AI vrstva pre výber správnej služby alebo ponuky",
+      visitorLine: "Pomohla by človeku rýchlo sa zorientovať a netlačiť ho do nesprávnej vetvy webu.",
+      teamLine: "Do tímu by chodili ľudia, ktorí už vedia, o akú oblasť majú záujem.",
+      phaseLine: "Nastaviť otázky, ktoré rýchlo rozlišujú, čo je pre návštevníka najrelevantnejšie.",
     },
     better_leads: {
-      title: "AI vrstva pre lepsie pripravene dopyty",
-      visitorLine: "Pred odoslanim by doplnila dolezity kontext a pomohla cloveku spresnit potrebu.",
-      teamLine: "Vas tim by dostaval lepsie pripravene dopyty namiesto vseobecnych sprav.",
-      phaseLine: "Prepojit vystup z otazok priamo do dopytu, aby ostal zachovany kontext.",
+      title: "AI vrstva pre lepšie pripravené dopyty",
+      visitorLine: "Pred odoslaním by doplnila dôležitý kontext a pomohla človeku spresniť potrebu.",
+      teamLine: "Váš tím by dostával lepšie pripravené dopyty namiesto všeobecných správ.",
+      phaseLine: "Prepojiť výstup z otázok priamo do dopytu, aby ostal zachovaný kontext.",
     },
     simplify_contact: {
-      title: "AI vrstva pre zjednodusenie objednania alebo kontaktu",
-      visitorLine: "Skratila by cestu od prveho zaujmu k objednaniu alebo kontaktu.",
-      teamLine: "Znizil by sa pocet odchodov pred formularom alebo pred objednanim terminu.",
-      phaseLine: "Nasadit vrstvu pred klucovy kontakt alebo objednavkovy krok.",
+      title: "AI vrstva pre zjednodušenie objednania alebo kontaktu",
+      visitorLine: "Skratila by cestu od prvého záujmu k objednaniu alebo kontaktu.",
+      teamLine: "Znížil by sa počet odchodov pred formulárom alebo pred objednaním termínu.",
+      phaseLine: "Nasadiť vrstvu pred kľúčový kontakt alebo objednávkový krok.",
     },
     discover_intent: {
-      title: "AI vrstva pre zachytenie zamerov navstevnikov",
-      visitorLine: "Navstevnik by sa dostal k spravnej ponuke a vy by ste zaroven videli, co realne hlada.",
-      teamLine: "Vznikli by nove obchodne data o temach, zaujmoch a miestach, kde ludia vahaju.",
-      phaseLine: "Zachytavat intent a odkladat ho do dashboardu zamerov bez prerabky existujuceho webu.",
+      title: "AI vrstva pre zachytenie zámerov návštevníkov",
+      visitorLine: "Návštevník by sa dostal k správnej ponuke a vy by ste zároveň videli, čo reálne hľadá.",
+      teamLine: "Vznikli by nové obchodné dáta o témach, záujmoch a miestach, kde ľudia váhajú.",
+      phaseLine: "Zachytávať intent a odkladať ho do dashboardu zámerov bez prerábky existujúceho webu.",
     },
     reduce_unclear_questions: {
-      title: "AI vrstva pre odfiltrovanie nejasnych otazok",
-      visitorLine: "Najskor by vysvetlila rozdiely a az potom poslala cloveka na kontakt alebo formular.",
-      teamLine: "Tim by mal menej opakujucich sa otazok a viac pripravenych kontaktov.",
-      phaseLine: "Najprv pokryt najcastejsie nejasne otazky a routovanie na spravny dalsi krok.",
+      title: "AI vrstva pre odfiltrovanie nejasných otázok",
+      visitorLine: "Najskôr by vysvetlila rozdiely a až potom poslala človeka na kontakt alebo formulár.",
+      teamLine: "Tím by mal menej opakujúcich sa otázok a viac pripravených kontaktov.",
+      phaseLine: "Najprv pokryť najčastejšie nejasné otázky a routovanie na správny ďalší krok.",
     },
     increase_existing_traffic_value: {
-      title: "AI vrstva pre vyssiu hodnotu existujucej navstevnosti",
-      visitorLine: "Viac ludi by sa z existujucej navstevnosti dostalo k spravnemu dalsiemu kroku.",
-      teamLine: "Z webu by ste vytazili viac bez prerabky existujuceho webu.",
-      phaseLine: "Vybrat jedno miesto s navstevnostou a vysokym rozhodovacim trenim a nasadit tam prvu fazu.",
+      title: "AI vrstva pre vyššiu hodnotu existujúcej návštevnosti",
+      visitorLine: "Viac ľudí by sa z existujúcej návštevnosti dostalo k správnemu ďalšiemu kroku.",
+      teamLine: "Z webu by ste vyťažili viac bez prerábky existujúceho webu.",
+      phaseLine: "Vybrať jedno miesto s návštevnosťou a vysokým rozhodovacím trením a nasadiť tam prvú fázu.",
     },
     other: {
-      title: "AI vrstva prispodobena vasmu cielu",
-      visitorLine: "Priblizila by navstevnika k dalsiemu kroku podla toho, co chce naozaj vyriesit.",
-      teamLine: "Timu by pridala lepsi kontext a nove obchodne data o zaujme navstevnikov.",
-      phaseLine: "Zacal by sa jeden uzky flow, kde sa najrychlejsie ukaze dopad.",
+      title: "AI vrstva prispôsobená vášmu cieľu",
+      visitorLine: "Priblížila by návštevníka k ďalšiemu kroku podľa toho, čo chce naozaj vyriešiť.",
+      teamLine: "Tímu by pridala lepší kontext a nové obchodné dáta o záujme návštevníkov.",
+      phaseLine: "Začal by sa jeden úzky flow, kde sa najrýchlejšie ukáže dopad.",
     },
   };
 
@@ -293,32 +293,32 @@ function getNextStepLens(value: AiCustomProposalVisitorNextStep) {
     }
   > = {
     send_inquiry: {
-      label: "odoslat dopyt",
-      line: "Viedla by cloveka k odoslaniu dopytu az vo chvili, ked ma vybrany spravny smer a doplneny kontext.",
+      label: "odoslať dopyt",
+      line: "Viedla by človeka k odoslaniu dopytu až vo chvíli, keď má vybraný správny smer a doplnený kontext.",
     },
     book_appointment: {
-      label: "objednat termin",
-      line: "Pomohla by rychlo vybrat vhodnu sluzbu a plynulo prejst do objednania terminu.",
+      label: "objednať termín",
+      line: "Pomohla by rýchlo vybrať vhodnú službu a plynulo prejsť do objednania termínu.",
     },
     choose_service: {
-      label: "vybrat sluzbu",
-      line: "Najprv by pomohla porovnat moznosti a az potom ukazala spravny dalsi krok.",
+      label: "vybrať službu",
+      line: "Najprv by pomohla porovnať možnosti a až potom ukázala správny ďalší krok.",
     },
     find_offer: {
-      label: "najst vhodnu ponuku",
-      line: "Zrychlila by orientaciu medzi ponukami a odporucila to, co je pre dany zamer najsilnejsie.",
+      label: "nájsť vhodnú ponuku",
+      line: "Zrýchlila by orientáciu medzi ponukami a odporučila to, čo je pre daný zámer najsilnejšie.",
     },
     contact_right_person: {
-      label: "kontaktovat spravneho cloveka",
-      line: "Rozlisila by potrebu a poslala cloveka na spravny kontakt bez zbytocneho preklikavania.",
+      label: "kontaktovať správneho človeka",
+      line: "Rozlíšila by potrebu a poslala človeka na správny kontakt bez zbytočného preklikávania.",
     },
     fill_form: {
-      label: "vyplnit formular",
-      line: "Pomohla by pripravit cloveka na formular tak, aby ho vedel dokoncit bez vazania.",
+      label: "vyplniť formulár",
+      line: "Pomohla by pripraviť človeka na formulár tak, aby ho vedel dokončiť bez váhania.",
     },
     other: {
-      label: "spravit spravny dalsi krok",
-      line: "Zmenila by nejasny zaciatok navstevy na konkretny dalsi krok.",
+      label: "spraviť správny ďalší krok",
+      line: "Zmenila by nejasný začiatok návštevy na konkrétny ďalší krok.",
     },
   };
 
@@ -327,14 +327,14 @@ function getNextStepLens(value: AiCustomProposalVisitorNextStep) {
 
 function getDashboardLine(value: AiCustomProposalDashboardData) {
   const lines: Record<AiCustomProposalDashboardData, string> = {
-    top_questions: "Najcastejsie otazky navstevnikov a temy, pri ktorych sa opakuje vahanie.",
-    interest_types: "Typy sluzieb, produktov alebo ponuk, o ktore je na webe najsilnejsi zaujem.",
-    contact_reasons: "Dovody, preco ludia kontaktuju firmu a s akym zamerom prichadzaju.",
-    unfinished_inquiries: "Miesta, kde ludia dopyt rozpracuju, ale nedokoncia ho.",
-    lead_quality: "Kvalitu leadov a rozdiel medzi vseobecnym a dobre pripravenym dopytom.",
-    timing_or_urgency: "Preferovane terminy, urgentnost a signal, kedy chce clovek konat hned.",
-    customer_segments: "Segmenty zakaznikov podla toho, co hladaju a aky dalsi krok preferuju.",
-    other: "Dalsie obchodne data podla toho, co je pre vas tim dnes najdolezitejsie.",
+    top_questions: "Najčastejšie otázky návštevníkov a témy, pri ktorých sa opakuje váhanie.",
+    interest_types: "Typy služieb, produktov alebo ponúk, o ktoré je na webe najsilnejší záujem.",
+    contact_reasons: "Dôvody, prečo ľudia kontaktujú firmu a s akým zámerom prichádzajú.",
+    unfinished_inquiries: "Miesta, kde ľudia dopyt rozpracujú, ale nedokončia ho.",
+    lead_quality: "Kvalitu leadov a rozdiel medzi všeobecným a dobre pripraveným dopytom.",
+    timing_or_urgency: "Preferované termíny, urgentnosť a signál, kedy chce človek konať hneď.",
+    customer_segments: "Segmenty zákazníkov podľa toho, čo hľadajú a aký ďalší krok preferujú.",
+    other: "Ďalšie obchodné dáta podľa toho, čo je pre váš tím dnes najdôležitejšie.",
   };
 
   return lines[value];
@@ -344,22 +344,22 @@ function getOpportunitySignal(opportunityText: string) {
   const value = opportunityText.toLowerCase();
 
   if (/(dopyt|formular|lead)/.test(value)) {
-    return "Najvacsi signal je kvalita dopytu a to, co clovek vie doplnit este pred odoslanim.";
+    return "Najväčší signál je kvalita dopytu a to, čo človek vie doplniť ešte pred odoslaním.";
   }
 
   if (/(objed|termin|rezerv)/.test(value)) {
-    return "Najvacsi signal je zjednodusenie cesty k objednaniu alebo rezervacii bez zbytocnych medzikrokov.";
+    return "Najväčší signál je zjednodušenie cesty k objednaniu alebo rezervácii bez zbytočných medzikrokov.";
   }
 
   if (/(otaz|recepci|tim|vola|pise)/.test(value)) {
-    return "Najvacsi signal je odfiltrovanie opakujucich sa otazok a lepsie smerovanie na spravny dalsi krok.";
+    return "Najväčší signál je odfiltrovanie opakujúcich sa otázok a lepšie smerovanie na správny ďalší krok.";
   }
 
   if (/(sluzb|ponuk|produkt|inzer)/.test(value)) {
-    return "Najvacsi signal je rychlejsie nasmerovanie cloveka na spravnu sluzbu, ponuku alebo produkt.";
+    return "Najväčší signál je rýchlejšie nasmerovanie človeka na správnu službu, ponuku alebo produkt.";
   }
 
-  return "Najvacsi signal je zjednodusenie rozhodovania bez prerabky existujuceho webu.";
+  return "Najväčší signál je zjednodušenie rozhodovania bez prerábky existujúceho webu.";
 }
 
 export const aiCustomProposalSchema = z
@@ -421,7 +421,7 @@ export function generateAiCustomProposalRecommendation(
     submission.mainGoal === "other" ? businessLens.suggestion : goalLens.title;
   const opportunitySignal = getOpportunitySignal(submission.opportunityText);
 
-  const summary = `Podla odpovedi by najvacsi zmysel davala ${recommendationTitle.toLowerCase()}, ktora pomoze navstevnikovi rychlejsie najst ${businessLens.audienceTarget}, pripravi lepsi dalsi krok a zaroven da timu kvalitnejsi kontext pre follow-up.`;
+  const summary = `Podľa odpovedí by najväčší zmysel dávala ${recommendationTitle.toLowerCase()}, ktorá pomôže návštevníkovi rýchlejšie nájsť ${businessLens.audienceTarget}, pripraví lepší ďalší krok a zároveň dá tímu kvalitnejší kontext pre follow-up.`;
 
   return {
     summary,
@@ -429,20 +429,20 @@ export function generateAiCustomProposalRecommendation(
     visitorValue: [
       `${goalLens.visitorLine}`,
       `${nextStepLens.line}`,
-      `Na vasom webe by nebolo treba menit cely flow. AI vrstva by len pomohla cloveku rychlejsie trafit ${businessLens.audienceTarget}.`,
+      `Na vašom webe by nebolo treba meniť celý flow. AI vrstva by len pomohla človeku rýchlejšie trafiť ${businessLens.audienceTarget}.`,
     ],
     teamValue: [
       `${goalLens.teamLine}`,
-      `Tim by ziskal ${businessLens.teamOutput}.`,
+      `Tím by získal ${businessLens.teamOutput}.`,
       `${opportunitySignal}`,
     ],
     dashboardValue,
     phaseOne: [
-      `Nasadit kratky vstup ${businessLens.phaseEntry} bez prerabky existujuceho webu.`,
+      `Nasadiť krátky vstup ${businessLens.phaseEntry} bez prerábky existujúceho webu.`,
       `${goalLens.phaseLine}`,
-      "Vysledok odkladat do dashboardu zamerov a do leadu tak, aby obchod videl, co clovek riesil este pred callom.",
+      "Výsledok odkladať do dashboardu zámerov a do leadu tak, aby obchod videl, čo človek riešil ešte pred callom.",
     ],
-    nextStep: `Odporucam prejst 15-min call nad webom ${submission.normalizedDomain} a vybrat jednu konkretnu stranku alebo flow, kde sa tato AI vrstva otestuje ako prva. Ako uspech po 30 dnoch ma zmysel merat: ${submission.successMetric}`,
+    nextStep: `Odporúčam prejsť 15-min call nad webom ${submission.normalizedDomain} a vybrať jednu konkrétnu stránku alebo flow, kde sa táto AI vrstva otestuje ako prvá. Ako úspech po 30 dňoch má zmysel merať: ${submission.successMetric}`,
   };
 }
 
@@ -454,12 +454,12 @@ export function buildAiCustomProposalLeadMessage(
   const generatedRecommendationLines = [
     recommendation.summary,
     "",
-    `Odporucany typ AI vrstvy: ${recommendation.recommendedLayerTitle}`,
-    `Co by riesila pre navstevnika: ${joinHumanList(recommendation.visitorValue)}`,
-    `Co by ziskal tim: ${joinHumanList(recommendation.teamValue)}`,
+    `Odporúčaný typ AI vrstvy: ${recommendation.recommendedLayerTitle}`,
+    `Čo by riešila pre návštevníka: ${joinHumanList(recommendation.visitorValue)}`,
+    `Čo by získal tím: ${joinHumanList(recommendation.teamValue)}`,
     `Dashboard: ${joinHumanList(recommendation.dashboardValue)}`,
-    `Najjednoduchsia prva faza: ${joinHumanList(recommendation.phaseOne)}`,
-    `Odporucany dalsi krok: ${recommendation.nextStep}`,
+    `Najjednoduchšia prvá fáza: ${joinHumanList(recommendation.phaseOne)}`,
+    `Odporúčaný ďalší krok: ${recommendation.nextStep}`,
   ].join("\n");
 
   return [

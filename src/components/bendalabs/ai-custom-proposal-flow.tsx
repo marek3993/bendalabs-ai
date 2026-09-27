@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   businessTypeOptions,
   dashboardDataOptions,
@@ -70,6 +70,7 @@ function ChoiceButton({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`rounded-[24px] border px-5 py-4 text-left text-sm leading-6 transition ${
         active
           ? "border-black bg-black text-white shadow-[0_16px_40px_rgba(17,17,17,0.16)]"
@@ -78,6 +79,7 @@ function ChoiceButton({
     >
       <div className="flex items-start gap-3">
         <div
+          aria-hidden="true"
           className={`mt-1 flex h-5 w-5 items-center justify-center rounded-full border ${
             active ? "border-white bg-white text-black" : "border-black/20 bg-white text-transparent"
           }`}
@@ -122,37 +124,37 @@ function validateCurrentStep(step: number, formState: FormState) {
   if (step === 0) {
     return normalizeWebsiteUrl(formState.website)
       ? ""
-      : "Zadajte platnu webovu adresu. Staci aj domena ako vasweb.sk.";
+      : "Zadajte platnú webovú adresu. Stačí aj doména ako vasweb.sk.";
   }
 
   if (step === 1) {
-    return formState.businessType ? "" : "Vyberte, aky typ webu riesite.";
+    return formState.businessType ? "" : "Vyberte, aký typ webu riešite.";
   }
 
   if (step === 2) {
-    return formState.mainGoal ? "" : "Vyberte, co ma AI vrstva zlepsit ako prve.";
+    return formState.mainGoal ? "" : "Vyberte, čo má AI vrstva zlepšiť ako prvé.";
   }
 
   if (step === 3) {
-    return formState.visitorNextStep ? "" : "Vyberte, co ma navstevnik idealne spravit.";
+    return formState.visitorNextStep ? "" : "Vyberte, čo má návštevník ideálne spraviť.";
   }
 
   if (step === 4) {
     return formState.opportunityText.trim().length >= 12
       ? ""
-      : "Strucne doplnte, kde dnes vidite najvacsiu prilezitost na zlepsenie.";
+      : "Stručne doplňte, kde dnes vidíte najväčšiu príležitosť na zlepšenie.";
   }
 
   if (step === 5) {
     return formState.dashboardData.length > 0
       ? ""
-      : "Vyberte aspon jeden typ dat, ktory chcete vidiet v dashboarde.";
+      : "Vyberte aspoň jeden typ dát, ktorý chcete vidieť v dashboarde.";
   }
 
   if (step === 6) {
     return formState.successMetric.trim().length >= 12
       ? ""
-      : "Doplnte, podla coho by ste po 30 dnoch povedali, ze to ma zmysel.";
+      : "Doplňte, podľa čoho by ste po 30 dňoch povedali, že to má zmysel.";
   }
 
   const normalizedWebsite = normalizeWebsiteUrl(formState.website);
@@ -162,17 +164,19 @@ function validateCurrentStep(step: number, formState: FormState) {
   }
 
   if (!formState.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
-    return "Zadajte platny email.";
+    return "Zadajte platný email.";
   }
 
   if (!normalizedWebsite) {
-    return "Web nie je platny. Vratte sa na prvy krok a opravte ho.";
+    return "Web nie je platný. Vráťte sa na prvý krok a opravte ho.";
   }
 
   return "";
 }
 
 export default function AiCustomProposalFlow() {
+  const inFlight = useRef(false);
+  const errorElement = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [stepError, setStepError] = useState("");
@@ -180,7 +184,7 @@ export default function AiCustomProposalFlow() {
   const [saveWarning, setSaveWarning] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recommendation, setRecommendation] = useState<AiCustomProposalRecommendation | null>(null);
-  const [emailRequested, setEmailRequested] = useState(false);
+  useEffect(() => { if (stepError || submitError) errorElement.current?.focus(); }, [stepError, submitError]);
 
   const stepIndex = step + 1;
 
@@ -223,6 +227,7 @@ export default function AiCustomProposalFlow() {
   }
 
   async function handleSubmit() {
+    if (inFlight.current) return;
     const error = validateCurrentStep(TOTAL_STEPS - 1, formState);
 
     if (error) {
@@ -230,6 +235,7 @@ export default function AiCustomProposalFlow() {
       return;
     }
 
+    inFlight.current = true;
     setIsSubmitting(true);
     setSubmitError("");
     setStepError("");
@@ -238,17 +244,16 @@ export default function AiCustomProposalFlow() {
     const submission = parseAiCustomProposalSubmission(formState);
 
     if (!submission.success) {
-      setSubmitError("Navrh sa teraz nepodarilo pripravit. Skontrolujte vyplnene udaje.");
+      setSubmitError("Návrh sa teraz nepodarilo pripraviť. Skontrolujte vyplnené údaje.");
       setIsSubmitting(false);
+      inFlight.current = false;
       return;
     }
 
     const localRecommendation = generateAiCustomProposalRecommendation(submission.data);
 
     setRecommendation(localRecommendation);
-    setEmailRequested(false);
-    setIsSubmitting(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 
     try {
       const response = await fetch("/api/ai-custom-proposal", {
@@ -265,16 +270,19 @@ export default function AiCustomProposalFlow() {
         recommendation?: AiCustomProposalRecommendation;
       };
 
-      if (!response.ok || payload.leadSaved === false) {
+      if (!response.ok || payload.leadSaved !== true) {
         setSaveWarning(
-          "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Skúste nám napísať na info@bendalabs.sk.",
+          "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Napíšte nám na info@bendalabs.sk.",
         );
         return;
       }
     } catch {
       setSaveWarning(
-        "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Skúste nám napísať na info@bendalabs.sk.",
+        "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Napíšte nám na info@bendalabs.sk.",
       );
+    } finally {
+      inFlight.current = false;
+      setIsSubmitting(false);
     }
   }
 
@@ -284,18 +292,18 @@ export default function AiCustomProposalFlow() {
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="space-y-6">
             <div className="rounded-[32px] border border-[#8fb6a8]/55 bg-[radial-gradient(circle_at_top_right,rgba(196,231,214,0.42),transparent_34%),linear-gradient(180deg,rgba(253,255,254,0.98),rgba(242,249,245,0.96))] p-7 shadow-[0_24px_72px_rgba(80,118,103,0.12)]">
-              <StepTag>Navrh pripraveny</StepTag>
+              <StepTag>Návrh pripravený</StepTag>
               <h1
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-4xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Vas AI navrh na mieru
+                Váš AI návrh na mieru
               </h1>
               <p className="mt-4 text-base leading-7 text-neutral-700">{recommendation.summary}</p>
 
               <div className="mt-6 rounded-[24px] border border-black/8 bg-white/80 p-5">
                 <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                  Odporucany typ AI vrstvy
+                  Odporúčaný typ AI vrstvy
                 </div>
                 <div className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
                   {recommendation.recommendedLayerTitle}
@@ -307,28 +315,23 @@ export default function AiCustomProposalFlow() {
                   href="tel:+421944388123"
                   className="inline-flex rounded-full border border-black bg-black px-5 py-3 text-sm font-medium text-white hover:bg-neutral-800"
                 >
-                  Dohodnut kratky call
+                  Dohodnúť krátky call
                 </a>
-                <button
-                  type="button"
-                  onClick={() => setEmailRequested(true)}
+                <a
+                  href={`mailto:info@bendalabs.sk?subject=${encodeURIComponent("AI návrh na mieru — " + formState.website)}&body=${encodeURIComponent(recommendation.summary + "\n\n" + recommendation.nextStep)}`}
                   className="rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-neutral-950 hover:bg-neutral-100"
                 >
-                  Poslat mi navrh emailom
-                </button>
+                  Konzultovať návrh e-mailom
+                </a>
               </div>
 
-              {emailRequested ? (
-                <div className="mt-4 rounded-[18px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-900">
-                  Navrh posleme aj na {formState.email.trim()} a nadviazeme s dalsim krokom.
-                </div>
-              ) : null}
-
               {saveWarning ? (
-                <div className="mt-4 rounded-[18px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                <div role="alert" className="mt-4 rounded-[18px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
                   {saveWarning}
                 </div>
               ) : null}
+              <p role="status" className="mt-4 text-sm text-neutral-600">{isSubmitting ? "Odosielam kontakt…" : !saveWarning ? "Kontakt bol odoslaný." : ""}</p>
+              <button type="button" disabled={isSubmitting} onClick={() => { setRecommendation(null); setSaveWarning(""); }} className="mt-4 rounded-full border border-black/15 px-5 py-3 text-sm disabled:opacity-50">Upraviť zadanie</button>
             </div>
 
             <div className="rounded-[30px] border border-black/10 bg-white p-6 shadow-[0_16px_50px_rgba(17,17,17,0.05)]">
@@ -345,13 +348,13 @@ export default function AiCustomProposalFlow() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-neutral-500">Hlavny ciel</div>
+                  <div className="text-neutral-500">Hlavný cieľ</div>
                   <div className="font-medium text-neutral-950">
                     {getOptionLabel(mainGoalOptions, formState.mainGoal)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-neutral-500">Idealny dalsi krok navstevnika</div>
+                  <div className="text-neutral-500">Ideálny ďalší krok návštevníka</div>
                   <div className="font-medium text-neutral-950">
                     {getOptionLabel(visitorNextStepOptions, formState.visitorNextStep)}
                   </div>
@@ -361,11 +364,11 @@ export default function AiCustomProposalFlow() {
           </div>
 
           <div className="space-y-6">
-            <ResultSection title="Co by riesila pre navstevnika" items={recommendation.visitorValue} />
-            <ResultSection title="Co by ziskal vas tim" items={recommendation.teamValue} />
-            <ResultSection title="Ake data by ukazal dashboard" items={recommendation.dashboardValue} />
-            <ResultSection title="Najjednoduchsia prva faza" items={recommendation.phaseOne} />
-            <ResultSection title="Odporucany dalsi krok" items={[recommendation.nextStep]} />
+            <ResultSection title="Čo by riešila pre návštevníka" items={recommendation.visitorValue} />
+            <ResultSection title="Čo by získal váš tím" items={recommendation.teamValue} />
+            <ResultSection title="Aké dáta by ukázal dashboard" items={recommendation.dashboardValue} />
+            <ResultSection title="Najjednoduchšia prvá fáza" items={recommendation.phaseOne} />
+            <ResultSection title="Odporúčaný ďalší krok" items={[recommendation.nextStep]} />
           </div>
         </div>
       </main>
@@ -377,25 +380,25 @@ export default function AiCustomProposalFlow() {
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="lg:sticky lg:top-28">
           <div className="rounded-[34px] border border-[#8fb6a8]/55 bg-[radial-gradient(circle_at_top_right,rgba(196,231,214,0.42),transparent_34%),linear-gradient(180deg,rgba(253,255,254,0.98),rgba(242,249,245,0.96))] p-7 shadow-[0_24px_72px_rgba(80,118,103,0.12)]">
-            <StepTag>AI navrh na mieru</StepTag>
+            <StepTag>AI návrh na mieru</StepTag>
             <h1
               className="mt-5 text-[2.8rem] font-semibold leading-[0.96] tracking-[-0.06em] text-neutral-950 sm:text-[3.6rem]"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              AI navrh na mieru
+              AI návrh na mieru
             </h1>
             <p className="mt-5 text-lg leading-8 text-neutral-600">
-              Odpovedzte na par otazok o vasom webe a cieloch. Na konci ziskate navrh, aka AI vrstva
-              by mohla davat najvacsi zmysel prave pre vas biznis.
+              Odpovedzte na pár otázok o vašom webe a cieľoch. Na konci získate návrh, aká AI vrstva
+              by mohla dávať najväčší zmysel práve pre váš biznis.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               {[
                 "AI vrstva",
-                "navrh na mieru",
-                "lepsie pripravene dopyty",
-                "dashboard zamerov",
-                "bez prerabky existujuceho webu",
+                "návrh na mieru",
+                "lepšie pripravené dopyty",
+                "dashboard zámerov",
+                "bez prerábky existujúceho webu",
               ].map((item) => (
                 <div
                   key={item}
@@ -420,10 +423,10 @@ export default function AiCustomProposalFlow() {
             </div>
 
             <div className="mt-6 rounded-[24px] border border-black/8 bg-white/72 p-5 text-sm leading-7 text-neutral-700">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Co ziskate</div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Čo získate</div>
               <div className="mt-3">
-                Na konci uvidite odporucany typ AI vrstvy, co by riesila pre navstevnika, ake nove
-                obchodne data by ste vedeli sledovat a aky je najjednoduchsi prvy krok.
+                Na konci uvidíte odporúčaný typ AI vrstvy, čo by riešila pre návštevníka, aké nové
+                obchodné dáta by ste vedeli sledovať a aký je najjednoduchší prvý krok.
               </div>
             </div>
           </div>
@@ -434,10 +437,10 @@ export default function AiCustomProposalFlow() {
             <div>
               <StepTag>Web firmy</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Aky web chcete posudit?
+                Aký web chcete posúdiť?
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-600">
-                Staci URL alebo domena. Navrh postavime na tom, ako dnes funguje vas web a co od neho
+                Stačí URL alebo doména. Návrh postavíme na tom, ako dnes funguje váš web a čo od neho
                 potrebujete.
               </p>
 
@@ -460,7 +463,7 @@ export default function AiCustomProposalFlow() {
             <div>
               <StepTag>Typ webu / biznisu</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Aky typ webu riesite?
+                Aký typ webu riešite?
               </h2>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
                 {businessTypeOptions.map((option) => (
@@ -477,9 +480,9 @@ export default function AiCustomProposalFlow() {
 
           {step === 2 ? (
             <div>
-              <StepTag>Hlavny ciel</StepTag>
+              <StepTag>Hlavný cieľ</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Co by mala AI vrstva zlepsit ako prve?
+                Čo by mala AI vrstva zlepšiť ako prvé?
               </h2>
               <div className="mt-8 grid gap-3">
                 {mainGoalOptions.map((option) => (
@@ -496,9 +499,9 @@ export default function AiCustomProposalFlow() {
 
           {step === 3 ? (
             <div>
-              <StepTag>Dalsi krok navstevnika</StepTag>
+              <StepTag>Ďalší krok návštevníka</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Co ma navstevnik idealne spravit?
+                Čo má návštevník ideálne spraviť?
               </h2>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
                 {visitorNextStepOptions.map((option) => (
@@ -515,15 +518,17 @@ export default function AiCustomProposalFlow() {
 
           {step === 4 ? (
             <div>
-              <StepTag>Dnesny problem alebo prilezitost</StepTag>
+              <StepTag>Dnešný problém alebo príležitosť</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Kde dnes vidite najvacsiu prilezitost na zlepsenie?
+                Kde dnes vidíte najväčšiu príležitosť na zlepšenie?
               </h2>
               <textarea
+                aria-label="Príležitosť na zlepšenie"
+                maxLength={2000}
                 value={formState.opportunityText}
                 onChange={(event) => updateField("opportunityText", event.target.value)}
                 rows={7}
-                placeholder="Napr. vela ludi pise vseobecne otazky, dopyty su neuplne, ludia nevedia vybrat spravnu sluzbu, chceme lepsie data o zameroch navstevnikov..."
+                placeholder="Napr. veľa ľudí píše všeobecné otázky, dopyty sú neúplné, ľudia nevedia vybrať správnu službu, chceme lepšie dáta o zámeroch návštevníkov..."
                 className="mt-8 w-full rounded-[24px] border border-black/10 bg-white px-5 py-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
               />
             </div>
@@ -531,13 +536,13 @@ export default function AiCustomProposalFlow() {
 
           {step === 5 ? (
             <div>
-              <StepTag>Data / dashboard</StepTag>
+              <StepTag>Dáta / dashboard</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Ake data by ste chceli vidiet v dashboarde?
+                Aké dáta by ste chceli vidieť v dashboarde?
               </h2>
               <p className="mt-4 text-base leading-7 text-neutral-600">
-                Mozete vybrat viac moznosti. Cielom je vidiet, co ludia realne hladaju a ako sa
-                rozhoduju.
+                Môžete vybrať viac možností. Cieľom je vidieť, čo ľudia reálne hľadajú a ako sa
+                rozhodujú.
               </p>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
                 {dashboardDataOptions.map((option) => (
@@ -555,15 +560,17 @@ export default function AiCustomProposalFlow() {
 
           {step === 6 ? (
             <div>
-              <StepTag>Uspech po 30 dnoch</StepTag>
+              <StepTag>Úspech po 30 dňoch</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Podla coho by ste po 30 dnoch povedali, ze to ma zmysel?
+                Podľa čoho by ste po 30 dňoch povedali, že to má zmysel?
               </h2>
               <textarea
+                aria-label="Úspech po 30 dňoch"
+                maxLength={2000}
                 value={formState.successMetric}
                 onChange={(event) => updateField("successMetric", event.target.value)}
                 rows={7}
-                placeholder="Napr. viac kvalitnych dopytov, menej nejasnych otazok, lepsi prehlad o potrebach zakaznikov, rychlejsie objednanie..."
+                placeholder="Napr. viac kvalitných dopytov, menej nejasných otázok, lepší prehľad o potrebách zákazníkov, rýchlejšie objednanie..."
                 className="mt-8 w-full rounded-[24px] border border-black/10 bg-white px-5 py-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
               />
             </div>
@@ -573,7 +580,7 @@ export default function AiCustomProposalFlow() {
             <div>
               <StepTag>Kontakt</StepTag>
               <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Kam vam mozeme poslat navrh alebo sa ozvat?
+                Kam vám môžeme poslať návrh alebo sa ozvať?
               </h2>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 <label className="grid gap-2 text-sm text-neutral-700">
@@ -581,6 +588,7 @@ export default function AiCustomProposalFlow() {
                   <input
                     type="text"
                     autoComplete="name"
+                    maxLength={120}
                     value={formState.name}
                     onChange={(event) => updateField("name", event.target.value)}
                     className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
@@ -592,6 +600,7 @@ export default function AiCustomProposalFlow() {
                   <input
                     type="email"
                     autoComplete="email"
+                    maxLength={180}
                     value={formState.email}
                     onChange={(event) => updateField("email", event.target.value)}
                     className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
@@ -599,10 +608,11 @@ export default function AiCustomProposalFlow() {
                 </label>
 
                 <label className="grid gap-2 text-sm text-neutral-700">
-                  <span>Telefon (volitelne)</span>
+                  <span>Telefón (voliteľne)</span>
                   <input
                     type="tel"
                     autoComplete="tel"
+                    maxLength={80}
                     value={formState.phone}
                     onChange={(event) => updateField("phone", event.target.value)}
                     className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
@@ -610,10 +620,11 @@ export default function AiCustomProposalFlow() {
                 </label>
 
                 <label className="grid gap-2 text-sm text-neutral-700">
-                  <span>Firma (volitelne)</span>
+                  <span>Firma (voliteľne)</span>
                   <input
                     type="text"
                     autoComplete="organization"
+                    maxLength={160}
                     value={formState.company}
                     onChange={(event) => updateField("company", event.target.value)}
                     className="min-h-12 rounded-[18px] border border-black/10 bg-white px-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
@@ -624,13 +635,13 @@ export default function AiCustomProposalFlow() {
           ) : null}
 
           {stepError ? (
-            <div className="mt-6 rounded-[20px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+            <div ref={errorElement} role="alert" tabIndex={-1} className="mt-6 rounded-[20px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
               {stepError}
             </div>
           ) : null}
 
           {submitError ? (
-            <div className="mt-6 rounded-[20px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+            <div ref={errorElement} role="alert" tabIndex={-1} className="mt-6 rounded-[20px] border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
               {submitError}
             </div>
           ) : null}
@@ -642,7 +653,7 @@ export default function AiCustomProposalFlow() {
               disabled={step === 0}
               className="rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-neutral-950 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Spat
+              Späť
             </button>
 
             {step < TOTAL_STEPS - 1 ? (
@@ -651,7 +662,7 @@ export default function AiCustomProposalFlow() {
                 onClick={handleNext}
                 className="rounded-full border border-black bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800"
               >
-                Dalsi krok
+                Ďalší krok
               </button>
             ) : (
               <button
@@ -660,7 +671,7 @@ export default function AiCustomProposalFlow() {
                 disabled={isSubmitting}
                 className="rounded-full border border-black bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Pripravujem navrh..." : "Zobrazit AI navrh na mieru"}
+                {isSubmitting ? "Pripravujem návrh..." : "Zobraziť AI návrh na mieru"}
               </button>
             )}
           </div>

@@ -3,11 +3,13 @@ import Script from "next/script";
 import appleTouchIcon from "./apple-touch-icon.png";
 import appIcon from "./icon.png";
 import "./globals.css";
+import "./brand.css";
+import "./arm-task.css";
 
 export const metadata: Metadata = {
-  title: "BendaLabs | AI vrstva, ktorá mení spôsob používania webu",
+  title: "BendaLabs — aplikácie, AI a robotika",
   description:
-    "BendaLabs prináša AI vrstvu, ktorá návštevníka dovedie k správnemu výsledku rýchlejšie a mení spôsob, akým ľudia používajú váš web.",
+    "Projekty Mareka Bendu: Fakturomat, TrendAtlas, robotická ruka a ďalšie digitálne produkty a fyzické prototypy. Spoznajte BendaLabs a BendaRobotics.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -45,3 +47,4 @@ export default function RootLayout({
     </html>
   );
 }
+

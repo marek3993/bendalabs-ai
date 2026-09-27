@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { usePathname } from "next/navigation";
 import { trackGoogleAdsConversion } from "@/lib/analytics/google-ads";
 import { getLeadFormCopy } from "@/lib/bendalabs/lead-form-content";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import type { ContactRequestSource } from "@/lib/leads/types";
+import { parseContactRequestSubmission, getContactRequestFieldErrors } from "@/lib/leads/contact-request";
 
 const CALL_REQUEST_FALLBACK_EMAIL = "no-email-call@bendalabs.invalid";
 
@@ -70,9 +71,43 @@ export default function LeadCaptureForm({
   const [callPhone, setCallPhone] = useState("");
   const [callPreferredTime, setCallPreferredTime] = useState("");
   const [callNote, setCallNote] = useState("");
+  const [pending, setPending] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const inFlight = useRef(false);
+  const feedback = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { if (error || submitted) feedback.current?.focus(); }, [error, submitted]);
 
-  function handleSubmit() {
-    trackGoogleAdsConversion();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (inFlight.current || submitted) return;
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const result = parseContactRequestSubmission(Object.fromEntries(data));
+    if (!result.success) {
+      const first = Object.values(getContactRequestFieldErrors(result.error))[0];
+      setError(first ? copy.validation[first] : copy.genericErrorMessage);
+      return;
+    }
+    if (isCallVariant && (!callPhone.trim() || !callPreferredTime.trim())) {
+      setError(locale === "cs" ? "Vyplňte telefon a preferovaný čas." : "Vyplňte telefón a preferovaný čas.");
+      return;
+    }
+    inFlight.current = true;
+    setPending(true);
+    setError("");
+    try {
+      const response = await fetch(form.action, { method: "POST", body: data });
+      const destination = new URL(response.url);
+      if (!response.ok || destination.origin !== window.location.origin || destination.pathname !== getSuccessPath(locale)) throw new Error("Submission failed");
+      setSubmitted(true);
+      trackGoogleAdsConversion();
+    } catch {
+      setError(copy.genericErrorMessage + (locale === "cs" ? " Vyplněné údaje zůstaly zachované." : " Vyplnené údaje zostali zachované."));
+    } finally {
+      inFlight.current = false;
+      setPending(false);
+    }
   }
 
   return (
@@ -110,6 +145,7 @@ export default function LeadCaptureForm({
         action="/api/contact-requests"
         method="post"
         onSubmit={handleSubmit}
+        aria-busy={pending}
         className="mt-6 grid gap-4"
       >
         <input type="hidden" name="locale" value={locale} />
@@ -303,19 +339,18 @@ export default function LeadCaptureForm({
           </>
         )}
 
+        {(error || submitted) && <p ref={feedback} role={error ? "alert" : "status"} tabIndex={-1} className="rounded-2xl border border-black/10 bg-neutral-50 px-4 py-3 text-sm text-neutral-800">{error || `${variantCopy.successTitle} ${variantCopy.successMessage}`}</p>}
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className={`text-xs uppercase tracking-[0.18em] ${isContactVariant ? "text-[#5d7c6f]" : "text-neutral-400"}`}>
-            {copy.sourceLabels[source]}
-          </div>
           <button
             type="submit"
+            disabled={pending || submitted}
             className={`rounded-[20px] px-6 py-3.5 text-sm font-semibold transition-all ${
               isContactVariant
                 ? "border border-[#46a06f] bg-[linear-gradient(180deg,#2f9a68_0%,#267c55_100%)] text-white shadow-[0_18px_34px_rgba(23,85,58,0.24),0_0_0_1px_rgba(191,242,214,0.08)_inset] hover:-translate-y-0.5 hover:bg-[linear-gradient(180deg,#39ab75_0%,#2b8b5e_100%)] hover:shadow-[0_22px_38px_rgba(23,85,58,0.28),0_0_0_1px_rgba(216,247,229,0.14)_inset]"
                 : "border border-black bg-black text-white hover:bg-neutral-800"
             }`}
           >
-            {variantCopy.submitLabel}
+            {pending ? variantCopy.submittingLabel : submitted ? (locale === "cs" ? "Odesláno" : "Odoslané") : variantCopy.submitLabel}
           </button>
         </div>
       </form>

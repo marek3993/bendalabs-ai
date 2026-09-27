@@ -555,8 +555,8 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
                       <a href="tel:+421944388123" className="block hover:text-white">
                         0944 388 123
                       </a>
-                      <a href="mailto:hello@bendalabs.sk" className="block hover:text-white">
-                        hello@bendalabs.sk
+                      <a href="mailto:info@bendalabs.sk" className="block hover:text-white">
+                        info@bendalabs.sk
                       </a>
                     </div>
 
@@ -564,7 +564,7 @@ export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPagePro
                       type="button"
                       onClick={() =>
                         window.open(
-                          `mailto:hello@bendalabs.sk?subject=${encodeURIComponent(content.contactMailSubject)}&body=${encodeURIComponent(content.contactMailBody)}`,
+                          `mailto:info@bendalabs.sk?subject=${encodeURIComponent(content.contactMailSubject)}&body=${encodeURIComponent(content.contactMailBody)}`,
                           "_self",
                         )
                       }

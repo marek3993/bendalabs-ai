@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { startTransition, useEffect, useMemo, useState } from "react";
+import { startTransition, useEffect, useMemo, useRef, useState } from "react";
 import LeadCaptureForm from "@/components/bendalabs/lead-capture-form";
 import { AI_CUSTOM_PROPOSAL_PATH } from "@/lib/bendalabs/ai-custom-proposal";
 import {
@@ -470,11 +470,11 @@ function getResolvedLoadingSteps(locale: SiteLocale, steps: ReadonlyArray<string
   if (resolved.length > 1) {
     resolved[1] = isHealthcareUrlCandidate(inputUrl)
       ? locale === "cs"
-        ? "Vyhodnocuji, jak by AI vrstva pomohla s vyberem sluzby a pripravu objednani..."
-        : "Vyhodnocujem, ako by AI vrstva pomohla s vyberom sluzby a pripravou objednania..."
+        ? "Vyhodnocuji, jak by AI vrstva pomohla s výběrem služby a přípravou objednání..."
+        : "Vyhodnocujem, ako by AI vrstva pomohla s výberom služby a prípravou objednania..."
       : locale === "cs"
-        ? "Vyhodnocuji, kde by AI vrstva dokazala urychlit vyber sluzby..."
-        : "Vyhodnocujem, kde by AI vrstva vedela urychlit vyber sluzby...";
+        ? "Vyhodnocuji, kde by AI vrstva dokázala urychlit výběr služby..."
+        : "Vyhodnocujem, kde by AI vrstva vedela urýchliť výber služby...";
   }
 
   resolved[resolved.length - 1] =
@@ -1301,6 +1301,7 @@ export default function AuditBot({
   const featuredBenefits = benefits ?? [];
   const featuredExplainer = explainerLine ?? "";
   const [url, setUrl] = useState("");
+  const auditInFlight = useRef(false);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [errorSuggestion, setErrorSuggestion] = useState<AuditErrorSuggestion | null>(null);
@@ -1326,8 +1327,8 @@ export default function AuditBot({
     : false;
   const resolvedFrictionTitle = healthcareAuditCopyActive
     ? locale === "cs"
-      ? "Kde by AI vrstva pomohla pred objednanim"
-      : "Kde by AI vrstva pomohla pred objednanim"
+      ? "Kde by AI vrstva pomohla před objednáním"
+      : "Kde by AI vrstva pomohla pred objednaním"
     : copy.frictionTitle;
   const resolvedFrictionItems =
     healthcareAuditCopyActive && dashboardPreview ? dashboardPreview.reasons : audit?.friction_points ?? [];
@@ -1377,6 +1378,8 @@ export default function AuditBot({
   };
 
   const runAudit = async (normalized: string) => {
+    if (auditInFlight.current) return;
+    auditInFlight.current = true;
     const minimumLoadingPromise = waitForDuration(
       getMinimumAuditLoadingDuration(resolvedLoadingSteps.length),
     );
@@ -1434,11 +1437,14 @@ export default function AuditBot({
       setAudit(null);
       setError(getGenericAuditErrorMessage(locale));
       setErrorSuggestion(null);
+    } finally {
+      auditInFlight.current = false;
     }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (auditInFlight.current) return;
 
     const normalized = normalizeFieldValue();
 
@@ -1756,9 +1762,9 @@ export default function AuditBot({
                 {copy.exampleFlowsTitle}
               </div>
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
-                {audit.example_user_flows.map((flow) => (
+                {audit.example_user_flows.map((flow, index) => (
                   <div
-                    key={flow.user_intent}
+                    key={`${index}-${flow.user_intent}`}
                     className="rounded-[24px] border border-black/8 bg-black/[0.03] p-5"
                   >
                     <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
@@ -1810,12 +1816,12 @@ export default function AuditBot({
                 </button>
                 <div className="text-sm leading-6 text-white/60">{dashboardCopy.formHelper}</div>
                 <div className="rounded-[20px] border border-white/12 bg-white/6 px-4 py-4 text-sm leading-6 text-white/72">
-                  <div>Chcete presnejsi navrh podla vasich cielov?</div>
+                  <div>{locale === "cs" ? "Chcete přesnější návrh podle svých cílů?" : "Chcete presnejší návrh podľa svojich cieľov?"}</div>
                   <Link
                     href={AI_CUSTOM_PROPOSAL_PATH}
                     className="mt-3 inline-flex rounded-full border border-white bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-200"
                   >
-                    Vyplnit AI navrh na mieru
+                    {locale === "cs" ? "Vyplnit AI návrh na míru (SK)" : "Vyplniť AI návrh na mieru"}
                   </Link>
                 </div>
               </div>
@@ -1823,6 +1829,7 @@ export default function AuditBot({
 
             {activeLeadForm ? (
               <LeadCaptureForm
+                key={`${auditedUrl}:${activeLeadForm}`}
                 locale={locale}
                 source="audit_result"
                 variant={activeLeadForm === "call" ? "call" : "audit"}

@@ -1,5 +1,5 @@
-import BendaLabsLandingPage from "@/components/bendalabs/benda-labs-landing-page";
+import WorldHome from "@/components/bendalabs/world-home";
 
 export default function Home() {
-  return <BendaLabsLandingPage locale="sk" />;
+  return <WorldHome locale="sk" />;
 }

@@ -21,6 +21,9 @@ export default function AuditPage() {
       heroAddon={
         <AuditBot
           locale="sk"
+          title="Kde by AI mohla zjednodušiť váš web?"
+          subtext="Zadajte adresu webu. Bez registrácie a e-mailu."
+          description="Audit vychádza z verejne dostupného obsahu. Výsledok je podkladom pre ďalší návrh, nie meraním skutočných konverzií."
           badge={content.auditBot.badge}
           proposalTitle={content.auditBot.proposalTitle}
           proposalDescription={content.auditBot.proposalDescription}

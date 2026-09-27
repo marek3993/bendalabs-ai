@@ -1,4 +1,4 @@
-import { getNormalizedDomain } from "@/lib/leads/domain";
+import { getNormalizedDomainFromUrl as getNormalizedDomain } from "@/lib/leads/domain-utils";
 import { siteAuditSchema, type RawSiteAudit, type SiteAudit } from "./schema";
 
 export type FitLabelKey = "low" | "borderline" | "good" | "strong";

@@ -1,12 +1,14 @@
 import ContactRequestSuccessState from "@/components/bendalabs/contact-request-success-state";
+import { contactReturnPath } from "@/lib/bendalabs/contact-return";
 
-export default function CzechContactRequestThankYouPage() {
+export default async function CzechContactRequestThankYouPage({ searchParams }: { searchParams: Promise<{ back?: string | string[] }> }) {
+  const { back } = await searchParams;
   return (
     <ContactRequestSuccessState
-      backHref="/cs"
-      backLabel="Zpet na web"
-      title="Dekuji, poptavka je odeslana."
-      description="Ozvu se vam."
+      backHref={contactReturnPath(back, "cs")}
+      backLabel="Zpět na web"
+      title="Děkuji, zadání dorazilo."
+      description="Ozvu se vám a probereme další krok."
     />
   );
 }
