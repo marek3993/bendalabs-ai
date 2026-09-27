@@ -19,10 +19,11 @@ function turn(frame: Basis, angle: number, axis: "y" | "z"): Basis {
     : { ...frame, x: mix(frame.x, frame.y, c, s), y: mix(frame.y, frame.x, c, -s) };
 }
 
-// Reference: 505 mm overall, 430 mm reach, 108 mm gripper. Individual link
-// lengths are estimated from the drawing; this is not the servo calibration/CAD.
+// Upper linkage follows the supplied pre-platform arm reference. The raised
+// bearing carrier follows the current photographs/STL envelope, not the old base.
+// Joint offsets are illustrative assembly estimates, not calibrated hardware CAD.
 export function armFrames(pose: ArmPose) {
-  const base = turn(move(identity, [0, 40, 0]), pose[0], "y");
+  const base = turn(move(identity, [0, 88, 0]), pose[0], "y");
   const shoulder = turn(move(base, [0, 35, 0]), -pose[1], "z");
   const elbow = turn(move(shoulder, [0, 153, 0]), -pose[2], "z");
   const wrist = turn(move(elbow, [0, 107, 0]), -pose[3], "z");
@@ -43,6 +44,16 @@ export function gripFrame(pose: ArmPose): Basis {
 }
 export function jawGap(opening: number) {
   return 14 + 96 * Math.sin(rad(CLOSED_FINGER_ANGLE + (40 - CLOSED_FINGER_ANGLE) * opening / 100));
+}
+export function gripperFrames(pose: ArmPose) {
+  const tool = armFrames(pose).tool;
+  const spread = CLOSED_FINGER_ANGLE + (40 - CLOSED_FINGER_ANGLE) * pose[5] / 100;
+  return ([-1, 1] as const).map(side => {
+    const drive = turn(move(tool, [side * 12, 15, 0]), -side * spread, "z");
+    const follower = turn(move(tool, [side * 22, 15, 0]), -side * spread, "z");
+    const jaw = turn(move(drive, [0, 48, 0]), side * spread, "z");
+    return { side, drive, follower, jaw };
+  });
 }
 export const TASK_SOURCE = gripFrame(TASK_PICK);
 export const TASK_TARGET = gripFrame(TASK_PLACE);
@@ -133,10 +144,9 @@ export function buildCubeScene(task: CubeTaskState): ArmFace[] {
 
 export function buildArm(pose: ArmPose): ArmFace[] {
   const faces: ArmFace[] = [];
-  const black = ["#161d22", "#2c373d", "#465159", "#202a30", "#10171b", "#36424a"];
-  const silver = ["#87918f", "#d6dcd2", "#eef0dc", "#abb5ad", "#71817e", "#bec6b8"];
-  const mint = ["#3c9676", "#93e7bb", "#c3f5d9", "#72cba1", "#29634f", "#76bca0"];
-  function face(frame: Basis, points: Vec3[], fill: string, edge = "#53625f") {
+  const black = ["#101317", "#252b31", "#434a51", "#181d23", "#0c1014", "#333a42"];
+  const silver = ["#77818c", "#d9dee4", "#f3f5f7", "#a5afb9", "#65717d", "#b9c2ca"];
+  function face(frame: Basis, points: Vec3[], fill: string, edge = "#41494f") {
     faces.push({ points: points.map(p => point(frame, p)), fill, edge });
   }
   function box(frame: Basis, center: Vec3, size: Vec3, colors = black) {
@@ -162,30 +172,74 @@ export function buildArm(pose: ArmPose): ArmFace[] {
       const light = .64 + .28 * Math.max(0, normal[0] * -.45 + normal[1] * .6 + normal[2] * .7);
       const rgb = colors[1].slice(1).match(/../g)!;
       const shade = "#" + rgb.map(channel => Math.round(parseInt(channel, 16) * light).toString(16).padStart(2, "0")).join("");
-      face(frame, [lower[i], lower[next], upper[next], upper[i]], shade);
+      face(frame, [lower[i], lower[next], upper[next], upper[i]], shade, shade);
     }
   }
   function disc(frame: Basis, center: Vec3, radius: number, length: number, colors = silver) {
     const shifted = move(frame, center);
     cylinder({ ...shifted, y: frame.z, z: mul(frame.y, -1) }, radius, length, colors, 12);
   }
+  function plate(frame: Basis, outline: [number, number][], z: number, thickness = 3) {
+    face(frame, outline.map(([x,y]) => [x,y,z-thickness/2]), black[0]);
+    face(frame, outline.map(([x,y]) => [x,y,z+thickness/2]), black[1]);
+    outline.forEach(([x,y],i) => {
+      const [nx,ny] = outline[(i+1)%outline.length];
+      face(frame, [[x,y,z-thickness/2],[nx,ny,z-thickness/2],[nx,ny,z+thickness/2],[x,y,z+thickness/2]], black[i%2?2:3]);
+    });
+  }
+  function screw(frame: Basis, x: number, y: number, z: number, side = 1, radius = 2.7) {
+    disc(frame, [x,y,z], radius+1, side*.7, silver);
+    disc(frame, [x,y,z+side*.8], radius, side*1.3, silver);
+    const front=z+side*2.2;
+    face(frame, [[x-.55,y-radius*.7,front],[x+.55,y-radius*.7,front],[x+.55,y+radius*.7,front],[x-.55,y+radius*.7,front]], '#33383e', '#33383e');
+    face(frame, [[x-radius*.7,y-.55,front],[x+radius*.7,y-.55,front],[x+radius*.7,y+.55,front],[x-radius*.7,y+.55,front]], '#33383e', '#33383e');
+  }
+  function rail(frame: Basis, z: number, width: number, length: number, holes: number[]) {
+    const radius=3, thickness=3;
+    for(const side of [-1,1]) box(frame,[side*(width/2+radius)/2,length/2,z],[(width/2-radius),length,thickness]);
+    let previous=0;
+    for(const y of [...holes,length+radius]) {
+      const bottom=y-radius;
+      if(bottom>previous) box(frame,[0,(previous+bottom)/2,z],[radius*2,bottom-previous,thickness]);
+      if(y<=length) for(let i=0;i<12;i++) {
+        const a=i*Math.PI/6,b=(i+1)*Math.PI/6;
+        const inner=(angle:number):[number,number]=>[Math.cos(angle)*radius,y+Math.sin(angle)*radius];
+        const outer=(angle:number):[number,number]=>{const r=radius/Math.max(Math.abs(Math.cos(angle)),Math.abs(Math.sin(angle)));return [Math.cos(angle)*r,y+Math.sin(angle)*r];};
+        const ia=inner(a),ib=inner(b),oa=outer(a),ob=outer(b);
+        for(const side of [-1,1]) face(frame,[[...oa,z+side*thickness/2],[...ob,z+side*thickness/2],[...ib,z+side*thickness/2],[...ia,z+side*thickness/2]],side>0?black[1]:black[0],side>0?black[1]:black[0]);
+        face(frame,[[...ia,z-thickness/2],[...ib,z-thickness/2],[...ib,z+thickness/2],[...ia,z+thickness/2]],black[4],black[4]);
+      }
+      previous=y+radius;
+    }
+  }
+  function cable(frame: Basis, points: Vec3[], color: string) {
+    for(let i=1;i<points.length;i++) {
+      const a=points[i-1],b=points[i],dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy)||1;
+      const ox=-dy/length*.85,oy=dx/length*.85;
+      face(frame,[[a[0]+ox,a[1]+oy,a[2]],[b[0]+ox,b[1]+oy,b[2]],[b[0]-ox,b[1]-oy,b[2]],[a[0]-ox,a[1]-oy,a[2]]],color,color);
+    }
+  }
   function axle(frame: Basis, width = 48) {
-    box(frame, [0, -8, 0], [32, 38, 33]);
+    box(frame, [0, -10, 0], [40, 35, 20]);
+    box(frame, [0, 6, 0], [42, 5, 22]);
+    box(frame, [0, -25, 0], [40, 3, 20]);
     for (const side of [-1, 1]) {
-      disc(frame, [0, 0, side * width / 2], 13, side * 3, black);
-      disc(frame, [0, 0, side * (width / 2 + 3)], 4, side * 2);
+      box(frame,[side*22,-8,0],[5,25,24]);
+      for(const y of [-17,0]) screw(frame,side*22,y,13,1,2);
+      disc(frame, [0, 0, side * width / 2], 13, side * 2, black);
+      screw(frame,0,0,side*(width/2+2),side,3.1);
       for (const [x, y] of [[-7,0],[7,0],[0,7],[0,-7]]) {
-        disc(frame, [x, y, side * (width / 2 + 3)], 1.6, side * 1.2);
+        screw(frame,x,y,side*(width/2+2),side,1.8);
       }
     }
   }
   function bolt(frame: Basis, p: Vec3) { cylinder(move(frame, p), 2.5, 3, silver, 8); }
-  function gear(frame: Basis, x: number) {
+  function gear(frame: Basis) {
     const near: Vec3[] = [], far: Vec3[] = [];
     for (let i = 0; i < 64; i++) {
       const angle = i / 64 * Math.PI * 2, radius = i % 4 < 2 ? 12.5 : 10.8;
-      near.push([x + Math.cos(angle) * radius, 15 + Math.sin(angle) * radius, 15]);
-      far.push([x + Math.cos(angle) * radius, 15 + Math.sin(angle) * radius, 18]);
+      near.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 5]);
+      far.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 8]);
     }
     face(frame, near, black[0]); face(frame, far, black[1]);
     for (let i = 0; i < 64; i++) {
@@ -195,24 +249,26 @@ export function buildArm(pose: ArmPose): ArmFace[] {
   }
   const { base, shoulder, elbow, wrist, tool } = armFrames(pose);
 
-  box(identity, [0, 1, 0], [145, 5, 112]);
-  box(identity, [0, 8, 0], [94, 10, 81]);
-  for (const x of [-37, 37]) for (const z of [-31, 31]) {
-    cylinder(move(identity, [x, 12, z]), 3, 14, black, 8);
-    bolt(identity, [x * 1.6, 4, z * 1.45]);
+  box(identity, [0, 3, 0], [145, 6, 132]);
+  box(identity, [0, 9, 0], [106, 8, 106]);
+  box(identity, [0, 34, 0], [40, 40.5, 20]);
+  cylinder(move(identity,[0,54,0]),5,23,silver,12);
+  for (const x of [-43, 43]) for (const z of [-40, 40]) {
+    cylinder(move(identity, [x, 13, z]), 5, 52, black, 10);
+    bolt(identity, [x * 1.45, 6, z * 1.4]);
   }
-  cylinder(move(identity, [0, 26, 0]), 65, 10, silver, 32);
-  cylinder(move(identity, [0, 37, 0]), 50, 4, black, 32);
+  cylinder(move(identity, [0, 65, 0]), 63.5, 8, black, 40);
+  cylinder(move(identity, [0, 73, 0]), 60, 8.5, silver, 40);
+  cylinder(move(base, [0, -6.5, 0]), 47, 6.5, black, 40);
   for (let i = 0; i < 4; i++) {
     const a = i * Math.PI / 2 + .4;
-    bolt(identity, [56 * Math.cos(a), 36, 56 * Math.sin(a)]);
+    bolt(identity, [55 * Math.cos(a), 81.5, 55 * Math.sin(a)]);
   }
   box(base, [0, 3, 0], [46, 6, 60]);
   for (const z of [-25, 25]) box(base, [0, 21, z], [38, 40, 4]);
   axle(shoulder);
   for (const z of [-23, 23]) {
-    box(shoulder, [0, 76, z], [26, 152, 4]);
-    for (const y of [31, 61, 91, 121]) disc(shoulder, [0, y, z + Math.sign(z) * 2.2], 2.8, .5, black);
+    rail(shoulder,z,28,153,[31,61,91,121]);
   }
   box(shoulder, [0, 140, 0], [29, 8, 43]);
   axle(elbow);
@@ -223,28 +279,45 @@ export function buildArm(pose: ArmPose): ArmFace[] {
   box(elbow, [0, 100, 0], [35, 7, 47]);
   for (const x of [-12, 12]) for (const z of [-10, 10]) bolt(elbow, [x, 22, z]);
   axle(wrist);
-  for (const z of [-23, 23]) box(wrist, [0, 29, z], [31, 60, 4]);
+  for (const z of [-23, 23]) rail(wrist,z,31,60,[24,43]);
   box(wrist, [0, 59, 0], [36, 5, 47]);
   box(wrist, [0, 36, 0], [26, 30, 31]);
   cylinder(move(wrist, [0, 62, 0]), 12, 4);
-  box(tool, [0, 8, 0], [49, 10, 26]);
-  box(tool, [0, 11, -13], [26, 31, 24]);
-  const closedAngle = -Math.asin(7 / 48) * 180 / Math.PI;
-  const spread = closedAngle + (40 - closedAngle) * pose[5] / 100;
-  for (const side of [-1, 1]) {
-    gear(tool, side * 12);
-    disc(tool, [side * 12, 15, 19], 3, 2);
-    const finger = turn(move(tool, [side * 12, 15, 0]), -side * spread, "z");
-    for (const z of [-10, 10]) {
-      box(finger, [0, 24, z], [5, 48, 4]);
-      box(finger, [side * 9, 24, z], [4, 48, 3]);
-      for (const y of [2, 47]) disc(finger, [0, y, z + 3], 2.6, 1.5);
-    }
-    // Counter-rotation keeps the gripping faces parallel as the linkage opens.
-    const jaw = turn(move(finger, [0, 48, 0]), side * spread, "z");
-    box(jaw, [0, 22.5, 0], [7, 45, 25]);
-    box(jaw, [-side * 4, 29, 0], [2, 26, 23], mint);
+  cylinder(move(tool,[0,0,0]),10,6,silver,20);
+  box(tool, [0, 8, -2], [54, 6, 30]);
+  box(tool, [0, 11, -16], [40, 24, 20]);
+  for(const side of [-1,1]) {
+    plate(tool,[[side*15,0],[side*28,2],[side*28,24],[side*17,28],[side*13,16]],3,3);
+    for(const y of [5,21]) screw(tool,side*23,y,5,1,2.1);
   }
+  for (const {side,drive,follower,jaw} of gripperFrames(pose)) {
+    gear(drive);
+    // The two 48 mm links have separate fixed pivots. Their distal pivots
+    // remain 10 mm apart in tool space, forming the photographed parallelogram.
+    plate(drive,[[-7,-6],[0,-10],[7,-6],[9,6],[5,22],[4,46],[0,52],[-4,46],[-5,22],[-9,6]],10,3);
+    plate(follower,[[-3,-3],[0,-5],[3,-3],[3,48],[0,51],[-3,48]],-2,3);
+    for(const [frame,z] of [[drive,12],[follower,0]] as const) {
+      screw(frame,0,0,z,1,2.5);
+      screw(frame,0,48,z,1,2.5);
+    }
+    const outline:[number,number][]=[[-5,-5],[14,-5],[14,7],[5,18],[5,39],[3,45],[-3,45],[-5,39]].map(([x,y])=>[side*x,y]);
+    for(const z of [-6,6]) plate(jaw,outline,z,2.5);
+    disc(jaw,[side*10,0,-7],2.2,14,silver);
+    screw(jaw,side*10,0,8,1,2.3);
+    for(const y of [0,17,39]) {
+      disc(jaw,[0,y,-7],2.2,14,silver);
+      screw(jaw,0,y,8,1,2.3);
+    }
+    box(jaw,[0,30,0],[10,24,10]);
+  }
+  const wireColors=['#b94a3b','#d4b965','#292c31'];
+  wireColors.forEach((color,i)=>{
+    const shift=i*2.1;
+    cable(shoulder,[[-18+shift,-18,15],[-23+shift,8,18],[-19+shift,44,18],[-18+shift,108,18],[-22+shift,144,18]],color);
+    cable(elbow,[[-18+shift,-9,16],[-22+shift,15,17],[-12+shift,32,12],[-12+shift,80,12],[-22+shift,103,17]],color);
+    cable(wrist,[[18+shift,-13,13],[25+shift,0,15],[24+shift,34,15],[18+shift,61,13]],color);
+    cable(tool,[[18+shift,-2,-8],[31+shift,5,0],[33+shift,25,0],[25+shift,34,-4],[18+shift,18,-9]],color);
+  });
   return faces;
 }
 

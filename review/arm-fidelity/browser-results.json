@@ -1,0 +1,38 @@
+[
+  {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900,
+    "result": "PASS",
+    "axes": 6,
+    "views": 3,
+    "meshUnclipped": true,
+    "recordingPlayback": true,
+    "cubeTransfer": true,
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "width": 390,
+    "height": 844,
+    "result": "PASS",
+    "axes": 6,
+    "views": 3,
+    "meshUnclipped": true,
+    "recordingPlayback": true,
+    "cubeTransfer": true,
+    "errors": []
+  },
+  {
+    "name": "small-mobile",
+    "width": 320,
+    "height": 640,
+    "result": "PASS",
+    "axes": 6,
+    "views": 3,
+    "meshUnclipped": true,
+    "recordingPlayback": true,
+    "cubeTransfer": true,
+    "errors": []
+  }
+]

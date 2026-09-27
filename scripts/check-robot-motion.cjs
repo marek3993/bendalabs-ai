@@ -12,7 +12,7 @@ for (const extension of [".ts", ".tsx"]) require.extensions[extension] = (module
   module._compile(outputText, filename);
 };
 const { appendFrame, clampPose, HOME_POSE, JOINTS, MAX_RECORDING_MS, PARK_POSE, poseAt, playbackTime } = require("../src/components/bendalabs/arm-motion.ts");
-const { armFrames, buildArm, projectPoint } = require("../src/components/bendalabs/arm-geometry.ts");
+const { armFrames, buildArm, projectPoint, gripperFrames, jawGap, gripFrame, initialCubeTask, TASK_APPROACH } = require("../src/components/bendalabs/arm-geometry.ts");
 const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-7, `${a} ≠ ${b}`);
 const recording = [];
 const a = [...HOME_POSE], b = [40, -12, 38, 60, 130, 5];
@@ -41,6 +41,24 @@ const limited = clampPose([NaN, 1000, -1000, Infinity, -999, 300]);
 limited.forEach((value, i) => assert.ok(Number.isFinite(value) && value >= JOINTS[i].min && value <= JOINTS[i].max));
 
 const mesh = buildArm(HOME_POSE);
+const localPoint = (frame, x, y, z) => frame.origin.map((n, i) => n + frame.x[i]*x + frame.y[i]*y + frame.z[i]*z);
+for (const reference of [HOME_POSE, PARK_POSE, [70, 40, -60, 30, 125, 0]]) {
+  for (const opening of [0, 25, 55, 100]) {
+    const pose = [...reference]; pose[5] = opening;
+    const tool = armFrames(pose).tool;
+    const fingers = gripperFrames(pose);
+    for (const {side, drive, follower, jaw} of fingers) {
+      jaw.y.forEach((n,i) => close(n,tool.y[i]));
+      const followerEnd = localPoint(follower,0,48,0);
+      const jawPivot = localPoint(jaw,side*10,0,0);
+      followerEnd.forEach((n,i) => close(n,jawPivot[i]));
+      close(Math.hypot(...jaw.origin.map((n,i)=>n-drive.origin[i])),48);
+    }
+    const contacts = fingers.map(({side,jaw})=>localPoint(jaw,-side*5,29,0));
+    close(Math.hypot(...contacts[0].map((n,i)=>n-contacts[1][i])),jawGap(opening));
+    contacts[0].map((n,i)=>(n+contacts[1][i])/2).forEach((n,i)=>close(n,gripFrame(pose).origin[i]));
+  }
+}
 for (let joint = 0; joint < 6; joint++) {
   const pose = [...HOME_POSE]; pose[joint] += 20;
   const changed = buildArm(pose);
@@ -63,12 +81,16 @@ for (const pose of [HOME_POSE, PARK_POSE, JOINTS.map(j => j.min), JOINTS.map(j =
 }
 const extended = buildArm([0, 0, 0, 0, 0, 0]).flatMap(face => face.points);
 const height = Math.max(...extended.map(p => p[1]));
-assert.ok(height >= 503 && height <= 506, "Extended model should match the 505 mm supplied reference");
+assert.ok(height >= 551 && height <= 554, "Upper arm reference plus the raised bearing carrier must retain the intended model envelope");
 
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 const ArmModel = require("../src/components/bendalabs/arm-model.tsx").default;
 const MotionStudy = require("../src/components/bendalabs/motion-study.tsx").default;
+for (const view of ["perspective", "side", "top"]) {
+  const taskMarkup = renderToStaticMarkup(React.createElement(ArmModel, {pose:TASK_APPROACH, view, cs:false, task:initialCubeTask()}));
+  assert.ok(taskMarkup.includes("Kocka") && !taskMarkup.includes("NaN"), "Detailed task mesh must render without argument-limit overflow");
+}
 for (const locale of ["sk", "cs"]) {
   const markup = renderToStaticMarkup(React.createElement(MotionStudy, { locale }));
   assert.equal((markup.match(/type="range"/g) || []).length, 7, "Six joint inputs plus the recording timeline");
