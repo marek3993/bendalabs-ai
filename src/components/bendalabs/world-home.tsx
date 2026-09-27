@@ -9,7 +9,7 @@ export default function WorldHome({ locale = "sk" }: { locale?: SiteLocale }) {
   return <PageShell locale={locale}><main id="main">
     <section className="bl-intro bl-wrap">
       <div className="bl-intro-copy">
-        <div><p className="bl-eyebrow">Marek Benda / BendaLabs</p><h1>{cs ? "Aplikace, AI\na vlastní roboty." : "Aplikácie, AI\na vlastné roboty."}</h1></div>
+        <div><p className="bl-eyebrow">Marek Benda / BendaLabs</p><h1>{cs ? "Aplikace, AI\na vlastní roboty." : "Aplikácie, AI, vlastný hardware a robotika"}</h1></div>
         <div><p>{cs ? "Vyvíjím digitální produkty a stavím fyzické prototypy. Tady najdete projekty, na kterých pracuji — od faktur až po robotickou ruku." : "Vyvíjam digitálne produkty a staviam fyzické prototypy. Tu nájdete projekty, na ktorých pracujem — od faktúr až po robotickú ruku."}</p><Link href="#kontakt" className="bl-text-link">{cs ? "Začít projekt" : "Začať projekt"}<Arrow diagonal /></Link></div>
       </div>
       <div className="bl-entrances" id="projekty">
