@@ -102,7 +102,7 @@
 .bl-case-details > summary > span { flex-shrink: 0; font-size: 23px; font-weight: 400; transition: transform .15s ease; }
 .bl-case-details[open] > summary > span { transform: rotate(45deg); }
 .bl-case-content { padding: 6px 0 18px; }
-.bl-case-content h4 { font-size: 15px; font-weight: 600; line-height: 1.4; margin: 22px 0 10px; color: var(--bl-ink); }
+.bl-case-content h4, .bl-more-content > h4 { font-size: 15px; font-weight: 600; line-height: 1.4; margin: 22px 0 10px; color: var(--bl-ink); }
 .bl-case-content > h4:first-child, .bl-detail-columns h4 { margin-top: 0; }
 .bl-case-content p { font-size: 14px; }
 .bl-case-content p + p { margin-top: 16px; }
