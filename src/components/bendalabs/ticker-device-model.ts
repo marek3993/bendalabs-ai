@@ -1,3 +1,4 @@
+import type { Quote } from "./ticker-market";
 export type TickerButton = "next" | "mode" | "currency";
 export type TickerCurrency = "EUR" | "USD";
 export type TickerState = { coin: number; view: number; currency: TickerCurrency; night: boolean; auto: boolean; greeting: boolean; greetingId: number };
@@ -47,22 +48,21 @@ export class TickerPressSession {
   }
 }
 
-const prices = { EUR: [54000, 2850, 125], USD: [60000, 3150, 139] };
-const changes = [2.45, -1.2, 4.1];
-const capitalizations = { EUR: ["1,08 bil. €", "343 mld. €", "58 mld. €"], USD: ["1,20 bil. $", "379 mld. $", "64 mld. $"] };
-const matrixCaps = { EUR: ["1.08T", "343B", "58B"], USD: ["1.20T", "379B", "64B"] };
-export function tickerMessage(state: TickerState, cs: boolean) {
+export function tickerMessage(state: TickerState, cs: boolean, quote: Quote | null = null, status = "connecting") {
   if (state.greeting) return { matrix: cs ? "VESELE VANOCE!" : "VESELE VIANOCE!", title: cs ? "Sváteční pozdrav" : "Sviatočný pozdrav", value: cs ? "Veselé Vánoce!" : "Veselé Vianoce!" };
-  const coin = COINS[state.coin];
-  const unit = state.currency === "EUR" ? "€" : "$";
+  const coin = COINS[state.coin], unit = state.currency === "EUR" ? "€" : "$";
+  if (!quote || quote.product !== coin + "-" + state.currency) return {
+    matrix: status === "connecting" ? "PRIPAJAM..." : "DATA NEDOSTUPNE",
+    title: coin + " · " + state.currency,
+    value: status === "connecting" ? (cs ? "Připojuji…" : "Pripájam…") : (cs ? "Data nejsou dostupná" : "Dáta nie sú dostupné"),
+  };
+  const format = (n: number, digits = 2) => new Intl.NumberFormat(cs ? "cs-CZ" : "sk-SK", {maximumFractionDigits:digits,minimumFractionDigits:digits}).format(n);
   if (state.view === 1) {
-    const change = changes[state.coin];
-    const value = `${change > 0 ? "+" : ""}${change.toFixed(2).replace(".", ",")} %`;
-    return { matrix: `${coin} 24H ${change > 0 ? "+" : ""}${change.toFixed(2)}%`, title: `${coin} · ${cs ? "Změna za 24 hodin" : "Zmena za 24 hodín"}`, value };
+    const sign = quote.change > 0 ? "+" : "";
+    return {matrix:coin + " 24H " + sign + quote.change.toFixed(2) + "%",title:coin + " · " + (cs ? "Změna za 24 hodin" : "Zmena za 24 hodín"),value:sign + format(quote.change) + " %"};
   }
-  if (state.view === 2) return { matrix: `${coin} MC ${unit}${matrixCaps[state.currency][state.coin]}`, title: `${coin} · ${cs ? "Tržní kapitalizace" : "Trhová kapitalizácia"}`, value: capitalizations[state.currency][state.coin] };
-  const value = new Intl.NumberFormat(cs ? "cs-CZ" : "sk-SK").format(prices[state.currency][state.coin]);
-  return { matrix: `${coin} ${changes[state.coin] >= 0 ? "^" : "v"} ${unit}${value.replace(/\s/g, " ")}`, title: `${coin} · Cena`, value: `${value} ${unit}` };
+  if (state.view === 2) return {matrix:coin + " VOL " + quote.volume.toFixed(2),title:coin + " · " + (cs ? "Objem za 24 hodin" : "Objem za 24 hodín"),value:format(quote.volume) + " " + coin};
+  return {matrix:coin + " " + unit + quote.price.toFixed(2),title:coin + " · Cena",value:format(quote.price) + " " + unit};
 }
 
 const glyphs: Record<string, string[]> = {

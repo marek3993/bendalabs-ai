@@ -77,7 +77,7 @@ export function RoboticsProjects({ locale = "sk", standalone = false }: Props) {
       <ProjectDemo kind="mecanum" cs={cs} defaultOpen />
     </article>
     <div className="bl-more-projects"><p className="bl-eyebrow">{cs ? "Další systémy a experimenty" : "Ďalšie systémy a experimenty"}</p>
-      <MoreProject title="Hardware market ticker" summary={cs ? "Tržní a systémová data na samostatném zařízení." : "Trhové a systémové dáta na samostatnom zariadení."} status={cs ? "Funkční experimentální prototyp" : "Fungujúci experimentálny prototyp"}>
+      <MoreProject title="Crypto Ticker Display" summary={cs ? "Tržní a systémová data na samostatném zařízení." : "Trhové a systémové dáta na samostatnom zariadení."} status={cs ? "Funkční experimentální prototyp" : "Fungujúci experimentálny prototyp"}>
         <p>{cs ? "Zobrazuje kryptoměnová a systémová data mimo počítač. Propojuje vlastní software, displeje, síťová data a embedded hardware." : "Zobrazuje kryptomenové a systémové dáta mimo počítača. Prepája vlastný softvér, displeje, sieťové dáta a embedded hardvér."}</p>
         <ProjectDemo kind="ticker" cs={cs} />
       </MoreProject>

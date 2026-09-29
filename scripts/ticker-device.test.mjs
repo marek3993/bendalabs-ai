@@ -16,6 +16,7 @@ function loadSource(relativePath, imports = {}) {
   return exports;
 }
 const model = loadSource("../src/components/bendalabs/ticker-device-model.ts");
+const market = loadSource("../src/components/bendalabs/ticker-market.ts");
 const { initialTicker, tickerReducer, tickerMessage, TickerPressSession, messageColumns, matrixBits, LONG_PRESS_MS } = model;
 const press = (state, button, long = false) => tickerReducer(state, { type: "press", button, long });
 
@@ -103,13 +104,22 @@ test("follow-up native clicks are suppressed while accessible clicks work", () =
   assert.equal(accessible.click("mode", 0, 200), null);
 });
 
-test("sample data changes numerically and supports Czech and Slovak greetings", () => {
-  const eur = tickerMessage(initialTicker, false);
-  const usd = tickerMessage(press(initialTicker, "currency"), false);
+test("only validated market quotes supply prices, changes and volume", () => {
+  const payload = {type:"ticker",product_id:"BTC-EUR",price:"123.45",open_24h:"100",volume_24h:"12.5",time:new Date().toISOString(),sequence:4};
+  const quote = market.parseQuote(payload,"BTC-EUR");
+  assert.equal(quote.price,123.45);
+  assert.ok(Math.abs(quote.change-23.45)<1e-9);
+  for(const patch of [{price:"NaN"},{price:""},{price:"0"},{volume_24h:"-1"},{open_24h:"0"},{time:"bad"},{time:"2000-01-01"},{product_id:"ETH-EUR"},{sequence:1.5}]) assert.equal(market.parseQuote({...payload,...patch},"BTC-EUR"),null);
+  const eur = tickerMessage(initialTicker, false, quote);
+  const usd = tickerMessage(press(initialTicker, "currency"), false, {...quote,product:"BTC-USD",price:140});
   assert.notEqual(eur.value.replace(/\D/g, ""), usd.value.replace(/\D/g, ""));
   assert.match(eur.matrix, /€/);
   assert.match(usd.matrix, /\$/);
-  assert.match(tickerMessage({ ...initialTicker, coin: 1, view: 1 }, false).value, /^-/);
+  assert.match(tickerMessage({ ...initialTicker, view: 1 }, false,{...quote,change:-1}).value, /^-/);
+  assert.match(tickerMessage({ ...initialTicker, view: 2 }, false,quote).value,/12,50 BTC/);
+  assert.equal(tickerMessage(initialTicker,false).value,"Pripájam…");
+  assert.equal(tickerMessage(initialTicker,false,null,"offline").value,"Dáta nie sú dostupné");
+  assert.equal(tickerMessage({...initialTicker,currency:"USD"},false,quote).value,"Pripájam…");
   const greeting = { ...initialTicker, greeting: true };
   assert.equal(tickerMessage(greeting, false).value, "Veselé Vianoce!");
   assert.equal(tickerMessage(greeting, true).value, "Veselé Vánoce!");
@@ -130,12 +140,14 @@ test("dot matrix keeps 64 columns, complete glyphs and a seamless scroll cycle",
 });
 
 test("both language variants server-render exactly three physical controls", () => {
-  const { default: TickerDevice } = loadSource("../src/components/bendalabs/ticker-device.tsx", { "./ticker-device-model": model });
+  const { default: TickerDevice } = loadSource("../src/components/bendalabs/ticker-device.tsx", { "./ticker-device-model": model, "./ticker-market": market });
   for (const cs of [false, true]) {
     const html = renderToStaticMarkup(React.createElement(TickerDevice, { cs }));
     assert.equal((html.match(/<button\b/g) ?? []).length, 3);
     assert.equal(/<(input|select|textarea)\b/.test(html), false);
-    assert.match(html, cs ? /Ceny jsou ukázkové/ : /Ceny sú ukážkové/);
+    assert.match(html, /Coinbase Exchange/);
+    assert.match(html, cs ? /Připojuji/ : /Pripájam/);
+    assert.doesNotMatch(html, /Ceny jsou ukázkové|Ceny sú ukážkové/);
     assert.match(html, cs ? /MĚNA/ : /MENA/);
     assert.equal((html.match(/aria-describedby=/g) ?? []).length, 3);
     assert.equal((html.match(/class="td-dots-off"/g) ?? []).length, 1);

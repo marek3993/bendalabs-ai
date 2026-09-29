@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useId, useMemo, useReducer, useRef, useState, useSyncExternalStore, type KeyboardEvent, type PointerEvent } from "react";
 import { COIN_INTERVAL_MS, GREETING_MS, LONG_PRESS_MS, TickerPressSession, initialTicker, matrixBits, messageColumns, tickerMessage, tickerReducer, type TickerButton } from "./ticker-device-model";
 import "../../app/ticker-device.css";
+import { subscribeMarket, type MarketState } from "./ticker-market";
+import { COINS } from "./ticker-device-model";
 
 function motionSubscribe(notify: () => void) { const query = window.matchMedia("(prefers-reduced-motion: reduce)"); query.addEventListener("change", notify); return () => query.removeEventListener("change", notify); }
 function activitySubscribe(notify: () => void) {
@@ -51,7 +53,12 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
   const session = useRef(new TickerPressSession());
   const longTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const uid = useId();
-  const message = tickerMessage(state, cs);
+  const product = `${COINS[state.coin]}-${state.currency}`;
+  const [market, setMarket] = useState<MarketState>({product,status:"connecting",quote:null});
+  useEffect(() => subscribeMarket(product,setMarket),[product]);
+  const quote = market.product === product && market.status === "live" ? market.quote : null;
+  const status = market.product === product ? market.status : "connecting";
+  const message = tickerMessage(state, cs, quote, status);
   const cancel = useCallback(() => {
     if (longTimer.current !== null) clearTimeout(longTimer.current);
     longTimer.current = null;
@@ -123,7 +130,7 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
   }
   const buttons: { key: TickerButton; label: string; short: string; long: string; icon: string }[] = [
     { key: "next", label: cs ? "MINCE" : "MINCA", short: cs ? "Další mince" : "Ďalšia minca", long: cs ? "Sváteční pozdrav" : "Sviatočný pozdrav", icon: "›" },
-    { key: "mode", label: "ÚDAJ", short: cs ? "Cena / 24 h / hodnota trhu" : "Cena / 24 h / hodnota trhu", long: cs ? "Noční jas" : "Nočný jas", icon: "≡" },
+    { key: "mode", label: "ÚDAJ", short: "Cena / 24 h / objem", long: cs ? "Noční jas" : "Nočný jas", icon: "≡" },
     { key: "currency", label: "MENA", short: "EUR / USD", long: cs ? "Střídání mincí" : "Striedanie mincí", icon: "€/$" },
   ];
   const feedback = pressed ? pressed.ready ? `${cs ? "Uvolni" : "Uvoľni"}: ${buttons.find(button => button.key === pressed.button)?.long}.` : (cs ? "Pro druhou funkci podrž 1,5 sekundy a uvolni." : "Pre druhú funkciu podrž 1,5 sekundy a uvoľni.") : (cs ? "Krátký stisk změní údaj. Podržení odemkne druhou funkci." : "Krátke stlačenie zmení údaj. Podržanie odomkne druhú funkciu.");
@@ -138,7 +145,7 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
         <div className="td-brand-row"><span>BENDA LABS</span><span className="td-device-light" aria-hidden="true" /><span>{state.night ? (cs ? "NOČNÍ JAS" : "NOČNÝ JAS") : "64 × 8"}</span></div>
         <div className="td-screen-bezel" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
           <div className="td-screen" role="img" aria-label={`${message.title}: ${message.value}`}>
-            <Matrix key={message.matrix} text={message.matrix} active={active && !hover && !pressed} reduced={reduced} />
+            <Matrix text={message.matrix} active={active && !hover && !pressed} reduced={reduced} />
             {reduced && <div className="td-static-message" aria-hidden="true">{message.title}<strong>{message.value}</strong></div>}
           </div>
           <i className="td-screw td-screw-left" aria-hidden="true" /><i className="td-screw td-screw-right" aria-hidden="true" />
@@ -153,12 +160,17 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
       </div>
     </div>
     <div className="td-reading" role="status"><span>{message.title}</span><strong>{message.value}</strong></div>
+    <p className="td-feed-status" data-status={quote ? "live" : status}>
+      <a href="https://exchange.coinbase.com/" target="_blank" rel="noreferrer">Coinbase Exchange</a>
+      <span>{quote ? (cs ? "Živé ceny" : "Živé ceny") : status === "connecting" ? (cs ? "Připojuji…" : "Pripájam…") : status === "paused" ? (cs ? "Připojení pozastaveno" : "Pripojenie pozastavené") : (cs ? "Spojení přerušeno · obnovuji" : "Spojenie prerušené · obnovujem")}</span>
+      {quote && <span>{cs ? "Poslední obchod" : "Posledný obchod"}: <time dateTime={new Date(quote.time).toISOString()}>{new Date(quote.time).toLocaleTimeString(cs ? "cs-CZ" : "sk-SK")}</time></span>}
+    </p>
     <div className="td-current-mode"><span>{state.night ? (cs ? "Noční jas" : "Nočný jas") : (cs ? "Denní jas" : "Denný jas")}</span><span>{state.currency}</span><span>{state.auto ? (reduced ? (cs ? "Střídání pozastaveno" : "Striedanie pozastavené") : (cs ? "Mince se střídají" : "Mince sa striedajú")) : (cs ? "Ruční výběr mince" : "Ručný výber mincí")}</span></div>
     </div>
     <div className="bl-demo-panel" role="region" aria-label={cs ? "Funkce tlačítek tickeru" : "Funkcie tlačidiel tickera"} tabIndex={0}>
     <p className="td-feedback" role="status">{feedback}</p>
     <ol className="td-guide">{buttons.map((button, index) => <li key={button.key} id={`${uid}-${button.key}`}><span className="td-guide-number" aria-hidden="true">{index + 1}</span><strong>{button.short}</strong><span>{cs ? "Podrž" : "Podrž"} 1,5 s: {button.long.toLowerCase()}.</span></li>)}</ol>
-    <p className="td-sample-note">{cs ? "Ceny jsou ukázkové. Tlačítka fungují i klávesami Enter a mezerník." : "Ceny sú ukážkové. Tlačidlá fungujú aj klávesmi Enter a medzerník."}</p>
+    <p className="td-sample-note">{cs ? "Cena posledního obchodu na Coinbase v EUR nebo USD. Cena, změna a objem za 24 h se obnovují průběžně. Tlačítka fungují i klávesami Enter a mezerník." : "Cena posledného obchodu na Coinbase v EUR alebo USD. Cena, zmena a objem za 24 h sa obnovujú priebežne. Tlačidlá fungujú aj klávesmi Enter a medzerník."}</p>
     </div>
     </div>
   </section>;

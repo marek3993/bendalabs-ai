@@ -79,3 +79,6 @@
  .td-demo .bl-demo-panel .td-guide { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
  .td-demo .bl-demo-panel .td-feedback { margin-top: 12px; }
 }
+.td-feed-status { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; margin: 8px 12px; color: #b6c8bd; font-size: 10px; line-height: 1.5; }
+.td-feed-status a { color: inherit; text-underline-offset: 3px; }
+.td-feed-status[data-status="live"] > span:first-of-type { color: #a4e6be; }
