@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import ArmModel from "./arm-model";
 import type { ArmView } from "./arm-model";
-import { appendFrame, clampPose, formatTime, HOME_POSE, JOINTS, MAX_RECORDING_MS, PARK_POSE, playbackTime, poseAt, SAMPLE_INTERVAL_MS } from "./arm-motion";
+import { appendFrame, clampPose, formatTime, HOME_POSE, JOINTS, MAX_RECORDING_MS, PARK_POSE, playbackTime, poseAt, presetDuration, presetPose, SAMPLE_INTERVAL_MS } from "./arm-motion";
 import type { ArmPose, MotionFrame } from "./arm-motion";
 import { advanceCubeTask, CUBE_DEMO, constrainCubePose, cubeGripDistance, initialCubeTask, TASK_APPROACH } from "./arm-geometry";
 import type { CubeTaskState } from "./arm-geometry";
@@ -32,6 +32,7 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
   const playFrom = useRef(0);
   const cursor = useRef(0);
   const durationRef = useRef(0);
+  const presetRequest = useRef(0);
   const recording = mode === "recording";
   const playing = mode === "playing";
   const hasRecording = duration > 0;
@@ -51,7 +52,37 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
     setPose(safe);
   }, []);
 
+  const cancelPreset = useCallback(() => {
+    cancelAnimationFrame(presetRequest.current);
+    presetRequest.current = 0;
+  }, []);
+
+  useEffect(() => {
+    const visibility = () => { if (document.hidden) cancelPreset(); };
+    document.addEventListener("visibilitychange", visibility);
+    return () => { cancelPreset(); document.removeEventListener("visibilitychange", visibility); };
+  }, [cancelPreset]);
+
+  function moveToPreset(target: ArmPose) {
+    if (playing || example === "playing") return;
+    cancelPreset();
+    if (mode === "paused") setMode("idle");
+    const from: ArmPose = [...poseRef.current], to = clampPose(target);
+    const total = presetDuration(from, to);
+    if (!total) return;
+    let previous = performance.now(), elapsed = 0;
+    const tick = (now: number) => {
+      // Keep delayed frames from skipping a large part of the physical movement.
+      elapsed = Math.min(total, elapsed + Math.min(100, now - previous));
+      previous = now;
+      updatePose(presetPose(from, to, elapsed, total));
+      presetRequest.current = elapsed < total ? requestAnimationFrame(tick) : 0;
+    };
+    presetRequest.current = requestAnimationFrame(tick);
+  }
+
   function resetTask() {
+    cancelPreset();
     setMode("idle"); setExample("idle"); setBlocked(false); demoCursor.current = 0;
     const fresh = initialCubeTask(); taskRef.current = fresh; setTask(fresh);
     updatePose([...TASK_APPROACH]);
@@ -120,6 +151,7 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
   }
 
   function stop(now: number) {
+    cancelPreset();
     if (recording) {
       const elapsed = Math.min(MAX_RECORDING_MS, now - startTime.current);
       appendFrame(frames.current, elapsed, poseRef.current);
@@ -133,6 +165,7 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
 
   function play(now: number) {
     if (!hasRecording) return;
+    cancelPreset();
     const from = mode === "paused" && cursor.current < duration ? cursor.current : 0;
     playFrom.current = from;
     cursor.current = from;
@@ -143,6 +176,7 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
   }
 
   function seek(next: number) {
+    cancelPreset();
     cursor.current = next;
     setTime(next);
     updatePose(poseAt(frames.current, next));
@@ -151,6 +185,7 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
 
   function manualPose(next: ArmPose, now: number) {
     if (playing || example === "playing") return;
+    cancelPreset();
     if (example === "paused") setExample("idle");
     if (mode === "paused") setMode("idle");
     updatePose(next);
@@ -260,8 +295,8 @@ export default function MotionStudy({ locale = "sk" }: { locale?: SiteLocale }) 
       </label>)}
     </fieldset>
     {!task && <div className="bl-study-presets" role="group" aria-label={cs ? "Výchozí polohy" : "Východiskové polohy"}>
-      <button type="button" disabled={playing} onClick={event => manualPose([...HOME_POSE], event.timeStamp)}>{cs ? "Výchozí poloha" : "Východisková poloha"}</button>
-      <button type="button" disabled={playing} onClick={event => manualPose([...PARK_POSE], event.timeStamp)}>{cs ? "Složit ruku" : "Zložiť ruku"}</button>
+      <button type="button" disabled={playing} onClick={() => moveToPreset(HOME_POSE)}>{cs ? "Výchozí poloha" : "Východisková poloha"}</button>
+      <button type="button" disabled={playing} onClick={() => moveToPreset(PARK_POSE)}>{cs ? "Složit ruku" : "Zložiť ruku"}</button>
     </div>}
     {!task && <div className="bl-study-recorder">
       <div className="bl-study-record-heading"><h4>{cs ? "Vlastní pohyb" : "Vlastný pohyb"}</h4><span role="status" className={recording ? "is-recording" : ""}>{recording && <i aria-hidden="true" />}{status}</span></div>

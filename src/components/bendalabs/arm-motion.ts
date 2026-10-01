@@ -16,6 +16,18 @@ export const PARK_POSE: ArmPose = [0, 48, -96, -62, 0, 15];
 export const MAX_RECORDING_MS = 60_000;
 export const SAMPLE_INTERVAL_MS = 50;
 
+export function presetDuration(from: ArmPose, to: ArmPose): number {
+  const travel = Math.max(...from.map((value, index) => Math.abs(to[index] - value)));
+  // Smoothstep peaks at 1.5 times its average speed; limit the fastest axis to 90 units/s.
+  return travel === 0 ? 0 : Math.max(600, travel * 1000 / 60);
+}
+
+export function presetPose(from: ArmPose, to: ArmPose, elapsed: number, duration: number): ArmPose {
+  const progress = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 1;
+  const weight = progress * progress * (3 - 2 * progress);
+  return from.map((value, index) => value + (to[index] - value) * weight) as ArmPose;
+}
+
 export function clampPose(pose: ArmPose): ArmPose {
   return pose.map((value, index) => Math.min(JOINTS[index].max,
     Math.max(JOINTS[index].min, Number.isFinite(value) ? value : HOME_POSE[index]))) as ArmPose;

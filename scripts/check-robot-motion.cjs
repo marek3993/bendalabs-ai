@@ -11,11 +11,28 @@ for (const extension of [".ts", ".tsx"]) require.extensions[extension] = (module
   });
   module._compile(outputText, filename);
 };
-const { appendFrame, clampPose, HOME_POSE, JOINTS, MAX_RECORDING_MS, PARK_POSE, poseAt, playbackTime } = require("../src/components/bendalabs/arm-motion.ts");
+const { appendFrame, clampPose, HOME_POSE, JOINTS, MAX_RECORDING_MS, PARK_POSE, poseAt, playbackTime, presetDuration, presetPose } = require("../src/components/bendalabs/arm-motion.ts");
 const { armFrames, buildArm, projectPoint, gripperFrames, jawGap, gripFrame, initialCubeTask, TASK_APPROACH } = require("../src/components/bendalabs/arm-geometry.ts");
 const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-7, `${a} ≠ ${b}`);
 const recording = [];
 const a = [...HOME_POSE], b = [40, -12, 38, 60, 130, 5];
+for (const start of [PARK_POSE, b, JOINTS.map(j => j.min), JOINTS.map(j => j.max)]) {
+  const duration = presetDuration(start, HOME_POSE);
+  assert.ok(duration >= 600);
+  assert.deepEqual(presetPose(start, HOME_POSE, 0, duration), start);
+  assert.deepEqual(presetPose(start, HOME_POSE, duration + 100, duration), HOME_POSE);
+  let previous = start;
+  for (let time = 16; time < duration; time += 16) {
+    const next = presetPose(start, HOME_POSE, time, duration);
+    next.forEach((value, i) => {
+      assert.ok(Math.abs(value - previous[i]) <= 90 * .016 + 1e-7, "Preset must respect peak joint speed");
+      assert.ok(Math.abs(value - HOME_POSE[i]) <= Math.abs(previous[i] - HOME_POSE[i]), "Preset must approach without overshoot");
+    });
+    previous = next;
+  }
+}
+assert.equal(presetDuration(HOME_POSE, HOME_POSE), 0);
+assert.deepEqual(presetPose(HOME_POSE, HOME_POSE, 0, 0), HOME_POSE);
 appendFrame(recording, 0, a);
 appendFrame(recording, 1000, a); // One second hold before motion.
 appendFrame(recording, 2000, b);
