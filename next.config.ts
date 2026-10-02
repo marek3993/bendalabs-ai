@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
     cpus: 2,
     webpackMemoryOptimizations: true,
   },
+  async headers() {
+    return ["/api/:path*", "/admin/:path*"].map((source) => ({
+      source,
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+    }));
+  },
   async redirects() {
     return [
       { source: "/ai", destination: "/labs", permanent: true },
