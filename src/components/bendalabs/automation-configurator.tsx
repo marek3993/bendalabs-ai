@@ -29,7 +29,7 @@ export default function AutomationConfigurator({ initialModules }: { initialModu
     inFlight.current = true;
     setPending(true); setError("");
     const url = new URL(window.location.href);
-    const campaign = ["utm_source", "utm_medium", "utm_campaign", "utm_content"].map(key => url.searchParams.has(key) ? `${key}=${url.searchParams.get(key)}` : "").filter(Boolean).join("; ").slice(0, 400);
+    const campaign = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "utm_id"].map(key => url.searchParams.has(key) ? `${key}=${url.searchParams.get(key)}` : "").filter(Boolean).join("; ").slice(0, 400);
     let failureMessage = "Dopyt sa nepodarilo odoslať. Skúste znova alebo napíšte na info@bendalabs.sk.";
     try {
       const response = await fetch("/api/automation-requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({

@@ -25,6 +25,16 @@ const faqs = [
 export default async function AutomationPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const initialModules = readAutomationModules(params.modul);
+  function moduleLink(module: string) {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (key.startsWith("utm_") && value) {
+        for (const item of Array.isArray(value) ? value : [value]) query.append(key, item);
+      }
+    }
+    query.set("modul", module);
+    return `/automatizacia?${query.toString()}#konfigurator`;
+  }
   return <div className="bl-site auto-site"><a href="#main" className="bl-skip">Prejsť na obsah</a>
     <header className="auto-header"><div className="bl-wrap auto-header-inner"><Brand /><nav aria-label="Navigácia ponuky"><a href="#moduly">Služby a ceny</a><a href="#ako-to-funguje">Ako to funguje</a><a href="#o-mne">Kto to pripraví</a></nav><a className="bl-button bl-button-small" href="#konfigurator">Napísať zadanie <Arrow /></a></div></header>
     <main id="main">
@@ -34,7 +44,7 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
       </section>
       <section className="auto-modules" id="moduly"><div className="bl-wrap">
         <div className="auto-heading-row"><div><p className="bl-eyebrow">S čím vám viem pomôcť</p><h2>Vyberte si podľa toho,<br />čo potrebujete vyriešiť.</h2></div><p>Obe služby dostanete s vlastným dashboardom. Môžete začať jednou a druhú pridať neskôr.</p></div>
-        <div className="auto-module-grid">{automationModules.map(module => <article key={module.id} className="auto-module-card"><div className="auto-module-number"><span>{module.id === "dokumenty" ? "DOKUMENTY A ADMINISTRATÍVA" : "OBCHODNÉ PRÍLEŽITOSTI"}</span></div><h3>{module.title}</h3><p>{module.description}</p><ul>{module.benefits.map(line => <li key={line}>{line}</li>)}</ul><div className="auto-module-price"><span>Nastavenie vrátane dashboardu</span><strong><small>od </small>{euro(module.totalSetup)}<small> jednorazovo</small></strong><p>+ od {euro(module.totalMonthly)} / mesiac</p></div><Link href={`/automatizacia?modul=${module.id}#konfigurator`} className="bl-text-link">{module.id === "dokumenty" ? "Mám záujem o dokumenty" : "Mám záujem o zákazky"} <Arrow /></Link></article>)}</div>
+        <div className="auto-module-grid">{automationModules.map(module => <article key={module.id} className="auto-module-card"><div className="auto-module-number"><span>{module.id === "dokumenty" ? "DOKUMENTY A ADMINISTRATÍVA" : "OBCHODNÉ PRÍLEŽITOSTI"}</span></div><h3>{module.title}</h3><p>{module.description}</p><ul>{module.benefits.map(line => <li key={line}>{line}</li>)}</ul><div className="auto-module-price"><span>Nastavenie vrátane dashboardu</span><strong><small>od </small>{euro(module.totalSetup)}<small> jednorazovo</small></strong><p>+ od {euro(module.totalMonthly)} / mesiac</p></div><Link href={moduleLink(module.id)} className="bl-text-link">{module.id === "dokumenty" ? "Mám záujem o dokumenty" : "Mám záujem o zákazky"} <Arrow /></Link></article>)}</div>
         <p className="auto-modules-note">Uvádzacie ceny pre prvých 5 klientov. Konkrétny postup a cenu si potvrdíme pred začiatkom práce.</p>
       </div></section>
       <section className="auto-how bl-wrap" id="ako-to-funguje">
@@ -46,7 +56,7 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
         <div className="auto-practical-benefits"><div><h3>Menej času na vypĺňanie</h3><p>Jedno meno a adresu už nekopírujete do každého súboru zvlášť.</p></div><div><h3>Menej preklepov a rozdielov</h3><p>Dokumenty čerpajú z toho istého profilu a dohodnutých vzorov.</p></div><div><h3>Prehľad pre celý tím</h3><p>Údaje, súbory a história zostávajú pri konkrétnom človeku alebo firme.</p></div></div>
       </section>
       <section className="auto-opportunity-section"><div className="bl-wrap auto-opportunity-grid">
-        <div><p className="bl-eyebrow">Zákazky v praxi</p><h2>Nájdená príležitosť<br />aj prvé oslovenie.</h2><p>Podľa odboru, regiónu a kapacity vašej firmy systém vyhľadáva vhodné zákazky. Pri každej máte dostupné podmienky, zdroj a kontakt.</p><p>Zároveň pripraví e-mail, ktorý vychádza z konkrétneho zadania a z toho, čo vaša firma ponúka. Text si prezriete, doplníte a odošlete podľa svojho rozhodnutia.</p><Link href="/automatizacia?modul=prilezitosti#konfigurator" className="bl-text-link">Nastaviť hľadanie pre moju firmu <Arrow /></Link></div>
+        <div><p className="bl-eyebrow">Zákazky v praxi</p><h2>Nájdená príležitosť<br />aj prvé oslovenie.</h2><p>Podľa odboru, regiónu a kapacity vašej firmy systém vyhľadáva vhodné zákazky. Pri každej máte dostupné podmienky, zdroj a kontakt.</p><p>Zároveň pripraví e-mail, ktorý vychádza z konkrétneho zadania a z toho, čo vaša firma ponúka. Text si prezriete, doplníte a odošlete podľa svojho rozhodnutia.</p><Link href={moduleLink("prilezitosti")} className="bl-text-link">Nastaviť hľadanie pre moju firmu <Arrow /></Link></div>
         <div className="auto-email-example"><div className="auto-email-top"><span>Návrh e-mailu</span><span>Ukážka</span></div><dl><div><dt>K zákazke</dt><dd>Elektroinštalácia novej prevádzky</dd></div><div><dt>Predmet</dt><dd>Spolupráca na elektroinštalácii v Bratislave</dd></div></dl><div className="auto-email-body"><p>Dobrý deň,</p><p>zaujalo nás vaše zadanie elektroinštalácie novej prevádzky v Bratislave. Naša firma sa venuje elektroinštalačným prácam pre firemné priestory.</p><p>Radi by sme si prešli rozsah prác a požadovaný termín. Môžete nám, prosím, poslať bližšie podklady?</p><p>Ďakujeme,<br />tím vašej firmy</p></div><p className="auto-email-foot">Pripravené na kontrolu a odoslanie · fiktívny príklad</p></div>
       </div></section>
       <section className="auto-founder bl-wrap" id="o-mne"><div className="auto-founder-id"><span className="auto-founder-mark" aria-hidden="true">MB</span><div><h2>Marek Benda</h2><p>Tvorca BendaLabs</p><a href="mailto:info@bendalabs.sk">info@bendalabs.sk</a><a href="tel:+421944388123">+421 944 388 123</a></div></div><div className="auto-founder-copy"><h3>Vaše zadanie prejdete priamo so mnou.</h3><p>V BendaLabs tvorím aplikácie a automatizácie. Začneme vaším dokumentom alebo príkladom zákazky. Prejdeme si, ako dnes pracujete, a navrhnem postup, ktorý má zmysel automatizovať.</p><p>Podobnej práci s dokladmi a zmluvami sa venujem aj v projekte Zmluvomat. Výsledný systém nastavím podľa potrieb vašej firmy a ukážem vášmu tímu, ako ho používať.</p><Link href="/labs" className="bl-text-link">Pozrieť moje ďalšie projekty <Arrow /></Link></div></section>

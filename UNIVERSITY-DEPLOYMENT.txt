@@ -1,11 +1,11 @@
 BendaLabs — Robotická univerzita
 Published: 5 October 2026, Europe/Paris
 
-Current production: dpl_DkK3GiRJf92PAcTTkLDcGr7x7FKc (READY)
-Deployment: https://bendalabs-a6hiz5g78-mareks-projects-6d793694.vercel.app
+Current production: dpl_2y2NP1iwHdC1658ooe8W5tfJh8sf (READY)
+Deployment: https://bendalabs-l3vu860ta-mareks-projects-6d793694.vercel.app
 SK: https://bendalabs.sk/roboticka-univerzita
 EN: https://bendalabs.sk/en/robotics-university
-Previous production: dpl_Cr72b8dbhbmgAyukXFiqQnEDCE1n
+Previous production: dpl_DkK3GiRJf92PAcTTkLDcGr7x7FKc
 
 Source: this english-production worktree. All pre-existing uncommitted English
 localization and SEO changes from the previous production were preserved.
@@ -21,7 +21,7 @@ Learning progress is device-local, shared between SK/EN on the same origin.
 No cloud accounts, school administration or certificates are claimed.
 
 Standalone source: C:/Projects/BendaLabs_AI/robotics-encyclopedia
-Standalone updated source commit: 77dede115e885c1d800b7be9f762b02b2e5506bd
+Standalone updated source commit: cbbddbe39193a24784a7c1b19fafbe7afaf01ba7
 Its scripts/export-university.mjs copies the module and scopes compiled CSS after
 building the standalone app. Keep university.tsx and integration.css in this
 worktree. Re-run dependency installation and checks after an export when needed.
@@ -77,3 +77,14 @@ and successful-save behavior, mobile 390 px and desktop 1280 px. Staged
 production admin login, protected dashboard, feedback submit/retry/readback
 passed. Synthetic verification rows were removed. Source Sites deployment
 also succeeded (owner-private).
+
+Motor lesson correction (5 October 2026): motors now opens a dedicated seventh
+experiment, not the battery budget. Static uniform-arm load and payload torques,
+approximate motor-side requirement with gearing/losses, and speed-ratio output
+are interactive in SK/EN. The diagram follows arm length. Motor feasibility is
+not claimed: continuous/peak and thermal/current checks remain explicit.
+Guided exercise, chapter link, laboratory list and homepage count updated.
+Verification: numerical oracles, reduction/length doubling, zero load/speed,
+chapter mapping regression, TypeScript and cloud build passed. Browser tested
+1440 px desktop + 390 px mobile, SK/EN, reset and close-in-chapter navigation.
+Private Sites source deployed successfully; native feedback files preserved.

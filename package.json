@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node scripts/check-frontend-contracts.cjs && node scripts/check-localization.cjs && node scripts/check-english-api.cjs && node scripts/check-arm-task.cjs && node scripts/check-mecanum-math.mjs && node scripts/check-platform-arrows.cjs && node scripts/check-project-demos.cjs && node scripts/check-robot-motion.cjs && node --test scripts/ticker-device.test.mjs",
-    "test:browser": "node scripts/check-english-browser.cjs"
+    "test:browser": "node scripts/check-english-browser.cjs",
+    "test:automation": "node scripts/check-automation.cjs",
+    "test:leads": "node --test scripts/leads-storage.test.cjs"
   },
   "dependencies": {
     "next": "16.1.6",

@@ -15,7 +15,7 @@ function getSupabaseConfig() {
 }
 
 export function isLeadStorageConfigured() {
-  return getSupabaseConfig() !== null;
+  return Boolean(process.env.BENDALABS_LEADS_URL && process.env.BENDALABS_LEADS_KEY) || getSupabaseConfig() !== null;
 }
 
 function buildRestUrl(path: string, searchParams?: URLSearchParams) {
@@ -45,6 +45,23 @@ export async function supabaseRestFetch(
   init: RequestInit & { searchParams?: URLSearchParams } = {},
 ) {
   const { searchParams, headers, ...requestInit } = init;
+  if (process.env.BENDALABS_LEADS_URL && process.env.BENDALABS_LEADS_KEY) {
+    const response = await fetch(process.env.BENDALABS_LEADS_URL, {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Content-Type": "application/json", "x-bendalabs-key": process.env.BENDALABS_LEADS_KEY },
+      body: JSON.stringify({
+        table: path,
+        method: requestInit.method ?? "GET",
+        query: searchParams?.toString() ?? "",
+        prefer: new Headers(headers).get("Prefer") ?? "",
+        body: typeof requestInit.body === "string" ? JSON.parse(requestInit.body) : undefined,
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) throw new Error(`Lead storage unavailable (${response.status})`);
+    return response;
+  }
   const { url, serviceRoleKey } = buildRestUrl(path, searchParams);
 
   const response = await fetch(url, {
