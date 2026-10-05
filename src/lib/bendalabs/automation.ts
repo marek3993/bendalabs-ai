@@ -1,7 +1,7 @@
 export const automationModules = [
   {
     id: "dokumenty", number: "01", title: "Automatizácia firemných dokumentov", shortTitle: "Dokumenty",
-    setup: 800, monthly: 25, totalSetup: 950, totalMonthly: 44.5,
+    setup: 350, monthly: 25, totalSetup: 500, totalMonthly: 44.5,
     description: "Od načítania údajov z dokladov až po prípravu zmlúv, dodatkov a ďalších dokumentov. V jednom systéme, ktorý si údaje pamätá.",
     input: "Doklady a vaše firemné vzory", output: "Vyplnené dokumenty z uložených údajov",
     benefits: ["Načítanie údajov z OP, živnostenského oprávnenia a ďalších podkladov", "Profil zamestnanca, klienta alebo firmy s uloženými údajmi", "Nástupné dokumenty, zmluvy aj personalizované dodatky", "Vaše šablóny a história dokumentov na jednom mieste"],
