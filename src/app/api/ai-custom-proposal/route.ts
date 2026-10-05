@@ -52,7 +52,11 @@ function classifySaveError(error: unknown): SafeErrorCode {
   return "db_save_failed";
 }
 
-function getValidationErrorMessage(issueMessage: string) {
+function getValidationErrorMessage(issueMessage: string, en = false) {
+  if (en) {
+    const messages: Record<string, string> = { required_website: "Enter the website you would like to assess.", invalid_website: "Enter a valid website address.", required_opportunity: "Describe the opportunity for improvement in at least 12 characters.", invalid_opportunity: "The opportunity description is too long.", invalid_dashboard_data: "Select at least one type of dashboard data.", required_success_metric: "Describe success after 30 days in at least 12 characters.", invalid_success_metric: "The success description is too long.", required_name: "Enter your name.", invalid_name: "Enter a valid name.", required_email: "Enter your email address.", invalid_email: "Enter a valid email address.", invalid_phone: "The phone number is too long.", invalid_company: "The company name is too long." };
+    return messages[issueMessage] ?? "Please check your answers.";
+  }
   const map: Record<string, string> = {
     required_website: "Zadajte web, ktory chcete posudit.",
     invalid_website: "Zadajte platnu webovu adresu.",
@@ -85,12 +89,13 @@ export async function POST(request: Request) {
     );
   }
 
+  const en = typeof payload === "object" && payload !== null && "locale" in payload && payload.locale === "en";
   const submission = parseAiCustomProposalSubmission(payload);
 
   if (!submission.success) {
     const message = submission.error.issues[0]
-      ? getValidationErrorMessage(submission.error.issues[0].message)
-      : "Skontrolujte vyplnene udaje.";
+      ? getValidationErrorMessage(submission.error.issues[0].message, en)
+      : en ? "Please check your answers." : "Skontrolujte vyplnene udaje.";
 
     return NextResponse.json(
       withSafeCode({
@@ -119,7 +124,7 @@ export async function POST(request: Request) {
           success: true,
           leadSaved: false,
           recommendation,
-          error: "Kontakt sa nepodarilo ulozit.",
+          error: en ? "Your contact details could not be saved. Please email info@bendalabs.sk." : "Kontakt sa nepodarilo ulozit.",
         },
         "missing_env",
       ),
@@ -129,7 +134,7 @@ export async function POST(request: Request) {
   if (
     isLikelyContactRequestSpam({
       ...submissionData,
-      locale: "sk",
+      locale: submissionData.locale,
       message,
       source: AI_CUSTOM_PROPOSAL_SOURCE,
       linkedAuditDomain: null,
@@ -149,7 +154,7 @@ export async function POST(request: Request) {
           success: true,
           leadSaved: false,
           recommendation,
-          error: "Kontakt sa nepodarilo ulozit.",
+          error: en ? "Your contact details could not be saved. Please email info@bendalabs.sk." : "Kontakt sa nepodarilo ulozit.",
         },
         "db_save_failed",
       ),
@@ -183,7 +188,7 @@ export async function POST(request: Request) {
             success: true,
             leadSaved: false,
             recommendation,
-            error: "Kontakt sa nepodarilo ulozit.",
+            error: en ? "Your contact details could not be saved. Please email info@bendalabs.sk." : "Kontakt sa nepodarilo ulozit.",
           },
           "db_save_failed",
         ),
@@ -228,7 +233,7 @@ export async function POST(request: Request) {
           success: true,
           leadSaved: false,
           recommendation,
-          error: "Kontakt sa nepodarilo ulozit.",
+          error: en ? "Your contact details could not be saved. Please email info@bendalabs.sk." : "Kontakt sa nepodarilo ulozit.",
         },
         errorCode,
       ),

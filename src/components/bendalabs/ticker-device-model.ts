@@ -48,21 +48,21 @@ export class TickerPressSession {
   }
 }
 
-export function tickerMessage(state: TickerState, cs: boolean, quote: Quote | null = null, status = "connecting") {
-  if (state.greeting) return { matrix: cs ? "VESELE VANOCE!" : "VESELE VIANOCE!", title: cs ? "Sváteční pozdrav" : "Sviatočný pozdrav", value: cs ? "Veselé Vánoce!" : "Veselé Vianoce!" };
+export function tickerMessage(state: TickerState, cs: boolean, quote: Quote | null = null, status = "connecting", en = false) {
+  if (state.greeting) return { matrix: en ? "MERRY CHRISTMAS!" : cs ? "VESELE VANOCE!" : "VESELE VIANOCE!", title: en ? "Holiday greeting" : cs ? "Sváteční pozdrav" : "Sviatočný pozdrav", value: en ? "Merry Christmas!" : cs ? "Veselé Vánoce!" : "Veselé Vianoce!" };
   const coin = COINS[state.coin], unit = state.currency === "EUR" ? "€" : "$";
   if (!quote || quote.product !== coin + "-" + state.currency) return {
-    matrix: status === "connecting" ? "PRIPAJAM..." : "DATA NEDOSTUPNE",
+    matrix: status === "connecting" ? (en ? "CONNECTING..." : "PRIPAJAM...") : (en ? "DATA UNAVAILABLE" : "DATA NEDOSTUPNE"),
     title: coin + " · " + state.currency,
-    value: status === "connecting" ? (cs ? "Připojuji…" : "Pripájam…") : (cs ? "Data nejsou dostupná" : "Dáta nie sú dostupné"),
+    value: status === "connecting" ? (en ? "Connecting…" : cs ? "Připojuji…" : "Pripájam…") : (en ? "Data unavailable" : cs ? "Data nejsou dostupná" : "Dáta nie sú dostupné"),
   };
-  const format = (n: number, digits = 2) => new Intl.NumberFormat(cs ? "cs-CZ" : "sk-SK", {maximumFractionDigits:digits,minimumFractionDigits:digits}).format(n);
+  const format = (n: number, digits = 2) => new Intl.NumberFormat(en ? "en-GB" : cs ? "cs-CZ" : "sk-SK", {maximumFractionDigits:digits,minimumFractionDigits:digits}).format(n);
   if (state.view === 1) {
     const sign = quote.change > 0 ? "+" : "";
-    return {matrix:coin + " 24H " + sign + quote.change.toFixed(2) + "%",title:coin + " · " + (cs ? "Změna za 24 hodin" : "Zmena za 24 hodín"),value:sign + format(quote.change) + " %"};
+    return {matrix:coin + " 24H " + sign + quote.change.toFixed(2) + "%",title:coin + " · " + (en ? "24-hour change" : cs ? "Změna za 24 hodin" : "Zmena za 24 hodín"),value:sign + format(quote.change) + " %"};
   }
-  if (state.view === 2) return {matrix:coin + " VOL " + quote.volume.toFixed(2),title:coin + " · " + (cs ? "Objem za 24 hodin" : "Objem za 24 hodín"),value:format(quote.volume) + " " + coin};
-  return {matrix:coin + " " + unit + quote.price.toFixed(2),title:coin + " · Cena",value:format(quote.price) + " " + unit};
+  if (state.view === 2) return {matrix:coin + " VOL " + quote.volume.toFixed(2),title:coin + " · " + (en ? "24-hour volume" : cs ? "Objem za 24 hodin" : "Objem za 24 hodín"),value:format(quote.volume) + " " + coin};
+  return {matrix:coin + " " + unit + quote.price.toFixed(2),title:coin + (en ? " · Price" : " · Cena"),value:format(quote.price) + " " + unit};
 }
 
 const glyphs: Record<string, string[]> = {

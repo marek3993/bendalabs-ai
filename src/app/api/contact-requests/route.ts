@@ -1,3 +1,4 @@
+import { pagePath } from "@/lib/bendalabs/localization";
 import { NextResponse } from "next/server";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import { getLeadFormCopy } from "@/lib/bendalabs/lead-form-content";
@@ -9,7 +10,7 @@ import { isLeadStorageConfigured } from "@/lib/leads/supabase";
 export const runtime = "nodejs";
 
 function normalizeLocale(input: FormDataEntryValue | null): SiteLocale {
-  return input === "cs" ? "cs" : "sk";
+  return input === "en" ? "en" : input === "cs" ? "cs" : "sk";
 }
 
 function sanitizeRelativePath(input: FormDataEntryValue | null, fallback: string) {
@@ -27,15 +28,15 @@ function sanitizeRelativePath(input: FormDataEntryValue | null, fallback: string
 }
 
 function getDefaultSuccessPath(locale: SiteLocale) {
-  return locale === "cs" ? "/cs/dekujeme" : "/dakujem";
+  return pagePath("success", locale);
 }
 
 function getDefaultErrorPath(locale: SiteLocale) {
-  return locale === "cs" ? "/cs/odeslani-selhalo" : "/odoslanie-zlyhalo";
+  return pagePath("failure", locale);
 }
 
 function getDefaultBackPath(locale: SiteLocale) {
-  return locale === "cs" ? "/cs" : "/";
+  return pagePath("home", locale);
 }
 
 function getLocalizedMessage(
@@ -43,6 +44,7 @@ function getLocalizedMessage(
   key: "generic" | "invalid" | "storage_unavailable",
 ) {
   const messages = {
+    en: { generic: "Your enquiry could not be sent. Please try again.", invalid: "Please check your details.", storage_unavailable: "Your enquiry could not be saved right now. Please try again or email info@bendalabs.sk." },
     sk: {
       generic: "Nepodarilo sa odoslat dopyt.",
       invalid: "Skontrolujte vyplnene udaje.",

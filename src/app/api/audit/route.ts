@@ -23,7 +23,7 @@ export const maxDuration = 30;
 const DOMAIN_OVERRIDE_DELAY_MS = 4500;
 
 function normalizeLocale(input: unknown): SiteLocale {
-  return input === "cs" ? "cs" : "sk";
+  return input === "en" ? "en" : input === "cs" ? "cs" : "sk";
 }
 
 function waitForOverrideDelay() {

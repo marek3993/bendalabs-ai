@@ -44,7 +44,7 @@ function Matrix({ text, active, reduced }: { text: string; active: boolean; redu
   return <svg className="td-matrix" viewBox="0 0 640 80" aria-hidden="true"><path d={backgroundDots} className="td-dots-off" /><path d={lit} className="td-dots-on" /></svg>;
 }
 
-export default function TickerDevice({ cs = false }: { cs?: boolean }) {
+export default function TickerDevice({ cs = false, en = false }: { cs?: boolean; en?: boolean }) {
   const [state, dispatch] = useReducer(tickerReducer, initialTicker);
   const [pressed, setPressed] = useState<{ button: TickerButton; ready: boolean } | null>(null);
   const [hover, setHover] = useState(false);
@@ -58,7 +58,7 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
   useEffect(() => subscribeMarket(product,setMarket),[product]);
   const quote = market.product === product && market.status === "live" ? market.quote : null;
   const status = market.product === product ? market.status : "connecting";
-  const message = tickerMessage(state, cs, quote, status);
+  const message = tickerMessage(state, cs, quote, status, en);
   const cancel = useCallback(() => {
     if (longTimer.current !== null) clearTimeout(longTimer.current);
     longTimer.current = null;
@@ -129,20 +129,20 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
     finish(button, "keyboard", event.key, event.timeStamp);
   }
   const buttons: { key: TickerButton; label: string; short: string; long: string; icon: string }[] = [
-    { key: "next", label: cs ? "MINCE" : "MINCA", short: cs ? "Další mince" : "Ďalšia minca", long: cs ? "Sváteční pozdrav" : "Sviatočný pozdrav", icon: "›" },
-    { key: "mode", label: "ÚDAJ", short: "Cena / 24 h / objem", long: cs ? "Noční jas" : "Nočný jas", icon: "≡" },
-    { key: "currency", label: "MENA", short: "EUR / USD", long: cs ? "Střídání mincí" : "Striedanie mincí", icon: "€/$" },
+    { key: "next", label: en ? "COIN" : cs ? "MINCE" : "MINCA", short: en ? "Next coin" : cs ? "Další mince" : "Ďalšia minca", long: en ? "Holiday greeting" : cs ? "Sváteční pozdrav" : "Sviatočný pozdrav", icon: "›" },
+    { key: "mode", label: en ? "DATA" : "ÚDAJ", short: en ? "Price / 24 h / volume" : "Cena / 24 h / objem", long: en ? "Night brightness" : cs ? "Noční jas" : "Nočný jas", icon: "≡" },
+    { key: "currency", label: en ? "CURRENCY" : "MENA", short: "EUR / USD", long: en ? "Coin rotation" : cs ? "Střídání mincí" : "Striedanie mincí", icon: "€/$" },
   ];
-  const feedback = pressed ? pressed.ready ? `${cs ? "Uvolni" : "Uvoľni"}: ${buttons.find(button => button.key === pressed.button)?.long}.` : (cs ? "Pro druhou funkci podrž 1,5 sekundy a uvolni." : "Pre druhú funkciu podrž 1,5 sekundy a uvoľni.") : (cs ? "Krátký stisk změní údaj. Podržení odemkne druhou funkci." : "Krátke stlačenie zmení údaj. Podržanie odomkne druhú funkciu.");
+  const feedback = pressed ? pressed.ready ? `${en ? "Release" : cs ? "Uvolni" : "Uvoľni"}: ${buttons.find(button => button.key === pressed.button)?.long}.` : (en ? "Hold for 1.5 seconds and release for the second function." : cs ? "Pro druhou funkci podrž 1,5 sekundy a uvolni." : "Pre druhú funkciu podrž 1,5 sekundy a uvoľni.") : (en ? "A short press changes the reading. Hold to access the second function." : cs ? "Krátký stisk změní údaj. Podržení odemkne druhou funkci." : "Krátke stlačenie zmení údaj. Podržanie odomkne druhú funkciu.");
 
-  return <section className={`td-demo bl-demo-bounded${state.night ? " td-night" : ""}${reduced ? " td-reduced" : ""}`} aria-label={cs ? "Kryptoměnový ticker se třemi tlačítky" : "Kryptomenový ticker s tromi tlačidlami"}>
-    <header className="td-heading"><p>{cs ? "Tři tlačítka. Celý přehled." : "Tri tlačidlá. Celý prehľad."}</p><span>{cs ? "Vyzkoušej i podržení" : "Vyskúšaj aj podržanie"}</span></header>
+  return <section className={`td-demo bl-demo-bounded${state.night ? " td-night" : ""}${reduced ? " td-reduced" : ""}`} aria-label={en ? "Cryptocurrency ticker with three buttons" : cs ? "Kryptoměnový ticker se třemi tlačítky" : "Kryptomenový ticker s tromi tlačidlami"}>
+    <header className="td-heading"><p>{en ? "Three buttons. The full picture." : cs ? "Tři tlačítka. Celý přehled." : "Tri tlačidlá. Celý prehľad."}</p><span>{en ? "Try holding a button too" : cs ? "Vyzkoušej i podržení" : "Vyskúšaj aj podržanie"}</span></header>
     <div className="bl-demo-workspace">
     <div className="bl-demo-preview">
     <div className="td-device-scene">
       <div className="td-enclosure">
         <div className="td-top-edge" aria-hidden="true" />
-        <div className="td-brand-row"><span>BENDA LABS</span><span className="td-device-light" aria-hidden="true" /><span>{state.night ? (cs ? "NOČNÍ JAS" : "NOČNÝ JAS") : "64 × 8"}</span></div>
+        <div className="td-brand-row"><span>BENDA LABS</span><span className="td-device-light" aria-hidden="true" /><span>{state.night ? (en ? "NIGHT BRIGHTNESS" : cs ? "NOČNÍ JAS" : "NOČNÝ JAS") : "64 × 8"}</span></div>
         <div className="td-screen-bezel" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
           <div className="td-screen" role="img" aria-label={`${message.title}: ${message.value}`}>
             <Matrix text={message.matrix} active={active && !hover && !pressed} reduced={reduced} />
@@ -162,15 +162,15 @@ export default function TickerDevice({ cs = false }: { cs?: boolean }) {
     <div className="td-reading" role="status"><span>{message.title}</span><strong>{message.value}</strong></div>
     <p className="td-feed-status" data-status={quote ? "live" : status}>
       <a href="https://exchange.coinbase.com/" target="_blank" rel="noreferrer">Coinbase Exchange</a>
-      <span>{quote ? (cs ? "Živé ceny" : "Živé ceny") : status === "connecting" ? (cs ? "Připojuji…" : "Pripájam…") : status === "paused" ? (cs ? "Připojení pozastaveno" : "Pripojenie pozastavené") : (cs ? "Spojení přerušeno · obnovuji" : "Spojenie prerušené · obnovujem")}</span>
-      {quote && <span>{cs ? "Poslední obchod" : "Posledný obchod"}: <time dateTime={new Date(quote.time).toISOString()}>{new Date(quote.time).toLocaleTimeString(cs ? "cs-CZ" : "sk-SK")}</time></span>}
+      <span>{quote ? (en ? "Live prices" : cs ? "Živé ceny" : "Živé ceny") : status === "connecting" ? (en ? "Connecting…" : cs ? "Připojuji…" : "Pripájam…") : status === "paused" ? (en ? "Connection paused" : cs ? "Připojení pozastaveno" : "Pripojenie pozastavené") : (en ? "Connection lost · reconnecting" : cs ? "Spojení přerušeno · obnovuji" : "Spojenie prerušené · obnovujem")}</span>
+      {quote && <span>{en ? "Last trade" : cs ? "Poslední obchod" : "Posledný obchod"}: <time dateTime={new Date(quote.time).toISOString()}>{new Date(quote.time).toLocaleTimeString(en ? "en-GB" : cs ? "cs-CZ" : "sk-SK")}</time></span>}
     </p>
-    <div className="td-current-mode"><span>{state.night ? (cs ? "Noční jas" : "Nočný jas") : (cs ? "Denní jas" : "Denný jas")}</span><span>{state.currency}</span><span>{state.auto ? (reduced ? (cs ? "Střídání pozastaveno" : "Striedanie pozastavené") : (cs ? "Mince se střídají" : "Mince sa striedajú")) : (cs ? "Ruční výběr mince" : "Ručný výber mincí")}</span></div>
+    <div className="td-current-mode"><span>{state.night ? (en ? "Night brightness" : cs ? "Noční jas" : "Nočný jas") : (en ? "Day brightness" : cs ? "Denní jas" : "Denný jas")}</span><span>{state.currency}</span><span>{state.auto ? (reduced ? (en ? "Rotation paused" : cs ? "Střídání pozastaveno" : "Striedanie pozastavené") : (en ? "Coins rotating" : cs ? "Mince se střídají" : "Mince sa striedajú")) : (en ? "Manual coin selection" : cs ? "Ruční výběr mince" : "Ručný výber mincí")}</span></div>
     </div>
-    <div className="bl-demo-panel" role="region" aria-label={cs ? "Funkce tlačítek tickeru" : "Funkcie tlačidiel tickera"} tabIndex={0}>
+    <div className="bl-demo-panel" role="region" aria-label={en ? "Ticker button functions" : cs ? "Funkce tlačítek tickeru" : "Funkcie tlačidiel tickera"} tabIndex={0}>
     <p className="td-feedback" role="status">{feedback}</p>
-    <ol className="td-guide">{buttons.map((button, index) => <li key={button.key} id={`${uid}-${button.key}`}><span className="td-guide-number" aria-hidden="true">{index + 1}</span><strong>{button.short}</strong><span>{cs ? "Podrž" : "Podrž"} 1,5 s: {button.long.toLowerCase()}.</span></li>)}</ol>
-    <p className="td-sample-note">{cs ? "Cena posledního obchodu na Coinbase v EUR nebo USD. Cena, změna a objem za 24 h se obnovují průběžně. Tlačítka fungují i klávesami Enter a mezerník." : "Cena posledného obchodu na Coinbase v EUR alebo USD. Cena, zmena a objem za 24 h sa obnovujú priebežne. Tlačidlá fungujú aj klávesmi Enter a medzerník."}</p>
+    <ol className="td-guide">{buttons.map((button, index) => <li key={button.key} id={`${uid}-${button.key}`}><span className="td-guide-number" aria-hidden="true">{index + 1}</span><strong>{button.short}</strong><span>{en ? "Hold" : cs ? "Podrž" : "Podrž"}{en ? "1.5 s:" : "1,5 s:"}{button.long.toLowerCase()}.</span></li>)}</ol>
+    <p className="td-sample-note">{en ? "Latest Coinbase trade price in EUR or USD. Price, change and 24-hour volume update continuously. Buttons also work with Enter and the space bar." : cs ? "Cena posledního obchodu na Coinbase v EUR nebo USD. Cena, změna a objem za 24 h se obnovují průběžně. Tlačítka fungují i klávesami Enter a mezerník." : "Cena posledného obchodu na Coinbase v EUR alebo USD. Cena, zmena a objem za 24 h sa obnovujú priebežne. Tlačidlá fungujú aj klávesmi Enter a medzerník."}</p>
     </div>
     </div>
   </section>;

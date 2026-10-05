@@ -1,4 +1,5 @@
-export type SiteLocale = "sk" | "cs";
+import { auditBotEnglish, auditPageEnglish, financePageEnglish, marketplacePageEnglish } from "./site-content.en";
+export type SiteLocale = "sk" | "cs" | "en";
 
 export type SiteCard = {
   title: string;
@@ -79,7 +80,7 @@ type HomeFlexibilityBlock = {
   supportingLine?: string;
 };
 
-type AuditBotCopy = {
+export type AuditBotCopy = {
   badge: string;
   title: string;
   subtext: string;
@@ -155,7 +156,7 @@ type HomePageContent = {
   contactMailBody: string;
 };
 
-type ServicePageContent = {
+export type ServicePageContent = {
   metadataTitle: string;
   metadataDescription: string;
   eyebrow: string;
@@ -300,7 +301,7 @@ const auditBotDefaults = {
       strong: "Velmi silný fit",
     },
   },
-} as const satisfies Record<SiteLocale, AuditBotCopy>;
+} as const satisfies Record<Exclude<SiteLocale, "en">, AuditBotCopy>;
 
 const homeContent = {
   sk: {
@@ -675,7 +676,7 @@ const homeContent = {
     contactMailSubject: "AI audit webu",
     contactMailBody: "Ahoj, posílám URL na audit: ",
   },
-} as const satisfies Record<SiteLocale, HomePageContent>;
+} as const satisfies Record<Exclude<SiteLocale, "en">, HomePageContent>;
 
 const auditPageContent = {
   sk: {
@@ -872,7 +873,7 @@ const auditPageContent = {
     ctaButtonLabel: "Objednat AI audit webu",
     ctaMailSubject: "AI audit webu",
   },
-} as const satisfies Record<SiteLocale, ServicePageContent>;
+} as const satisfies Record<Exclude<SiteLocale, "en">, ServicePageContent>;
 
 const financePageContent = {
   sk: {
@@ -1095,7 +1096,7 @@ const financePageContent = {
     ctaButtonLabel: "Poslat web k posouzení",
     ctaMailSubject: "AI vrstva pro finanční nebo pojistný web",
   },
-} as const satisfies Record<SiteLocale, ServicePageContent>;
+} as const satisfies Record<Exclude<SiteLocale, "en">, ServicePageContent>;
 
 const marketplacePageContent = {
   sk: {
@@ -1318,38 +1319,38 @@ const marketplacePageContent = {
     ctaButtonLabel: "Poslat marketplace nebo rental web",
     ctaMailSubject: "AI vrstva pro marketplace nebo rental web",
   },
-} as const satisfies Record<SiteLocale, ServicePageContent>;
+} as const satisfies Record<Exclude<SiteLocale, "en">, ServicePageContent>;
 
 export function getSitePaths(locale: SiteLocale) {
-  return sitePaths[locale];
+  return locale === "en" ? { home: "/en", audit: "/en/ai-website-audit", finance: "/en/ai-layer-for-finance-and-insurance", marketplace: "/en/ai-layer-for-marketplaces-and-rentals" } : sitePaths[locale];
 }
 
 export function getPageLinks(locale: SiteLocale): ReadonlyArray<SiteNavLink> {
-  return chromeContent[locale].nav;
+  return getSiteChrome(locale).nav;
 }
 
 export function getSiteChrome(locale: SiteLocale) {
-  return chromeContent[locale];
+  return locale === "en" ? { brandTagline: "An intelligent layer over your existing website", nav: [{ href: "/en", label: "Home" }, { href: "/en/ai-layer-for-finance-and-insurance", label: "Finance and insurance" }, { href: "/en/ai-layer-for-marketplaces-and-rentals", label: "Marketplaces and rentals" }, { href: "/en/ai-website-audit", label: "AI website audit" }], openCtaLabel: "Get in touch", openAuditLabel: "View the AI website audit", ctaTag: "Next step", contactLabel: "Contact" } : chromeContent[locale];
 }
 
 export function getAuditBotCopy(locale: SiteLocale): AuditBotCopy {
-  return auditBotDefaults[locale];
+  return locale === "en" ? auditBotEnglish : auditBotDefaults[locale];
 }
 
-export function getHomePageContent(locale: SiteLocale): HomePageContent {
+export function getHomePageContent(locale: "sk" | "cs"): HomePageContent {
   return homeContent[locale];
 }
 
 export function getAuditPageContent(locale: SiteLocale): ServicePageContent {
-  return auditPageContent[locale];
+  return locale === "en" ? auditPageEnglish : auditPageContent[locale];
 }
 
 export function getFinancePageContent(locale: SiteLocale): ServicePageContent {
-  return financePageContent[locale];
+  return locale === "en" ? financePageEnglish : financePageContent[locale];
 }
 
 export function getMarketplacePageContent(locale: SiteLocale): ServicePageContent {
-  return marketplacePageContent[locale];
+  return locale === "en" ? marketplacePageEnglish : marketplacePageContent[locale];
 }
 
 export function getPreferredLocaleFromHost(hostname: string | null | undefined): SiteLocale {

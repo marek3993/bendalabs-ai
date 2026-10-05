@@ -45,6 +45,7 @@ export class SiteAuditError extends Error {
 }
 
 function getAuditErrorCopy(locale: SiteLocale): AuditErrorCopy {
+  if (locale === "en") return { invalidUrl: "Enter a valid website address. A domain such as yourcompany.com is enough.", generic: "We could not generate the audit right now. Please try again.", loadFailed: "We could not load this website. Check the address or try another URL.", crawlerBlocked: "This website appears to block automated access. This can happen with protected websites and large online shops. We can arrange a manual audit instead.", bendalabsSuggestion: "Did you mean bendalabs.sk?", bendalabsSuggestionAction: "Use https://bendalabs.sk" };
   if (locale === "cs") {
     return {
       invalidUrl:

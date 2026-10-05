@@ -1,3 +1,4 @@
+import { englishDashboard } from "./dashboard-preview.en";
 import type { SiteAudit } from "../site-audit/schema";
 
 export type DashboardPreviewLocale = "sk" | "cs";
@@ -1801,11 +1802,12 @@ export function resolveDashboardPreviewSegment(
 export function getDashboardPreviewCopy(
   audit: DashboardPreviewAuditSource,
   auditedUrl: string,
-  locale: DashboardPreviewLocale,
+  locale: DashboardPreviewLocale | "en",
 ): DashboardPreviewCopy {
   const segment = resolveDashboardPreviewSegment(audit, auditedUrl);
   const template = SEGMENT_TEMPLATES[segment];
   const domainLabel = getDomainLabel(auditedUrl, audit);
+  if (locale === "en") return englishDashboard(audit, domainLabel, segment);
   const questionItems = template.questions[locale].slice(0, 4);
   const leadRows = buildLeadRows(audit, locale, segment, template);
   const topTheme = buildTopTheme(segment, locale, template, questionItems);

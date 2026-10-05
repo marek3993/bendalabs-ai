@@ -1,0 +1,134 @@
+[
+  {
+    "id": "gemini-robotics-2",
+    "date": "2026-07-30",
+    "dateLabel": { "sk": "30. júla 2026", "en": "30 July 2026" },
+    "category": "ai",
+    "title": {
+      "sk": "Gemini Robotics 2 prepája pohyb celého tela s plánovaním",
+      "en": "Gemini Robotics 2 connects whole-body motion with planning"
+    },
+    "summary": {
+      "sk": "Google DeepMind predstavil modely pre koordináciu celého tela, jemnú manipuláciu a spoluprácu viacerých robotov. Gemini Robotics ER 2 je dostupný v Google AI Studio; modely VLA a On-Device 2 majú prístup pre vybraných partnerov. Pre konštruktéra je podstatné oddeliť plánovanie úloh od vykonávania pohybov a overovať úspešnosť na konkrétnom hardvéri.",
+      "en": "Google DeepMind introduced models for whole-body coordination, dexterous manipulation and collaboration between robots. Gemini Robotics ER 2 is available in Google AI Studio; the VLA and On-Device 2 models are available to early-access partners. For builders, the practical lesson is to separate task planning from motion execution and evaluate success on the intended hardware."
+    },
+    "status": {
+      "sk": "ER 2 je dostupný vývojárom; VLA a On-Device 2 sú pre vybraných partnerov.",
+      "en": "ER 2 is available to developers; VLA and On-Device 2 are limited to early-access partners."
+    },
+    "source": {
+      "title": "Google DeepMind",
+      "url": "https://deepmind.google/blog/gemini-robotics-2-brings-whole-body-intelligence-to-robots/"
+    }
+  },
+  {
+    "id": "ros2-lyrical",
+    "date": "2026-05-22",
+    "dateLabel": { "sk": "22. mája 2026", "en": "22 May 2026" },
+    "category": "code",
+    "title": {
+      "sk": "ROS 2 Lyrical prináša podporu do roku 2031",
+      "en": "ROS 2 Lyrical brings support through 2031"
+    },
+    "summary": {
+      "sk": "ROS 2 Lyrical Luth je vydanie s dlhodobou podporou do mája 2031. Medzi hlavné podporované platformy patria Ubuntu 26.04 a Windows 11. Pribudli možnosti efektívnejšieho vykonávania callbackov, integrácia Python asyncio a prenos vybraných správ bez kopírovania dát. Pri novom projekte pomáha zvoliť podporovanú kombináciu systému, ovládačov a robotických balíkov.",
+      "en": "ROS 2 Lyrical Luth is a long-term support release supported until May 2031. Its Tier 1 platforms include Ubuntu 26.04 and Windows 11. Improvements include callback execution, Python asyncio integration and zero-copy transport for supported message data. For a new robot, choose a compatible combination of operating system, drivers and robotics packages before committing to the distribution."
+    },
+    "status": {
+      "sk": "Vydané; dlhodobá podpora do mája 2031.",
+      "en": "Released; long-term support until May 2031."
+    },
+    "source": {
+      "title": "Open Robotics · ROS 2 Release Team",
+      "url": "https://discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021"
+    }
+  },
+  {
+    "id": "px4-117",
+    "date": "2026-05-18",
+    "dateLabel": { "sk": "18. mája 2026 · správa o vydaní", "en": "18 May 2026 · release announcement" },
+    "category": "drones",
+    "title": {
+      "sk": "PX4 1.17 rozširuje riadenie cez ROS 2",
+      "en": "PX4 1.17 expands ROS 2 control interfaces"
+    },
+    "summary": {
+      "sk": "Stabilný PX4 1.17 pridáva režim Altitude Cruise, nové riadiace rozhrania pre lietadlá a pozemné vozidlá a kompatibilitu middleware Zenoh s rmw_zenoh. Rozširuje tiež simuláciu a podporu inerciálnych senzorov. Pre stavbu autonómneho stroja sú užitočné najmä rozhrania ROS 2; experimentálne riadenie neurónovou sieťou zostáva určené na výskum a skúšky.",
+      "en": "Stable PX4 1.17 adds Altitude Cruise, new control interfaces for fixed-wing aircraft and rovers, and Zenoh compatibility with rmw_zenoh. It also expands simulation and inertial sensor support. The ROS 2 interfaces are particularly useful for autonomous vehicle development; the experimental neural-network controller remains a research and bench-testing path."
+    },
+    "status": {
+      "sk": "Stabilné vydanie; riadenie neurónovou sieťou je experimentálne.",
+      "en": "Stable release; neural-network control is experimental."
+    },
+    "source": {
+      "title": "PX4 Autopilot",
+      "url": "https://px4.io/px4-autopilot-release-v1-17-what-you-need-to-know/"
+    }
+  },
+  {
+    "id": "nvidia-reference-humanoid",
+    "date": "2026-06-01",
+    "dateLabel": { "sk": "1. júna 2026", "en": "1 June 2026" },
+    "category": "ai",
+    "title": {
+      "sk": "NVIDIA predstavila referenčného humanoida pre výskum",
+      "en": "NVIDIA announces a reference humanoid for research"
+    },
+    "summary": {
+      "sk": "Referenčný humanoid NVIDIA kombinuje telo Unitree H2 Plus, päťprsté ruky Sharpa, výpočtový modul Jetson Thor a platformu Isaac GR00T. Cieľom je prepojiť zber dát, učenie robotických schopností a testovanie na fyzickom stroji. Oznámenie uvádza dostupnosť cez Unitree ku koncu roka 2026; samo osebe nepotvrdzuje, že sa robot už dodáva.",
+      "en": "NVIDIA's reference humanoid combines a Unitree H2 Plus body, Sharpa five-fingered hands, Jetson Thor compute and the Isaac GR00T platform. It connects data collection, robot policy learning and testing on physical hardware. The announcement schedules availability through Unitree for late 2026; it does not establish that the robot is already shipping."
+    },
+    "status": {
+      "sk": "Oznámené; dostupnosť bola plánovaná na koniec roka 2026.",
+      "en": "Announced; availability was planned for late 2026."
+    },
+    "source": {
+      "title": "NVIDIA",
+      "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-NVIDIA-Isaac-GR00T-Reference-Humanoid-Robot-for-Academic-Research/default.aspx"
+    }
+  },
+  {
+    "id": "bosch-bmi5",
+    "date": "2026-01-01",
+    "dateLabel": { "sk": "CES 2026", "en": "CES 2026" },
+    "category": "sensors",
+    "title": {
+      "sk": "Bosch BMI5 cieli na pohyb v náročných podmienkach",
+      "en": "Bosch BMI5 targets demanding motion sensing"
+    },
+    "summary": {
+      "sk": "Bosch predstavil platformu inerciálnych senzorov BMI5. Variant BMI563 je zameraný na robotiku, širší merací rozsah a odolnosť voči vibráciám; výrobca uvádza aj využitie pri SLAM. Pri oznámení boli dostupné vzorky pre priamych zákazníkov a sériová výroba bola plánovaná od tretieho štvrťroka 2026. Pri výbere IMU porovnávaj šum, rozsah, časovanie aj vibrácie.",
+      "en": "Bosch introduced the BMI5 inertial sensor platform. The BMI563 targets robotics with an extended measurement range and vibration robustness, with SLAM listed among its applications. Samples were available to direct customers at announcement, while high-volume production was planned from the third quarter of 2026. When selecting an IMU, compare noise, range, timing and vibration behavior."
+    },
+    "status": {
+      "sk": "Vzorky boli dostupné pri oznámení; sériová výroba bola plánovaná od Q3 2026.",
+      "en": "Samples were available at announcement; high-volume production was planned from Q3 2026."
+    },
+    "source": {
+      "title": "Bosch Sensortec",
+      "url": "https://www.bosch-sensortec.com/en/news/from-immersive-xr-to-advanced-robotics-and-wearables-bosch-sensortec-launches-bmi5-motion-sensor-platform.html"
+    }
+  },
+  {
+    "id": "ti-bms-open-wire",
+    "date": "2026-08-18",
+    "dateLabel": { "sk": "18. augusta 2026", "en": "18 August 2026" },
+    "category": "power",
+    "title": {
+      "sk": "Diagnostika BMS musí odhaliť aj prerušený vodič",
+      "en": "BMS diagnostics must also detect broken sensing wires"
+    },
+    "summary": {
+      "sk": "Texas Instruments vydal postupy na detekciu prerušených vodičov v napäťových a prúdových meracích vetvách BMS. Dokument používa obvody BQ76952, BQ78706 a BQ79731 a vysvetľuje, prečo chybná meracia cesta znižuje spoľahlivosť ochrany. Pre batériový systém robota je praktickým podkladom na návrh diagnostiky a testovanie porúch, nie univerzálnym zapojením hotovej batérie.",
+      "en": "Texas Instruments published methods for detecting broken wires in BMS voltage and current sensing paths. The application note uses BQ76952, BQ78706 and BQ79731 devices and explains how sensing faults can undermine protection reliability. For a robot battery system, it supports diagnostic design and fault testing rather than providing a universal, ready-to-build battery circuit."
+    },
+    "status": {
+      "sk": "Publikovaná aplikačná poznámka; dostupná na stiahnutie.",
+      "en": "Published application note; available to download."
+    },
+    "source": {
+      "title": "Texas Instruments · Open-Wire Detection in BMS Systems",
+      "url": "https://www.ti.com/lit/pdf/SDAA369"
+    }
+  }
+]

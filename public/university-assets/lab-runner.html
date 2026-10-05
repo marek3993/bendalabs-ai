@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; worker-src blob:; connect-src 'none';"></head><body><script>
+let active;
+addEventListener('message',event=>{
+ if(event.source!==parent||event.data?.type!=='run'||typeof event.data.code!=='string')return;
+ if(active)active.terminate();const {code,id}=event.data;
+ const source=`onmessage=e=>{const commands=[],logs=[];const send=(type,value)=>{if(!Number.isFinite(value)||Math.abs(value)>1000)throw Error('Use a finite value between -1000 and 1000.');if(commands.length>=1000)throw Error('Maximum 1000 commands.');if(type==='wait'&&value<0)throw Error('Wait must be positive.');commands.push({type,value});};const robot=Object.freeze({forward:v=>send('forward',v),turn:v=>send('turn',v),wait:v=>send('wait',v)});const logger=Object.freeze({log:(...v)=>{if(logs.length<30)logs.push(v.map(x=>String(x).slice(0,200)).join(' '));}});try{new Function('robot','console','"use strict";'+e.data)(robot,logger);postMessage({commands,logs});}catch(err){postMessage({error:String(err.message).slice(0,300)});}};`;
+ const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));const worker=new Worker(url);active=worker;URL.revokeObjectURL(url);
+ const timer=setTimeout(()=>{worker.terminate();parent.postMessage({type:'result',id,error:'timeout'},'*');},1200);
+ worker.onmessage=e=>{clearTimeout(timer);worker.terminate();parent.postMessage({type:'result',id,...e.data},'*');};worker.onerror=()=>{clearTimeout(timer);worker.terminate();parent.postMessage({type:'result',id,error:'execution'},'*');};worker.postMessage(code);
+});
+</script></body></html>

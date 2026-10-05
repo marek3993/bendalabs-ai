@@ -8,6 +8,7 @@ let openaiClient: OpenAI | null = null;
 
 function getLocalizedAuditError(locale: SiteLocale, key: "missingApiKey" | "emptyAudit") {
   const messages = {
+    en: { missingApiKey: "Missing audit API configuration.", emptyAudit: "The model returned an empty audit." },
     sk: {
       missingApiKey: "Chyba OPENAI_API_KEY. Dopln ho do env pre spustenie AI auditu.",
       emptyAudit: "Model vratil prazdny audit.",
@@ -36,6 +37,7 @@ function getOpenAIClient(locale: SiteLocale) {
 }
 
 function getLanguageDirective(locale: SiteLocale) {
+  if (locale === "en") return "Write every user-facing field in natural, precise English. Base claims only on the supplied website summary. Describe the product as an intelligent layer over an existing website that helps visitors choose and prepares better enquiries. Do not call the product a chatbot. Distinguish current capabilities, prototypes and proposed improvements. Never present simulated examples as measured results.";
   if (locale === "cs") {
     return "Vystup musi byt v cestine, prirozeny, konkretni, strucny a oprety jen o dodany summary webu.";
   }

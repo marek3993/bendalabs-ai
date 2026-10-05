@@ -6,14 +6,23 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node scripts/check-frontend-contracts.cjs && node scripts/check-localization.cjs && node scripts/check-english-api.cjs && node scripts/check-arm-task.cjs && node scripts/check-mecanum-math.mjs && node scripts/check-platform-arrows.cjs && node scripts/check-project-demos.cjs && node scripts/check-robot-motion.cjs && node --test scripts/ticker-device.test.mjs",
+    "test:browser": "node scripts/check-english-browser.cjs"
   },
   "dependencies": {
     "next": "16.1.6",
     "openai": "^6.34.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "zod": "^4.1.12"
+    "zod": "^4.1.12",
+    "lucide-react": "^1.31.0",
+    "class-variance-authority": "0.7.1",
+    "radix-ui": "^1.6.7",
+    "clsx": "2.1.1",
+    "tailwind-merge": "3.6.0",
+    "three": "^0.180.0",
+    "recharts": "^3.8.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -22,8 +31,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "playwright": "1.58.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@types/three": "^0.180.0"
   }
 }
-

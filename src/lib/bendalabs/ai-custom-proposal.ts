@@ -1,3 +1,4 @@
+import { englishProposal } from "./ai-custom-proposal.en";
 import { z } from "zod";
 import { getNormalizedDomainFromUrl } from "@/lib/leads/domain-utils";
 import { normalizeWebsiteUrl } from "@/lib/site-audit/url";
@@ -96,6 +97,7 @@ export type AiCustomProposalVisitorNextStep = (typeof visitorNextStepValues)[num
 export type AiCustomProposalDashboardData = (typeof dashboardDataValues)[number];
 
 export type AiCustomProposalSubmission = {
+  locale: "sk" | "cs" | "en";
   website: string;
   businessType: AiCustomProposalBusinessType;
   mainGoal: AiCustomProposalMainGoal;
@@ -364,6 +366,7 @@ function getOpportunitySignal(opportunityText: string) {
 
 export const aiCustomProposalSchema = z
   .object({
+    locale: z.enum(["sk", "cs", "en"]).default("sk"),
     website: z.string().trim().min(1, "required_website").transform(normalizeWebsiteValue),
     businessType: z.enum(businessTypeValues),
     mainGoal: z.enum(mainGoalValues),
@@ -391,6 +394,7 @@ export const aiCustomProposalSchema = z
     }
 
     return {
+      locale: value.locale,
       website: value.website,
       businessType: value.businessType,
       mainGoal: value.mainGoal,
@@ -413,6 +417,7 @@ export function parseAiCustomProposalSubmission(value: unknown) {
 export function generateAiCustomProposalRecommendation(
   submission: AiCustomProposalSubmission,
 ): AiCustomProposalRecommendation {
+  if (submission.locale === "en") return englishProposal(submission);
   const businessLens = getBusinessLens(submission.businessType);
   const goalLens = getGoalLens(submission.mainGoal);
   const nextStepLens = getNextStepLens(submission.visitorNextStep);

@@ -1,0 +1,190 @@
+BendaLabs – anglická lokalizácia a protokol overenia
+Dátum: 4. októbra 2026
+
+PRACOVNÁ VERZIA
+C:\Users\benda\.codex\worktrees\english-production\BendaLabs_AI
+Vetva: codex/english-production
+Báza: origin/main b1420986e9d332302be5f87e93f44f393b20e313.
+Báza bola overená po fetchi a porovnaná s verejným bendalabs.sk.
+Pôvodný priečinok C:\Projects\BendaLabs_AI zostal na svojej rozpracovanej vetve.
+Jeho lokálne zmeny a priečinok bendalabs-world-class zostali nedotknuté.
+V čase tohto overenia nebol vykonaný commit, push ani nasadenie.
+Následné zverejnenie na pokyn používateľa je zaznamenané v EN-DEPLOYMENT.txt.
+
+IMPLEMENTÁCIA
+Existujúce prepínanie cez SiteLocale (sk/cs) je rozšírené o en.
+Anglické stránky používajú rovnaké komponenty, štýly, obrázky a simulácie.
+CSS ani obrazové/modelové podklady neboli zmenené.
+Preložené sú homepage, navigácia, portfólio, rozbalené detaily projektov,
+robotické ukážky a ich ovládanie, službové stránky, audit, návrh a kontakt.
+Texty rozlišujú fungujúce projekty, prototypy a plánované funkcie.
+AI je opísaná ako inteligentná vrstva nad existujúcim webom, ktorá pomáha
+s výberom a pripravuje kvalitnejšie dopyty.
+
+Zmluvomat zostáva jedným záznamom; v jeho EN texte je zahrnutá Opportunities.
+Podrobnejší aktuálny popis Príležitostí nie je v overenom maine ani na
+verejnom webe. Používateľ nevedel určiť zdroj. Implementácia preto obsahuje
+iba potvrdenie, že táto časť patrí k Zmluvomatu, bez vymyslených funkcií.
+
+Mapovanie jazykových trás je centralizované. Prepnutie zachová zodpovedajúcu
+stránku a kotvu, ak existujú. Pri chýbajúcej jazykovej verzii smeruje na úvod.
+Doplnené sú EN titulky, popisy, canonical, hreflang, OpenGraph, JSON-LD a sitemap.
+Výsledkové stránky majú noindex. Interné API a administrácia nie sú v sitemap.
+SEO nadväzuje na existujúcu implementáciu z vetvy fix/production-seo-sharing.
+Pre správne serverové html lang sa jazyk prenáša z proxy do root layoutu.
+Verejné stránky sa preto renderujú na serveri pri požiadavke.
+
+OVERENÉ VEREJNÉ EN TRASY (HTTP 200, desktop 1440 px aj mobil 390 px)
+/en
+  SK: /
+  CS: /cs
+/en/labs
+  SK: /labs
+  CS: /cs/labs
+/en/robotics
+  SK: /robotics
+  CS: /cs/robotics
+/en/ai-website-audit
+  SK: /ai-audit-webu
+  CS: /cs/ai-audit-webu
+/en/custom-ai-proposal
+  SK: /ai-navrh-na-mieru
+  CS: /cs (návrat na úvod, CS návrh neexistuje)
+/en/ai-layer-for-finance-and-insurance
+  SK: /ai-vrstva-pre-financne-a-poistne-weby
+  CS: /cs/ai-vrstva-pro-financni-a-pojistne-weby
+/en/ai-layer-for-marketplaces-and-rentals
+  SK: /ai-vrstva-pre-marketplace-a-rental-weby
+  CS: /cs/ai-vrstva-pro-marketplace-a-rental-weby
+/en/thank-you
+  SK: /dakujem
+  CS: /cs/dekujeme
+/en/submission-failed
+  SK: /odoslanie-zlyhalo
+  CS: /cs/odeslani-selhalo
+Kontakt je na príslušných stránkach pod #kontakt.
+Navyše: /sitemap.xml, /robots.txt, /share-image.
+
+KONTROLY
+PASS – npm run lint; po záverečných úpravách aj cielený ESLint zmenených súborov.
+PASS – npm test: pôvodné regresné kontroly aj nové lokalizačné/API testy.
+PASS – npm run build: Next.js produkčný build vrátane TypeScriptu.
+PASS – npm run test:browser nad produkčným buildom, 18 kontrol trás.
+PASS – git diff --check.
+PASS – kontrola zachovania 1 555 pôvodných SK/CS textových reťazcov.
+PASS – vizuálna kontrola desktopových a mobilných snímok; bez vodorovného pretečenia.
+PASS – jazykové odkazy, prepínanie SK/CS/EN, zachovanie #kontakt, mobilné menu.
+PASS – rozbalené portfólio a robotické detaily, 3D platforma, ticker a kroky ukážky ruky.
+PASS – EN html lang, titulky, meta description, JSON-LD, canonical a hreflang.
+PASS – sitemap obsahuje všetkých 7 indexovateľných EN stránok a jazykové alternatívy.
+PASS – výsledkové stránky nie sú v sitemap a majú noindex.
+PASS – všetkých 392 kombinácií odporúčaní návrhu a 11 prednastavených auditov.
+PASS – pôvodné robotické matematické/ovládacie testy a 9 testov tickeru.
+
+FORMULÁRE A API (DESKTOP AJ MOBIL)
+Kontakt: validácia, neúspešné uloženie, zachované hodnoty, opakovanie, úspech,
+anglická potvrdzovacia stránka a návrat na pôvodný kontakt.
+Návrh: všetkých 8 krokov, voľby, validácie, návrat na predchádzajúci krok,
+zachovanie odpovedí, výsledné odporúčanie, chyba uloženia, úprava, opakovanie a úspech.
+Audit: chybná URL, výsledok lokálneho API, anglický simulovaný dashboard,
+odoslanie dopytu, žiadosť o telefonát a prechod na návrh na mieru.
+API test: skutočný crawler s testovacími HTML odpoveďami, anglická inštrukcia modelu,
+normalizácia výsledku, ukladanie, odmietnutý/nedostupný web a chyba poskytovateľa.
+
+HRANICE OVERENIA
+Browser test spúšťa skutočný produkčný Next.js server a API.
+Úložisko je izolovaný lokálny HTTP server; prijalo 10 testovacích záznamov.
+Browser audit používa existujúci doménový preset. Dynamické generovanie je
+overené cez skutočný API handler s testovacím modelom a webovými odpoveďami.
+Živý OpenAI poskytovateľ, produkčný Supabase ani odosielanie e-mailov neboli použité.
+Bez JavaScriptových chýb aplikácie a bez lokálnych HTTP 404.
+Dva externé HTTP 404 pochádzali z favicon služby Google pre bendalabs.sk;
+existujúci náhradný znak v náhľade auditu zostal funkčný.
+
+DÔKAZY A OPAKOVANIE
+Strojový výsledok: .tmp-en/browser-results/report.json
+Snímky: .tmp-en/browser-results/*.png (desktop, mobil, rozbalené projekty a výsledky)
+Príkazy: npm run lint; npm test; npm run build; npm run test:browser
+Browser test používa Chrome; mimo predvolenej Windows cesty možno nastaviť CHROME_PATH.
+Lokálne testovacie servery a prehliadače boli po overení ukončené.
+
+ÚPLNÝ ZOZNAM ZMENENÝCH A NOVÝCH SÚBOROV (78)
+Všetky cesty sú relatívne k vyššie uvedenému worktree.
+- EN-VERIFICATION.txt
+- package-lock.json
+- package.json
+- scripts/check-english-api.cjs
+- scripts/check-english-browser.cjs
+- scripts/check-localization.cjs
+- src/app/admin/leads/page.tsx
+- src/app/ai-audit-webu/page.tsx
+- src/app/ai-navrh-na-mieru/page.tsx
+- src/app/ai-vrstva-pre-financne-a-poistne-weby/page.tsx
+- src/app/ai-vrstva-pre-marketplace-a-rental-weby/page.tsx
+- src/app/api/ai-custom-proposal/route.ts
+- src/app/api/audit/route.ts
+- src/app/api/contact-requests/route.ts
+- src/app/cs/ai-audit-webu/page.tsx
+- src/app/cs/ai-vrstva-pro-financni-a-pojistne-weby/page.tsx
+- src/app/cs/ai-vrstva-pro-marketplace-a-rental-weby/page.tsx
+- src/app/cs/dekujeme/page.tsx
+- src/app/cs/labs/page.tsx
+- src/app/cs/odeslani-selhalo/page.tsx
+- src/app/cs/page.tsx
+- src/app/cs/robotics/page.tsx
+- src/app/dakujem/page.tsx
+- src/app/en/ai-layer-for-finance-and-insurance/page.tsx
+- src/app/en/ai-layer-for-marketplaces-and-rentals/page.tsx
+- src/app/en/ai-website-audit/page.tsx
+- src/app/en/custom-ai-proposal/page.tsx
+- src/app/en/labs/page.tsx
+- src/app/en/layout.tsx
+- src/app/en/page.tsx
+- src/app/en/robotics/page.tsx
+- src/app/en/submission-failed/page.tsx
+- src/app/en/thank-you/page.tsx
+- src/app/labs/page.tsx
+- src/app/layout.tsx
+- src/app/odoslanie-zlyhalo/page.tsx
+- src/app/page.tsx
+- src/app/robotics/page.tsx
+- src/app/robots.ts
+- src/app/share-image/route.tsx
+- src/app/sitemap.ts
+- src/components/bendalabs/ai-custom-proposal-flow.tsx
+- src/components/bendalabs/arm-model.tsx
+- src/components/bendalabs/audit-bot.tsx
+- src/components/bendalabs/benda-labs-landing-page.tsx
+- src/components/bendalabs/brand-shell.tsx
+- src/components/bendalabs/contact-request-success-state.tsx
+- src/components/bendalabs/lead-capture-form.tsx
+- src/components/bendalabs/mecanum-drive.tsx
+- src/components/bendalabs/motion-study.tsx
+- src/components/bendalabs/platform-explainer.tsx
+- src/components/bendalabs/project-contact.tsx
+- src/components/bendalabs/project-demo.tsx
+- src/components/bendalabs/project-details.tsx
+- src/components/bendalabs/project-showcase.tsx
+- src/components/bendalabs/request-status.tsx
+- src/components/bendalabs/site-structured-data.tsx
+- src/components/bendalabs/ticker-device-model.ts
+- src/components/bendalabs/ticker-device.tsx
+- src/components/bendalabs/world-home.tsx
+- src/lib/bendalabs/ai-custom-proposal.en.ts
+- src/lib/bendalabs/ai-custom-proposal.ts
+- src/lib/bendalabs/contact-return.ts
+- src/lib/bendalabs/dashboard-preview.en.ts
+- src/lib/bendalabs/dashboard-preview.ts
+- src/lib/bendalabs/lead-form-content.en.ts
+- src/lib/bendalabs/lead-form-content.ts
+- src/lib/bendalabs/localization.ts
+- src/lib/bendalabs/proposal-copy.en.ts
+- src/lib/bendalabs/seo.ts
+- src/lib/bendalabs/site-content.en.ts
+- src/lib/bendalabs/site-content.ts
+- src/lib/leads/contact-request.ts
+- src/lib/site-audit/analyze.ts
+- src/lib/site-audit/error.ts
+- src/lib/site-audit/overrides.en.ts
+- src/lib/site-audit/overrides.ts
+- src/proxy.ts

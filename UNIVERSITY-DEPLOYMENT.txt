@@ -1,0 +1,79 @@
+BendaLabs — Robotická univerzita
+Published: 5 October 2026, Europe/Paris
+
+Current production: dpl_DkK3GiRJf92PAcTTkLDcGr7x7FKc (READY)
+Deployment: https://bendalabs-a6hiz5g78-mareks-projects-6d793694.vercel.app
+SK: https://bendalabs.sk/roboticka-univerzita
+EN: https://bendalabs.sk/en/robotics-university
+Previous production: dpl_Cr72b8dbhbmgAyukXFiqQnEDCE1n
+
+Source: this english-production worktree. All pre-existing uncommitted English
+localization and SEO changes from the previous production were preserved.
+No main-site commit or push was made. Do not deploy raw origin/main or the old
+C:/Projects/BendaLabs_AI checkout: they do not contain this published source.
+
+Added the full React learning application under src/components/robotics-university.
+Styles are scoped to .robotics-university. Radix portals remain inside that root.
+integration.css contains main-site-specific isolation and placeholder contrast.
+Assets are in public/university-assets. The code worker retains its sandbox/CSP.
+Both entry routes, header/footer links and the homepage section were added.
+Learning progress is device-local, shared between SK/EN on the same origin.
+No cloud accounts, school administration or certificates are claimed.
+
+Standalone source: C:/Projects/BendaLabs_AI/robotics-encyclopedia
+Standalone updated source commit: 77dede115e885c1d800b7be9f762b02b2e5506bd
+Its scripts/export-university.mjs copies the module and scopes compiled CSS after
+building the standalone app. Keep university.tsx and integration.css in this
+worktree. Re-run dependency installation and checks after an export when needed.
+
+Verification:
+- Standalone TypeScript, numerical model checks and learning-path checks passed.
+- Main-site npm test and Next.js production build passed.
+- SK/EN chapter, quiz, next/resume, in-chapter PID and JavaScript rover passed.
+- Opening/closing an experiment preserves a selected quiz answer.
+- Language switching preserves the chapter and progress.
+- Mobile 390 px, tablet 1024 px and desktop 1440 px checked.
+- Scoped stylesheet has no unscoped selectors (excluding keyframes).
+- Cloud production build READY; deploy --prod --skip-domain then promote.
+- Public SK/EN routes, homepages and sitemap returned HTTP 200 with expected copy.
+- Vercel inspection of bendalabs.sk confirmed the exact production ID above.
+
+The main project still includes all original uncommitted edits. Preserve them.
+
+Arm layout refinement (5 October 2026): sliders now directly above the 3D
+canvas, with formulas and model notes below. Container-responsive controls,
+compact metrics, mobile 390 px and desktop 1280/1440 px checked in SK/EN.
+Both TypeScript checks and cloud production build passed.
+
+Battery layout refinement (5 October 2026): compact responsive seven-input
+calculator; runtime beside controls on desktop, above them on mobile. Formula
+and export moved below workspace. SK/EN and live recalculation checked on
+390, 1280, and 1440 px views; no horizontal overflow or console errors. Both
+TypeScript checks and cloud production build passed.
+
+Free access and lesson feedback (5 October 2026): homepage SK/CS/EN and
+university SK/EN now state free access without registration. Every native
+chapter has a 1-5 rating and optional suggestion, including suggestion-only
+submissions. Drafts persist locally; success appears only after storage.
+Native lesson-feedback.tsx and its wrapper callback must be preserved on export.
+
+Feedback storage: authorized isolated university_ tables in active Supabase
+project figgfdxmlaawoqsgidyx (TrendAtlas). No existing application tables changed.
+RLS and revoked public grants limit storage/RPC access to service_role. Edge
+university-feedback authenticates a dedicated server key before using storage.
+UNIVERSITY_FEEDBACK_URL and UNIVERSITY_FEEDBACK_KEY are production server envs.
+Rotating the key also requires updating its SHA256 in the Edge function.
+SQL source: supabase/university-feedback.sql. Remote migration applied.
+
+Owner dashboard: https://bendalabs.sk/admin/university, using the existing
+ADMIN_LEADS_PASSWORD/session policy. Includes chapter averages, suggestions,
+new/reviewed filters, pagination and marking feedback read. No public comments.
+The .vercelignore /review entry must remain root-anchored so the nested admin
+review route is included in production uploads.
+
+Verification: TypeScript, 9 focused tests, database validation/access/rate-limit
+assertions, 5 concurrent retries producing one row, local browser SK/EN draft
+and successful-save behavior, mobile 390 px and desktop 1280 px. Staged
+production admin login, protected dashboard, feedback submit/retry/readback
+passed. Synthetic verification rows were removed. Source Sites deployment
+also succeeded (owner-private).

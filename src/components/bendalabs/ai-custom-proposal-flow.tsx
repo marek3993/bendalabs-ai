@@ -1,5 +1,8 @@
 "use client";
 
+import type { SiteLocale } from "@/lib/bendalabs/site-content";
+import { proposalText } from "@/lib/bendalabs/proposal-copy.en";
+import { proposalOptionLabels } from "@/lib/bendalabs/ai-custom-proposal.en";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -120,61 +123,66 @@ function getOptionLabel(options: readonly { value: string; label: string }[], va
   return options.find((item) => item.value === value)?.label ?? value;
 }
 
-function validateCurrentStep(step: number, formState: FormState) {
+function validateCurrentStep(step: number, formState: FormState, locale: SiteLocale) {
   if (step === 0) {
     return normalizeWebsiteUrl(formState.website)
       ? ""
-      : "Zadajte platnú webovú adresu. Stačí aj doména ako vasweb.sk.";
+      : proposalText(locale, "Zadajte platnú webovú adresu. Stačí aj doména ako vasweb.sk.");
   }
 
   if (step === 1) {
-    return formState.businessType ? "" : "Vyberte, aký typ webu riešite.";
+    return formState.businessType ? "" : proposalText(locale, "Vyberte, aký typ webu riešite.");
   }
 
   if (step === 2) {
-    return formState.mainGoal ? "" : "Vyberte, čo má AI vrstva zlepšiť ako prvé.";
+    return formState.mainGoal ? "" : proposalText(locale, "Vyberte, čo má AI vrstva zlepšiť ako prvé.");
   }
 
   if (step === 3) {
-    return formState.visitorNextStep ? "" : "Vyberte, čo má návštevník ideálne spraviť.";
+    return formState.visitorNextStep ? "" : proposalText(locale, "Vyberte, čo má návštevník ideálne spraviť.");
   }
 
   if (step === 4) {
     return formState.opportunityText.trim().length >= 12
       ? ""
-      : "Stručne doplňte, kde dnes vidíte najväčšiu príležitosť na zlepšenie.";
+      : proposalText(locale, "Stručne doplňte, kde dnes vidíte najväčšiu príležitosť na zlepšenie.");
   }
 
   if (step === 5) {
     return formState.dashboardData.length > 0
       ? ""
-      : "Vyberte aspoň jeden typ dát, ktorý chcete vidieť v dashboarde.";
+      : proposalText(locale, "Vyberte aspoň jeden typ dát, ktorý chcete vidieť v dashboarde.");
   }
 
   if (step === 6) {
     return formState.successMetric.trim().length >= 12
       ? ""
-      : "Doplňte, podľa čoho by ste po 30 dňoch povedali, že to má zmysel.";
+      : proposalText(locale, "Doplňte, podľa čoho by ste po 30 dňoch povedali, že to má zmysel.");
   }
 
   const normalizedWebsite = normalizeWebsiteUrl(formState.website);
 
   if (!formState.name.trim()) {
-    return "Zadajte meno.";
+    return proposalText(locale, "Zadajte meno.");
   }
 
   if (!formState.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
-    return "Zadajte platný email.";
+    return proposalText(locale, "Zadajte platný email.");
   }
 
   if (!normalizedWebsite) {
-    return "Web nie je platný. Vráťte sa na prvý krok a opravte ho.";
+    return proposalText(locale, "Web nie je platný. Vráťte sa na prvý krok a opravte ho.");
   }
 
   return "";
 }
 
-export default function AiCustomProposalFlow() {
+export default function AiCustomProposalFlow({ locale = "sk" }: { locale?: SiteLocale }) {
+  const options = <T extends { value: keyof typeof proposalOptionLabels; label: string }>(items: readonly T[]) => items.map(item => ({ ...item, label: locale === "en" ? proposalOptionLabels[item.value] : item.label }));
+  const businessOptions = options(businessTypeOptions);
+  const goalOptions = options(mainGoalOptions);
+  const nextOptions = options(visitorNextStepOptions);
+  const dataOptions = options(dashboardDataOptions);
   const inFlight = useRef(false);
   const errorElement = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
@@ -196,7 +204,7 @@ export default function AiCustomProposalFlow() {
   }
 
   function handleNext() {
-    const error = validateCurrentStep(step, formState);
+    const error = validateCurrentStep(step, formState, locale);
 
     if (error) {
       setStepError(error);
@@ -228,7 +236,7 @@ export default function AiCustomProposalFlow() {
 
   async function handleSubmit() {
     if (inFlight.current) return;
-    const error = validateCurrentStep(TOTAL_STEPS - 1, formState);
+    const error = validateCurrentStep(TOTAL_STEPS - 1, formState, locale);
 
     if (error) {
       setStepError(error);
@@ -241,10 +249,10 @@ export default function AiCustomProposalFlow() {
     setStepError("");
     setSaveWarning("");
 
-    const submission = parseAiCustomProposalSubmission(formState);
+    const submission = parseAiCustomProposalSubmission({ ...formState, locale });
 
     if (!submission.success) {
-      setSubmitError("Návrh sa teraz nepodarilo pripraviť. Skontrolujte vyplnené údaje.");
+      setSubmitError(proposalText(locale, "Návrh sa teraz nepodarilo pripraviť. Skontrolujte vyplnené údaje."));
       setIsSubmitting(false);
       inFlight.current = false;
       return;
@@ -261,7 +269,7 @@ export default function AiCustomProposalFlow() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formState),
+        body: JSON.stringify({ ...formState, locale }),
       });
 
       const payload = (await response.json()) as {
@@ -272,13 +280,13 @@ export default function AiCustomProposalFlow() {
 
       if (!response.ok || payload.leadSaved !== true) {
         setSaveWarning(
-          "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Napíšte nám na info@bendalabs.sk.",
+          proposalText(locale, "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Napíšte nám na info@bendalabs.sk."),
         );
         return;
       }
     } catch {
       setSaveWarning(
-        "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Napíšte nám na info@bendalabs.sk.",
+        proposalText(locale, "Návrh sa zobrazil, ale kontakt sa nepodarilo uložiť. Napíšte nám na info@bendalabs.sk."),
       );
     } finally {
       inFlight.current = false;
@@ -292,19 +300,15 @@ export default function AiCustomProposalFlow() {
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="space-y-6">
             <div className="rounded-[32px] border border-[#8fb6a8]/55 bg-[radial-gradient(circle_at_top_right,rgba(196,231,214,0.42),transparent_34%),linear-gradient(180deg,rgba(253,255,254,0.98),rgba(242,249,245,0.96))] p-7 shadow-[0_24px_72px_rgba(80,118,103,0.12)]">
-              <StepTag>Návrh pripravený</StepTag>
+              <StepTag>{proposalText(locale, "Návrh pripravený")}</StepTag>
               <h1
                 className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-4xl"
                 style={{ fontFamily: "var(--font-display)" }}
-              >
-                Váš AI návrh na mieru
-              </h1>
+              >{proposalText(locale, "Váš AI návrh na mieru")}</h1>
               <p className="mt-4 text-base leading-7 text-neutral-700">{recommendation.summary}</p>
 
               <div className="mt-6 rounded-[24px] border border-black/8 bg-white/80 p-5">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">
-                  Odporúčaný typ AI vrstvy
-                </div>
+                <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">{proposalText(locale, "Odporúčaný typ AI vrstvy")}</div>
                 <div className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-neutral-950">
                   {recommendation.recommendedLayerTitle}
                 </div>
@@ -314,15 +318,11 @@ export default function AiCustomProposalFlow() {
                 <a
                   href="tel:+421944388123"
                   className="inline-flex rounded-full border border-black bg-black px-5 py-3 text-sm font-medium text-white hover:bg-neutral-800"
-                >
-                  Dohodnúť krátky call
-                </a>
+                >{proposalText(locale, "Dohodnúť krátky call")}</a>
                 <a
-                  href={`mailto:info@bendalabs.sk?subject=${encodeURIComponent("AI návrh na mieru — " + formState.website)}&body=${encodeURIComponent(recommendation.summary + "\n\n" + recommendation.nextStep)}`}
+                  href={`mailto:info@bendalabs.sk?subject=${encodeURIComponent(proposalText(locale, "AI návrh na mieru — ") + formState.website)}&body=${encodeURIComponent(recommendation.summary + "\n\n" + recommendation.nextStep)}`}
                   className="rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-neutral-950 hover:bg-neutral-100"
-                >
-                  Konzultovať návrh e-mailom
-                </a>
+                >{proposalText(locale, "Konzultovať návrh e-mailom")}</a>
               </div>
 
               {saveWarning ? (
@@ -330,33 +330,33 @@ export default function AiCustomProposalFlow() {
                   {saveWarning}
                 </div>
               ) : null}
-              <p role="status" className="mt-4 text-sm text-neutral-600">{isSubmitting ? "Odosielam kontakt…" : !saveWarning ? "Kontakt bol odoslaný." : ""}</p>
-              <button type="button" disabled={isSubmitting} onClick={() => { setRecommendation(null); setSaveWarning(""); }} className="mt-4 rounded-full border border-black/15 px-5 py-3 text-sm disabled:opacity-50">Upraviť zadanie</button>
+              <p role="status" className="mt-4 text-sm text-neutral-600">{isSubmitting ? proposalText(locale, "Odosielam kontakt…") : !saveWarning ? proposalText(locale, "Kontakt bol odoslaný.") : ""}</p>
+              <button type="button" disabled={isSubmitting} onClick={() => { setRecommendation(null); setSaveWarning(""); }} className="mt-4 rounded-full border border-black/15 px-5 py-3 text-sm disabled:opacity-50">{proposalText(locale, "Upraviť zadanie")}</button>
             </div>
 
             <div className="rounded-[30px] border border-black/10 bg-white p-6 shadow-[0_16px_50px_rgba(17,17,17,0.05)]">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Zadanie</div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">{proposalText(locale, "Zadanie")}</div>
               <div className="mt-4 space-y-4 text-sm leading-6 text-neutral-700">
                 <div>
-                  <div className="text-neutral-500">Web</div>
+                  <div className="text-neutral-500">{proposalText(locale, "Web")}</div>
                   <div className="font-medium text-neutral-950">{formState.website}</div>
                 </div>
                 <div>
-                  <div className="text-neutral-500">Typ webu</div>
+                  <div className="text-neutral-500">{proposalText(locale, "Typ webu")}</div>
                   <div className="font-medium text-neutral-950">
-                    {getOptionLabel(businessTypeOptions, formState.businessType)}
+                    {getOptionLabel(businessOptions, formState.businessType)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-neutral-500">Hlavný cieľ</div>
+                  <div className="text-neutral-500">{proposalText(locale, "Hlavný cieľ")}</div>
                   <div className="font-medium text-neutral-950">
-                    {getOptionLabel(mainGoalOptions, formState.mainGoal)}
+                    {getOptionLabel(goalOptions, formState.mainGoal)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-neutral-500">Ideálny ďalší krok návštevníka</div>
+                  <div className="text-neutral-500">{proposalText(locale, "Ideálny ďalší krok návštevníka")}</div>
                   <div className="font-medium text-neutral-950">
-                    {getOptionLabel(visitorNextStepOptions, formState.visitorNextStep)}
+                    {getOptionLabel(nextOptions, formState.visitorNextStep)}
                   </div>
                 </div>
               </div>
@@ -364,11 +364,11 @@ export default function AiCustomProposalFlow() {
           </div>
 
           <div className="space-y-6">
-            <ResultSection title="Čo by riešila pre návštevníka" items={recommendation.visitorValue} />
-            <ResultSection title="Čo by získal váš tím" items={recommendation.teamValue} />
-            <ResultSection title="Aké dáta by ukázal dashboard" items={recommendation.dashboardValue} />
-            <ResultSection title="Najjednoduchšia prvá fáza" items={recommendation.phaseOne} />
-            <ResultSection title="Odporúčaný ďalší krok" items={[recommendation.nextStep]} />
+            <ResultSection title={proposalText(locale, "Čo by riešila pre návštevníka")} items={recommendation.visitorValue} />
+            <ResultSection title={proposalText(locale, "Čo by získal váš tím")} items={recommendation.teamValue} />
+            <ResultSection title={proposalText(locale, "Aké dáta by ukázal dashboard")} items={recommendation.dashboardValue} />
+            <ResultSection title={proposalText(locale, "Najjednoduchšia prvá fáza")} items={recommendation.phaseOne} />
+            <ResultSection title={proposalText(locale, "Odporúčaný ďalší krok")} items={[recommendation.nextStep]} />
           </div>
         </div>
       </main>
@@ -380,25 +380,20 @@ export default function AiCustomProposalFlow() {
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="lg:sticky lg:top-28">
           <div className="rounded-[34px] border border-[#8fb6a8]/55 bg-[radial-gradient(circle_at_top_right,rgba(196,231,214,0.42),transparent_34%),linear-gradient(180deg,rgba(253,255,254,0.98),rgba(242,249,245,0.96))] p-7 shadow-[0_24px_72px_rgba(80,118,103,0.12)]">
-            <StepTag>AI návrh na mieru</StepTag>
+            <StepTag>{proposalText(locale, "AI návrh na mieru")}</StepTag>
             <h1
               className="mt-5 text-[2.8rem] font-semibold leading-[0.96] tracking-[-0.06em] text-neutral-950 sm:text-[3.6rem]"
               style={{ fontFamily: "var(--font-display)" }}
-            >
-              AI návrh na mieru
-            </h1>
-            <p className="mt-5 text-lg leading-8 text-neutral-600">
-              Odpovedzte na pár otázok o vašom webe a cieľoch. Na konci získate návrh, aká AI vrstva
-              by mohla dávať najväčší zmysel práve pre váš biznis.
-            </p>
+            >{proposalText(locale, "AI návrh na mieru")}</h1>
+            <p className="mt-5 text-lg leading-8 text-neutral-600">{proposalText(locale, "Odpovedzte na pár otázok o vašom webe a cieľoch. Na konci získate návrh, aká AI vrstva by mohla dávať najväčší zmysel práve pre váš biznis.")}</p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               {[
-                "AI vrstva",
-                "návrh na mieru",
-                "lepšie pripravené dopyty",
-                "dashboard zámerov",
-                "bez prerábky existujúceho webu",
+                proposalText(locale, "AI vrstva"),
+                proposalText(locale, "návrh na mieru"),
+                proposalText(locale, "lepšie pripravené dopyty"),
+                proposalText(locale, "dashboard zámerov"),
+                proposalText(locale, "bez prerábky existujúceho webu"),
               ].map((item) => (
                 <div
                   key={item}
@@ -411,7 +406,7 @@ export default function AiCustomProposalFlow() {
 
             <div className="mt-8 rounded-[24px] border border-black/8 bg-white/80 p-5">
               <div className="flex items-center justify-between gap-4">
-                <div className="text-sm font-medium text-neutral-950">Krok {stepIndex} z 8</div>
+                <div className="text-sm font-medium text-neutral-950">{proposalText(locale, "Krok")} {stepIndex} {proposalText(locale, "z 8")}</div>
                 <div className="text-sm text-neutral-500">{Math.round((stepIndex / TOTAL_STEPS) * 100)}%</div>
               </div>
               <div className="mt-4 h-2 rounded-full bg-black/8">
@@ -423,11 +418,8 @@ export default function AiCustomProposalFlow() {
             </div>
 
             <div className="mt-6 rounded-[24px] border border-black/8 bg-white/72 p-5 text-sm leading-7 text-neutral-700">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Čo získate</div>
-              <div className="mt-3">
-                Na konci uvidíte odporúčaný typ AI vrstvy, čo by riešila pre návštevníka, aké nové
-                obchodné dáta by ste vedeli sledovať a aký je najjednoduchší prvý krok.
-              </div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">{proposalText(locale, "Čo získate")}</div>
+              <div className="mt-3">{proposalText(locale, "Na konci uvidíte odporúčaný typ AI vrstvy, čo by riešila pre návštevníka, aké nové obchodné dáta by ste vedeli sledovať a aký je najjednoduchší prvý krok.")}</div>
             </div>
           </div>
         </div>
@@ -435,24 +427,19 @@ export default function AiCustomProposalFlow() {
         <div className="rounded-[34px] border border-black/10 bg-white p-6 shadow-[0_18px_64px_rgba(17,17,17,0.06)] sm:p-8">
           {step === 0 ? (
             <div>
-              <StepTag>Web firmy</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Aký web chcete posúdiť?
-              </h2>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-600">
-                Stačí URL alebo doména. Návrh postavíme na tom, ako dnes funguje váš web a čo od neho
-                potrebujete.
-              </p>
+              <StepTag>{proposalText(locale, "Web firmy")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Aký web chcete posúdiť?")}</h2>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-600">{proposalText(locale, "Stačí URL alebo doména. Návrh postavíme na tom, ako dnes funguje váš web a čo od neho potrebujete.")}</p>
 
               <label className="mt-8 block">
-                <span className="mb-2 block text-sm text-neutral-700">Web firmy</span>
+                <span className="mb-2 block text-sm text-neutral-700">{proposalText(locale, "Web firmy")}</span>
                 <input
                   type="text"
                   inputMode="url"
                   autoComplete="url"
                   value={formState.website}
                   onChange={(event) => updateField("website", event.target.value)}
-                  placeholder="napr. vasweb.sk"
+                  placeholder={proposalText(locale, "napr. vasweb.sk")}
                   className="min-h-14 w-full rounded-[22px] border border-black/10 bg-white px-5 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
                 />
               </label>
@@ -461,12 +448,10 @@ export default function AiCustomProposalFlow() {
 
           {step === 1 ? (
             <div>
-              <StepTag>Typ webu / biznisu</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Aký typ webu riešite?
-              </h2>
+              <StepTag>{proposalText(locale, "Typ webu / biznisu")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Aký typ webu riešite?")}</h2>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
-                {businessTypeOptions.map((option) => (
+                {businessOptions.map((option) => (
                   <ChoiceButton
                     key={option.value}
                     active={formState.businessType === option.value}
@@ -480,12 +465,10 @@ export default function AiCustomProposalFlow() {
 
           {step === 2 ? (
             <div>
-              <StepTag>Hlavný cieľ</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Čo by mala AI vrstva zlepšiť ako prvé?
-              </h2>
+              <StepTag>{proposalText(locale, "Hlavný cieľ")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Čo by mala AI vrstva zlepšiť ako prvé?")}</h2>
               <div className="mt-8 grid gap-3">
-                {mainGoalOptions.map((option) => (
+                {goalOptions.map((option) => (
                   <ChoiceButton
                     key={option.value}
                     active={formState.mainGoal === option.value}
@@ -499,12 +482,10 @@ export default function AiCustomProposalFlow() {
 
           {step === 3 ? (
             <div>
-              <StepTag>Ďalší krok návštevníka</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Čo má návštevník ideálne spraviť?
-              </h2>
+              <StepTag>{proposalText(locale, "Ďalší krok návštevníka")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Čo má návštevník ideálne spraviť?")}</h2>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
-                {visitorNextStepOptions.map((option) => (
+                {nextOptions.map((option) => (
                   <ChoiceButton
                     key={option.value}
                     active={formState.visitorNextStep === option.value}
@@ -518,17 +499,15 @@ export default function AiCustomProposalFlow() {
 
           {step === 4 ? (
             <div>
-              <StepTag>Dnešný problém alebo príležitosť</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Kde dnes vidíte najväčšiu príležitosť na zlepšenie?
-              </h2>
+              <StepTag>{proposalText(locale, "Dnešný problém alebo príležitosť")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Kde dnes vidíte najväčšiu príležitosť na zlepšenie?")}</h2>
               <textarea
-                aria-label="Príležitosť na zlepšenie"
+                aria-label={proposalText(locale, "Príležitosť na zlepšenie")}
                 maxLength={2000}
                 value={formState.opportunityText}
                 onChange={(event) => updateField("opportunityText", event.target.value)}
                 rows={7}
-                placeholder="Napr. veľa ľudí píše všeobecné otázky, dopyty sú neúplné, ľudia nevedia vybrať správnu službu, chceme lepšie dáta o zámeroch návštevníkov..."
+                placeholder={proposalText(locale, "Napr. veľa ľudí píše všeobecné otázky, dopyty sú neúplné, ľudia nevedia vybrať správnu službu, chceme lepšie dáta o zámeroch návštevníkov...")}
                 className="mt-8 w-full rounded-[24px] border border-black/10 bg-white px-5 py-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
               />
             </div>
@@ -536,16 +515,11 @@ export default function AiCustomProposalFlow() {
 
           {step === 5 ? (
             <div>
-              <StepTag>Dáta / dashboard</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Aké dáta by ste chceli vidieť v dashboarde?
-              </h2>
-              <p className="mt-4 text-base leading-7 text-neutral-600">
-                Môžete vybrať viac možností. Cieľom je vidieť, čo ľudia reálne hľadajú a ako sa
-                rozhodujú.
-              </p>
+              <StepTag>{proposalText(locale, "Dáta / dashboard")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Aké dáta by ste chceli vidieť v dashboarde?")}</h2>
+              <p className="mt-4 text-base leading-7 text-neutral-600">{proposalText(locale, "Môžete vybrať viac možností. Cieľom je vidieť, čo ľudia reálne hľadajú a ako sa rozhodujú.")}</p>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
-                {dashboardDataOptions.map((option) => (
+                {dataOptions.map((option) => (
                   <ChoiceButton
                     key={option.value}
                     active={formState.dashboardData.includes(option.value)}
@@ -560,17 +534,15 @@ export default function AiCustomProposalFlow() {
 
           {step === 6 ? (
             <div>
-              <StepTag>Úspech po 30 dňoch</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Podľa čoho by ste po 30 dňoch povedali, že to má zmysel?
-              </h2>
+              <StepTag>{proposalText(locale, "Úspech po 30 dňoch")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Podľa čoho by ste po 30 dňoch povedali, že to má zmysel?")}</h2>
               <textarea
-                aria-label="Úspech po 30 dňoch"
+                aria-label={proposalText(locale, "Úspech po 30 dňoch")}
                 maxLength={2000}
                 value={formState.successMetric}
                 onChange={(event) => updateField("successMetric", event.target.value)}
                 rows={7}
-                placeholder="Napr. viac kvalitných dopytov, menej nejasných otázok, lepší prehľad o potrebách zákazníkov, rýchlejšie objednanie..."
+                placeholder={proposalText(locale, "Napr. viac kvalitných dopytov, menej nejasných otázok, lepší prehľad o potrebách zákazníkov, rýchlejšie objednanie...")}
                 className="mt-8 w-full rounded-[24px] border border-black/10 bg-white px-5 py-4 text-neutral-950 outline-none focus:border-black/25 focus:shadow-[0_0_0_4px_rgba(17,17,17,0.05)]"
               />
             </div>
@@ -578,13 +550,11 @@ export default function AiCustomProposalFlow() {
 
           {step === 7 ? (
             <div>
-              <StepTag>Kontakt</StepTag>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">
-                Kam vám môžeme poslať návrh alebo sa ozvať?
-              </h2>
+              <StepTag>{proposalText(locale, "Kontakt")}</StepTag>
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-neutral-950">{proposalText(locale, "Kam vám môžeme poslať návrh alebo sa ozvať?")}</h2>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 <label className="grid gap-2 text-sm text-neutral-700">
-                  <span>Meno</span>
+                  <span>{proposalText(locale, "Meno")}</span>
                   <input
                     type="text"
                     autoComplete="name"
@@ -596,7 +566,7 @@ export default function AiCustomProposalFlow() {
                 </label>
 
                 <label className="grid gap-2 text-sm text-neutral-700">
-                  <span>Email</span>
+                  <span>{proposalText(locale, "Email")}</span>
                   <input
                     type="email"
                     autoComplete="email"
@@ -608,7 +578,7 @@ export default function AiCustomProposalFlow() {
                 </label>
 
                 <label className="grid gap-2 text-sm text-neutral-700">
-                  <span>Telefón (voliteľne)</span>
+                  <span>{proposalText(locale, "Telefón (voliteľne)")}</span>
                   <input
                     type="tel"
                     autoComplete="tel"
@@ -620,7 +590,7 @@ export default function AiCustomProposalFlow() {
                 </label>
 
                 <label className="grid gap-2 text-sm text-neutral-700">
-                  <span>Firma (voliteľne)</span>
+                  <span>{proposalText(locale, "Firma (voliteľne)")}</span>
                   <input
                     type="text"
                     autoComplete="organization"
@@ -652,18 +622,14 @@ export default function AiCustomProposalFlow() {
               onClick={handleBack}
               disabled={step === 0}
               className="rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-neutral-950 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Späť
-            </button>
+            >{proposalText(locale, "Späť")}</button>
 
             {step < TOTAL_STEPS - 1 ? (
               <button
                 type="button"
                 onClick={handleNext}
                 className="rounded-full border border-black bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800"
-              >
-                Ďalší krok
-              </button>
+              >{proposalText(locale, "Ďalší krok")}</button>
             ) : (
               <button
                 type="button"
@@ -671,7 +637,7 @@ export default function AiCustomProposalFlow() {
                 disabled={isSubmitting}
                 className="rounded-full border border-black bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Pripravujem návrh..." : "Zobraziť AI návrh na mieru"}
+                {isSubmitting ? proposalText(locale, "Pripravujem návrh...") : proposalText(locale, "Zobraziť AI návrh na mieru")}
               </button>
             )}
           </div>

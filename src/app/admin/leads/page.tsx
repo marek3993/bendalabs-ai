@@ -1,3 +1,4 @@
+import { privatePageMetadata } from "@/lib/bendalabs/seo";
 import { isAdminAuthenticated, isAdminProtectionConfigured } from "@/lib/leads/auth";
 import {
   getLeadRollups,
@@ -346,6 +347,9 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
               </p>
             </div>
 
+            <a href="/admin/university" className="text-sm font-medium text-neutral-900 underline underline-offset-4">
+              Hodnotenia Robotickej univerzity
+            </a>
             <form action="/admin/leads/logout" method="post">
               <button
                 type="submit"
@@ -730,3 +734,5 @@ export default async function AdminLeadsPage({ searchParams }: PageProps) {
     </main>
   );
 }
+
+export const metadata = privatePageMetadata("BendaLabs");

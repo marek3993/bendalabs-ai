@@ -1,3 +1,4 @@
+import { englishLeadForm } from "./lead-form-content.en";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import type { ContactRequestErrorCode, ContactRequestField } from "@/lib/leads/contact-request";
 import type { ContactRequestSource } from "@/lib/leads/types";
@@ -12,7 +13,7 @@ type LeadFormVariantCopy = {
   successMessage: string;
 };
 
-type LeadFormSharedCopy = {
+export type LeadFormSharedCopy = {
   fields: Record<ContactRequestField, string>;
   placeholders: {
     name: string;
@@ -186,8 +187,8 @@ const leadFormCopy = {
       ai_navrh_na_mieru: "AI návrh na míru",
     },
   },
-} as const satisfies Record<SiteLocale, LeadFormSharedCopy>;
+} as const satisfies Record<Exclude<SiteLocale, "en">, LeadFormSharedCopy>;
 
 export function getLeadFormCopy(locale: SiteLocale) {
-  return leadFormCopy[locale];
+  return locale === "en" ? englishLeadForm : leadFormCopy[locale];
 }

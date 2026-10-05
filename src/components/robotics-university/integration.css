@@ -1,0 +1,30 @@
+html:has(#robotics-university){color-scheme:dark;background:#0b100e}
+body:has(#robotics-university){margin:0;background:#0b100e}
+.robotics-university input::placeholder,.robotics-university textarea::placeholder{color:#91a698;opacity:1}
+.robotics-university .lesson-feedback{margin:32px 0;padding:26px;border:1px solid #496e53;border-radius:9px;background:linear-gradient(135deg,#1b3022,#132319)}
+.robotics-university .feedback-heading{display:flex;gap:14px;align-items:flex-start;margin-bottom:24px}
+.robotics-university .feedback-heading>svg{flex-shrink:0;color:#b2e2bc;margin-top:4px}
+.robotics-university .feedback-heading h2{font-size:24px;line-height:1.3;margin:0 0 10px;font-weight:500;letter-spacing:-.5px}
+.robotics-university .feedback-heading p{font-size:16px;line-height:1.65;color:#aec8b6;margin:0}
+.robotics-university .lesson-feedback fieldset{padding:0;margin:0;border:0;min-width:0}
+.robotics-university .lesson-feedback legend,.robotics-university .feedback-label{font-size:15px;line-height:1.5;color:#d0e5d6;display:block;margin-bottom:9px}
+.robotics-university .feedback-rating{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.robotics-university .feedback-rating>label{position:relative;display:grid;place-items:center;width:46px;height:46px;border:1px solid #506e58;border-radius:7px;cursor:pointer;color:#a5c2af;background:#102017}
+.robotics-university .feedback-rating input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0}
+.robotics-university .feedback-rating label:has(input:focus-visible){outline:2px solid #d0efd6;outline-offset:3px}
+.robotics-university .feedback-rating label.is-selected{color:#c5edbd;border-color:#9ac8a3;background:#284831}
+.robotics-university .feedback-rating label.is-selected svg{fill:currentColor}
+.robotics-university .feedback-rating .text-button{padding:9px 4px;text-decoration:underline;text-underline-offset:3px}
+.robotics-university .feedback-scale{font-size:13px;color:#abc2b2;margin:10px 0 22px;min-height:20px}
+.robotics-university .feedback-label>span{color:#9cb4a4}
+.robotics-university .lesson-feedback textarea{display:block;resize:vertical;width:100%;min-height:96px;max-height:380px;box-sizing:border-box;padding:13px 14px;border:1px solid #57725e;border-radius:6px;background:#0d1b12;color:#e0eee3;font-family:inherit;line-height:1.6;font-size:16px}
+.robotics-university .lesson-feedback textarea:focus{outline:2px solid #b2e2bc;outline-offset:2px}
+.robotics-university .feedback-field-meta{display:flex;justify-content:space-between;gap:16px;font-size:12px;line-height:1.5;color:#9eb9a8;margin:8px 0 16px}
+.robotics-university .feedback-field-meta>span:last-child{white-space:nowrap}
+.robotics-university .feedback-privacy{font-size:13px;line-height:1.65;color:#abc0b2;margin:0 0 18px}
+.robotics-university .feedback-error{color:#f1b8a8;font-size:15px;line-height:1.6;margin:18px 0 0}
+.robotics-university .feedback-success{display:flex;gap:12px;padding:18px;background:#26472f;border:1px solid #679670;border-radius:7px;color:#d3ecd8}
+.robotics-university .feedback-success>svg{flex-shrink:0}
+.robotics-university .feedback-success p{font-size:15px;line-height:1.6;margin:8px 0 0}
+.robotics-university .feedback-honeypot,.robotics-university .feedback-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:767px){.robotics-university .lesson-feedback{padding:20px}.robotics-university .feedback-heading{gap:10px}.robotics-university .feedback-heading h2{font-size:22px}.robotics-university .feedback-heading>svg{width:20px}.robotics-university .feedback-rating{gap:6px}.robotics-university .feedback-rating>label{width:44px;height:44px}.robotics-university .feedback-rating .text-button{width:100%;padding-top:3px}}

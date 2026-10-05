@@ -209,7 +209,13 @@ function getDomainInitials(domain: string) {
 
 function buildFallbackQuestion(locale: SiteLocale, index: number) {
   const questions =
-    locale === "cs"
+    locale === "en" ? [
+          "Which offer is the best fit for me?",
+          "How can I get to the right next step quickly?",
+          "What should I know before sending an enquiry?",
+          "How do the options on the website differ?",
+          "Who should I contact about my situation?",
+        ] : locale === "cs"
       ? [
           "Která nabídka je pro mě nejvhodnější?",
           "Jak se co nejrychleji dostanu ke správnému dalšímu kroku?",
@@ -469,16 +475,16 @@ function getResolvedLoadingSteps(locale: SiteLocale, steps: ReadonlyArray<string
   const resolved = [...steps];
   if (resolved.length > 1) {
     resolved[1] = isHealthcareUrlCandidate(inputUrl)
-      ? locale === "cs"
+      ? locale === "en" ? "Assessing how an AI layer could help visitors choose a service and prepare a booking…" : locale === "cs"
         ? "Vyhodnocuji, jak by AI vrstva pomohla s výběrem služby a přípravou objednání..."
         : "Vyhodnocujem, ako by AI vrstva pomohla s výberom služby a prípravou objednania..."
-      : locale === "cs"
+      : locale === "en" ? "Assessing where an AI layer could help visitors choose a service faster…" : locale === "cs"
         ? "Vyhodnocuji, kde by AI vrstva dokázala urychlit výběr služby..."
         : "Vyhodnocujem, kde by AI vrstva vedela urýchliť výber služby...";
   }
 
   resolved[resolved.length - 1] =
-    locale === "cs"
+    locale === "en" ? "Preparing an illustration of the AI layer and dashboard. This may take around 15 seconds." : locale === "cs"
       ? "Připravujeme ukázku AI vrstvy a dashboardu. Může to trvat přibližně 15 sekund."
       : "Pripravujeme ukážku AI vrstvy a dashboardu. Môže to trvať približne 15 sekúnd.";
 
@@ -486,6 +492,7 @@ function getResolvedLoadingSteps(locale: SiteLocale, steps: ReadonlyArray<string
 }
 
 function getSalesDashboardCopy(locale: SiteLocale): SalesDashboardCopy {
+  if (locale === "en") return { eyebrow: "AI dashboard preview", cardTitle: "What you could learn about your visitors", previewSubtitle: "A simulation based on your website's type and content. It illustrates the signals an AI layer could capture from visitors; it is not current visitor data.", callTitle: "Next step", callDescription: "Leave your contact details and preferred time for a short discussion about where an AI layer could make sense.", callButtonLabel: "Request a short call", formButtonLabel: "Send details / request a proposal", formHelper: "Or use the form below to request a specific proposal." };
   if (locale === "cs") {
     return {
       eyebrow: "AI dashboard preview",
@@ -537,7 +544,7 @@ function DashboardWidget({
   );
 }
 
-function DashboardSiteMark({ auditedUrl }: { auditedUrl: string }) {
+function DashboardSiteMark({ auditedUrl, locale }: { auditedUrl: string; locale: SiteLocale }) {
   const domain = getAuditDomainLabel(auditedUrl);
   const sources = useMemo(
     () => [`https://${domain}/favicon.ico`, `https://www.google.com/s2/favicons?domain=${domain}&sz=128`],
@@ -564,7 +571,7 @@ function DashboardSiteMark({ auditedUrl }: { auditedUrl: string }) {
           )}
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">Auditovaný web</div>
+          <div className="text-[11px] uppercase tracking-[0.22em] text-neutral-500">{locale === "en" ? "Audited website" : "Auditovaný web"}</div>
           <div className="mt-1 text-sm font-semibold text-neutral-950">{domain}</div>
         </div>
       </div>
@@ -608,7 +615,7 @@ function AuditDashboardPreview({
               <p className="mt-3 text-sm leading-6 text-neutral-500">{copy.previewNote}</p>
             </div>
 
-            <DashboardSiteMark key={auditedUrl} auditedUrl={auditedUrl} />
+            <DashboardSiteMark key={auditedUrl} auditedUrl={auditedUrl} locale={locale} />
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -781,7 +788,7 @@ function StructuredAuditDashboardPreview({
               <p className="mt-4 text-sm leading-6 text-neutral-700">{copy.previewSubtitle}</p>
             </div>
 
-            <DashboardSiteMark key={auditedUrl} auditedUrl={auditedUrl} />
+            <DashboardSiteMark key={auditedUrl} auditedUrl={auditedUrl} locale={locale} />
           </div>
         </div>
 
@@ -821,7 +828,7 @@ function StructuredAuditDashboardPreview({
                 ))}
               </div>
               <div className="mt-4 rounded-[16px] border border-white/70 bg-white/90 px-4 py-3 text-sm leading-6 text-neutral-700">
-                {locale === "cs"
+                {locale === "en" ? "An enquiry prepared for your team with clear context, priority and a next step." : locale === "cs"
                   ? "Kontakt připravený pro obchodní tým s jasným kontextem, prioritou a dalším krokem."
                   : "Kontakt pripravený pre obchodný tím s jasným kontextom, prioritou a ďalším krokom."}
               </div>
@@ -883,7 +890,7 @@ function SalesAuditDashboardPreview({
             </div>
 
             <div className="w-full max-w-sm space-y-3 xl:flex-shrink-0">
-              <DashboardSiteMark key={auditedUrl} auditedUrl={auditedUrl} />
+              <DashboardSiteMark key={auditedUrl} auditedUrl={auditedUrl} locale={locale} />
               <div className="flex flex-wrap gap-2">
                 <div className="rounded-full border border-black/8 bg-white/72 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-600">
                   {preview.simulatedBadge}
@@ -1143,14 +1150,14 @@ function AuditPreviewPanel({
   const displaySteps = isIdle ? idleSteps ?? steps : steps;
   const progress = steps.length > 0 ? `${Math.max(14, ((safeIndex + 1) / steps.length) * 100)}%` : "14%";
   const panelLabel = isIdle
-    ? locale === "sk"
+    ? locale === "en" ? "READY TO AUDIT" : locale === "sk"
       ? "PRIPRAVENE NA AUDIT"
       : "PRIPRAVENO NA AUDIT"
-    : locale === "sk"
+    : locale === "en" ? "Audit in progress" : locale === "sk"
       ? "Audit pr\u00e1ve be\u017e\u00ed"
       : "Audit pr\u00e1v\u011b b\u011b\u017e\u00ed";
   const currentStep = isIdle
-    ? idleTitle ?? (locale === "sk" ? "Zadajte URL a spustite audit" : "Zadejte URL a spus\u0165te audit")
+    ? idleTitle ?? (locale === "en" ? "Enter a URL and start the audit" : locale === "sk" ? "Zadajte URL a spustite audit" : "Zadejte URL a spus\u0165te audit")
     : steps[safeIndex] ?? "";
   const progressLabel = isIdle ? null : steps.length > 0 ? `${safeIndex + 1}/${steps.length}` : null;
 
@@ -1186,10 +1193,10 @@ function AuditPreviewPanel({
 
         <div className="mt-5 text-[11px] uppercase tracking-[0.22em] text-emerald-50/48">
           {isIdle
-            ? locale === "sk"
+            ? locale === "en" ? "What the audit does" : locale === "sk"
               ? "Co audit spravi"
               : "Co audit udela"
-            : locale === "sk"
+            : locale === "en" ? "Current step" : locale === "sk"
               ? "Akt\u00edvny krok"
               : "Aktivn\u00ed krok"}
         </div>
@@ -1326,7 +1333,7 @@ export default function AuditBot({
     ? isHealthcareDashboardPreviewSegment(dashboardPreview.segment)
     : false;
   const resolvedFrictionTitle = healthcareAuditCopyActive
-    ? locale === "cs"
+    ? locale === "en" ? "Where an AI layer could help before booking" : locale === "cs"
       ? "Kde by AI vrstva pomohla před objednáním"
       : "Kde by AI vrstva pomohla pred objednaním"
     : copy.frictionTitle;
@@ -1735,7 +1742,7 @@ export default function AuditBot({
                       key={item}
                       className="rounded-full border border-black/10 bg-black/[0.03] px-4 py-2 text-sm text-neutral-800"
                     >
-                      {item}
+                      {locale === "en" ? ({ navigator: "Guidance to the next step", recommender: "Help choosing an offer", "lead qualifier": "Better-prepared enquiries", "upsell assistant": "Relevant related services" } as Record<string, string>)[item] ?? item : item}
                     </div>
                   ))}
                 </div>
@@ -1816,12 +1823,12 @@ export default function AuditBot({
                 </button>
                 <div className="text-sm leading-6 text-white/60">{dashboardCopy.formHelper}</div>
                 <div className="rounded-[20px] border border-white/12 bg-white/6 px-4 py-4 text-sm leading-6 text-white/72">
-                  <div>{locale === "cs" ? "Chcete přesnější návrh podle svých cílů?" : "Chcete presnejší návrh podľa svojich cieľov?"}</div>
+                  <div>{locale === "en" ? "Would you like a proposal based on your goals?" : locale === "cs" ? "Chcete přesnější návrh podle svých cílů?" : "Chcete presnejší návrh podľa svojich cieľov?"}</div>
                   <Link
-                    href={AI_CUSTOM_PROPOSAL_PATH}
+                    href={locale === "en" ? "/en/custom-ai-proposal" : AI_CUSTOM_PROPOSAL_PATH}
                     className="mt-3 inline-flex rounded-full border border-white bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-200"
                   >
-                    {locale === "cs" ? "Vyplnit AI návrh na míru (SK)" : "Vyplniť AI návrh na mieru"}
+                    {locale === "en" ? "Get a custom AI proposal" : locale === "cs" ? "Vyplnit AI návrh na míru (SK)" : "Vyplniť AI návrh na mieru"}
                   </Link>
                 </div>
               </div>

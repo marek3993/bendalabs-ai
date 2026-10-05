@@ -19,11 +19,11 @@ type LeadCaptureFormProps = {
 };
 
 function getSuccessPath(locale: SiteLocale) {
-  return locale === "cs" ? "/cs/dekujeme" : "/dakujem";
+  return locale === "en" ? "/en/thank-you" : locale === "cs" ? "/cs/dekujeme" : "/dakujem";
 }
 
 function getErrorPath(locale: SiteLocale) {
-  return locale === "cs" ? "/cs/odeslani-selhalo" : "/odoslanie-zlyhalo";
+  return locale === "en" ? "/en/submission-failed" : locale === "cs" ? "/cs/odeslani-selhalo" : "/odoslanie-zlyhalo";
 }
 
 function buildCallRequestMessage({
@@ -41,16 +41,16 @@ function buildCallRequestMessage({
   website: string;
   note: string;
 }) {
-  const emptyEmail = locale === "cs" ? "nezadany" : "nezadany";
-  const emptyNote = locale === "cs" ? "bez poznamky" : "bez poznamky";
+  const emptyEmail = locale === "en" ? "not provided" : locale === "cs" ? "nezadany" : "nezadany";
+  const emptyNote = locale === "en" ? "no note" : locale === "cs" ? "bez poznamky" : "bez poznamky";
 
   return [
-    locale === "cs" ? "Typ pozadavku: kratky call" : "Typ poziadavky: kratky call",
-    `${locale === "cs" ? "Telefon" : "Telefon"}: ${phone.trim()}`,
-    `${locale === "cs" ? "Preferovany cas" : "Preferovany cas"}: ${preferredTime.trim()}`,
+    locale === "en" ? "Request type: short call" : locale === "cs" ? "Typ pozadavku: kratky call" : "Typ poziadavky: kratky call",
+    `${locale === "en" ? "Phone" : locale === "cs" ? "Telefon" : "Telefon"}: ${phone.trim()}`,
+    `${locale === "en" ? "Preferred time" : locale === "cs" ? "Preferovany cas" : "Preferovany cas"}: ${preferredTime.trim()}`,
     `${locale === "cs" ? "Email" : "Email"}: ${email.trim() || emptyEmail}`,
-    `${locale === "cs" ? "Web" : "Web"}: ${website.trim() || "-"}`,
-    `${locale === "cs" ? "Poznamka" : "Poznamka"}: ${note.trim() || emptyNote}`,
+    `${locale === "en" ? "Website" : locale === "cs" ? "Web" : "Web"}: ${website.trim() || "-"}`,
+    `${locale === "en" ? "Note" : locale === "cs" ? "Poznamka" : "Poznamka"}: ${note.trim() || emptyNote}`,
   ].join("\n");
 }
 
@@ -61,7 +61,7 @@ export default function LeadCaptureForm({
   initialWebsite = "",
   variant,
 }: LeadCaptureFormProps) {
-  const pathname = usePathname() || (locale === "cs" ? "/cs" : "/");
+  const pathname = usePathname() || (locale === "en" ? "/en" : locale === "cs" ? "/cs" : "/");
   const copy = getLeadFormCopy(locale);
   const variantCopy = copy[variant];
   const isContactVariant = variant === "contact";
@@ -90,7 +90,7 @@ export default function LeadCaptureForm({
       return;
     }
     if (isCallVariant && (!callPhone.trim() || !callPreferredTime.trim())) {
-      setError(locale === "cs" ? "Vyplňte telefon a preferovaný čas." : "Vyplňte telefón a preferovaný čas.");
+      setError(locale === "en" ? "Enter your phone number and preferred time." : locale === "cs" ? "Vyplňte telefon a preferovaný čas." : "Vyplňte telefón a preferovaný čas.");
       return;
     }
     inFlight.current = true;
@@ -103,7 +103,7 @@ export default function LeadCaptureForm({
       setSubmitted(true);
       trackGoogleAdsConversion();
     } catch {
-      setError(copy.genericErrorMessage + (locale === "cs" ? " Vyplněné údaje zůstaly zachované." : " Vyplnené údaje zostali zachované."));
+      setError(copy.genericErrorMessage + (locale === "en" ? " Your entries have been kept." : locale === "cs" ? " Vyplněné údaje zůstaly zachované." : " Vyplnené údaje zostali zachované."));
     } finally {
       inFlight.current = false;
       setPending(false);
@@ -144,6 +144,7 @@ export default function LeadCaptureForm({
       <form
         action="/api/contact-requests"
         method="post"
+        noValidate={locale === "en"}
         onSubmit={handleSubmit}
         aria-busy={pending}
         className="mt-6 grid gap-4"
@@ -350,7 +351,7 @@ export default function LeadCaptureForm({
                 : "border border-black bg-black text-white hover:bg-neutral-800"
             }`}
           >
-            {pending ? variantCopy.submittingLabel : submitted ? (locale === "cs" ? "Odesláno" : "Odoslané") : variantCopy.submitLabel}
+            {pending ? variantCopy.submittingLabel : submitted ? (locale === "en" ? "Sent" : locale === "cs" ? "Odesláno" : "Odoslané") : variantCopy.submitLabel}
           </button>
         </div>
       </form>

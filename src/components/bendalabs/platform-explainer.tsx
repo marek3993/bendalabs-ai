@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPlatformRenderer, type PlatformMeshes, type PlatformMode, type PlatformPart, type PlatformScene, type PlatformVariant, type PlatformView } from "./platform-renderer";
 import "@/app/platform-explainer.css";
 
-export default function PlatformExplainer({ cs = false }: { cs?: boolean }) {
+export default function PlatformExplainer({ cs = false, en = false }: { cs?: boolean; en?: boolean }) {
   const uid = useId();
   const canvas = useRef<HTMLCanvasElement>(null);
   const renderer = useRef<ReturnType<typeof createPlatformRenderer> | null>(null);
@@ -116,12 +116,17 @@ export default function PlatformExplainer({ cs = false }: { cs?: boolean }) {
     if (mode !== "parts") { setMode("parts"); setSpread(65); }
   }
 
-  const viewLabels: [PlatformView, string][] = cs
+  const viewLabels: [PlatformView, string][] = en ? [["front", "Front"], ["back", "Back"], ["side", "Left"], ["right", "Right"], ["top", "Top"], ["under", "Bottom"]] : cs
     ? [["front", "Zepředu"], ["back", "Zezadu"], ["side", "Zleva"], ["right", "Zprava"], ["top", "Shora"], ["under", "Zespodu"]]
     : [["front", "Spredu"], ["back", "Zozadu"], ["side", "Zľava"], ["right", "Sprava"], ["top", "Zhora"], ["under", "Zospodu"]];
-  const playLabel = playing ? (cs ? "Pozastavit" : "Pozastaviť") : mode === "rotation" ? (cs ? "Ukázat otáčení" : "Ukázať otáčanie") : spread >= 100
-    ? (cs ? "Složit platformu" : "Zložiť platformu") : (cs ? "Rozložit platformu" : "Rozložiť platformu");
-  const parts: { id: PlatformPart; label: string; description: string }[] = cs ? [
+  const playLabel = playing ? (en ? "Pause" : cs ? "Pozastavit" : "Pozastaviť") : mode === "rotation" ? (en ? "Show rotation" : cs ? "Ukázat otáčení" : "Ukázať otáčanie") : spread >= 100
+    ? (en ? "Assemble platform" : cs ? "Složit platformu" : "Zložiť platformu") : (en ? "Explode platform" : cs ? "Rozložit platformu" : "Rozložiť platformu");
+  const parts: { id: PlatformPart; label: string; description: string }[] = en ? [
+    { id: "upper", label: "Upper part", description: "The rotating upper part carries the arm mount. The raised variant adds a side platform for a second shoulder servo." },
+    { id: "bearing", label: "Bearing", description: "The large bearing supports the rotating part and transfers the arm's weight to the fixed frame while allowing it to rotate." },
+    { id: "frame", label: "Fixed frame", description: "The pillars and bottom plate transfer the load from the bearing to the supporting surface. This part stays still when the base rotates." },
+    { id: "servo", label: "Servos", description: "The bottom servo drives the base rotation. The upper servo, or pair of servos, bends and lifts the arm." },
+  ] : cs ? [
     { id: "upper", label: "Horní díl", description: "Otočný horní díl nese uchycení ramene. Zvýšená varianta přidává boční plošinu pro druhé ramenní servo." },
     { id: "bearing", label: "Ložisko", description: "Velké ložisko podpírá otočný díl a přenáší hmotnost ruky do pevného rámu. Současně umožňuje otáčení." },
     { id: "frame", label: "Pevný rám", description: "Sloupky a spodní deska přenášejí zatížení od ložiska do podložky. Tato část se při otáčení základny nepohybuje." },
@@ -133,14 +138,14 @@ export default function PlatformExplainer({ cs = false }: { cs?: boolean }) {
     { id: "servo", label: "Servá", description: "Spodné servo poháňa otáčanie základne. Horné servo, prípadne dvojica serv, slúži na ohyb a zdvih ramena." },
   ];
   const focusDescription = selected !== "all" ? parts.find(part => part.id === selected)!.description
-    : mode === "load" ? (cs ? "Zelené šipky ukazují směr přenosu hmotnosti: horní díl → ložisko → pevný rám." : "Zelené šípky ukazujú smer prenosu hmotnosti: horný diel → ložisko → pevný rám.")
-    : mode === "rotation" ? (cs ? "Oranžové oblouky ukazují otáčení. Spodní servo pohání horní díl, pevný rám zůstává na místě." : "Oranžové oblúky ukazujú otáčanie. Spodné servo poháňa horný diel, pevný rám zostáva na mieste.")
-    : (cs ? "Vyberte díl a prohlédněte si jeho roli. Opětovným stiskem zobrazíte celou sestavu." : "Vyberte diel a prezrite si jeho úlohu. Opätovným stlačením zobrazíte celú zostavu.");
+    : mode === "load" ? (en ? "Green arrows show the load path: upper part → bearing → fixed frame." : cs ? "Zelené šipky ukazují směr přenosu hmotnosti: horní díl → ložisko → pevný rám." : "Zelené šípky ukazujú smer prenosu hmotnosti: horný diel → ložisko → pevný rám.")
+    : mode === "rotation" ? (en ? "Orange arcs show rotation. The bottom servo drives the upper part while the fixed frame stays in place." : cs ? "Oranžové oblouky ukazují otáčení. Spodní servo pohání horní díl, pevný rám zůstává na místě." : "Oranžové oblúky ukazujú otáčanie. Spodné servo poháňa horný diel, pevný rám zostáva na mieste.")
+    : (en ? "Select a part to explore its role. Select it again to show the whole assembly." : cs ? "Vyberte díl a prohlédněte si jeho roli. Opětovným stiskem zobrazíte celou sestavu." : "Vyberte diel a prezrite si jeho úlohu. Opätovným stlačením zobrazíte celú zostavu.");
 
   return <section className="pf-demo bl-demo-bounded" aria-labelledby={`${uid}-title`}>
     <header className="pf-demo-header">
-      <div><span className="pf-demo-eyebrow">{cs ? "Prohlédněte si konstrukci" : "Prezrite si konštrukciu"}</span>
-        <h4 id={`${uid}-title`}>{cs ? "Platforma ze všech stran" : "Platforma zo všetkých strán"}</h4></div>
+      <div><span className="pf-demo-eyebrow">{en ? "Explore the structure" : cs ? "Prohlédněte si konstrukci" : "Prezrite si konštrukciu"}</span>
+        <h4 id={`${uid}-title`}>{en ? "The platform from every angle" : cs ? "Platforma ze všech stran" : "Platforma zo všetkých strán"}</h4></div>
       <span className="pf-demo-badge">3D</span>
     </header>
 
@@ -148,30 +153,30 @@ export default function PlatformExplainer({ cs = false }: { cs?: boolean }) {
     <figure className="pf-demo-figure bl-demo-preview">
       <div className="pf-demo-stage" aria-busy={status === "loading"}>
         <canvas key={attempt} ref={canvas} tabIndex={ready ? 0 : -1} role="img"
-          aria-label={cs ? "3D model nosné platformy: pevný rám, ložisko, otočný vrch a serva." : "3D model nosnej platformy: pevný rám, ložisko, otočný vrch a servá."}
+          aria-label={en ? "3D model of the supporting platform: fixed frame, bearing, rotating upper part and servos." : cs ? "3D model nosné platformy: pevný rám, ložisko, otočný vrch a serva." : "3D model nosnej platformy: pevný rám, ložisko, otočný vrch a servá."}
           aria-describedby={`${uid}-help ${uid}-caption`} aria-hidden={!ready}>
-          {cs ? "Ložisko přenáší hmotnost ramene do pevného rámu. Spodní servo zajišťuje otáčení." : "Ložisko prenáša hmotnosť ramena do pevného rámu. Spodné servo zabezpečuje otáčanie."}
+          {en ? "The bearing transfers the arm's weight into the fixed frame. The bottom servo drives rotation." : cs ? "Ložisko přenáší hmotnost ramene do pevného rámu. Spodní servo zajišťuje otáčení." : "Ložisko prenáša hmotnosť ramena do pevného rámu. Spodné servo zabezpečuje otáčanie."}
         </canvas>
-        {status === "loading" && <div className="pf-demo-state" role="status"><span className="pf-demo-loader" aria-hidden="true" />{cs ? "Načítám 3D model…" : "Načítavam 3D model…"}</div>}
+        {status === "loading" && <div className="pf-demo-state" role="status"><span className="pf-demo-loader" aria-hidden="true" />{en ? "Loading the 3D model…" : cs ? "Načítám 3D model…" : "Načítavam 3D model…"}</div>}
         {status === "unavailable" && <div className="pf-demo-state" role="status">
-          <strong>{cs ? "3D zobrazení není dostupné." : "3D zobrazenie nie je dostupné."}</strong>
-          <span>{cs ? "Ložisko nese hmotnost do pevného rámu, spodní servo otáčí horní částí." : "Ložisko nesie hmotnosť do pevného rámu, spodné servo otáča hornou časťou."}</span>
-          <button type="button" className="pf-demo-retry" onClick={() => { stop(); setStatus("loading"); setAttempt(value => value + 1); }}>{cs ? "Zkusit znovu" : "Skúsiť znova"}</button>
+          <strong>{en ? "3D view is unavailable." : cs ? "3D zobrazení není dostupné." : "3D zobrazenie nie je dostupné."}</strong>
+          <span>{en ? "The bearing carries the load into the fixed frame; the bottom servo rotates the upper part." : cs ? "Ložisko nese hmotnost do pevného rámu, spodní servo otáčí horní částí." : "Ložisko nesie hmotnosť do pevného rámu, spodné servo otáča hornou časťou."}</span>
+          <button type="button" className="pf-demo-retry" onClick={() => { stop(); setStatus("loading"); setAttempt(value => value + 1); }}>{en ? "Try again" : cs ? "Zkusit znovu" : "Skúsiť znova"}</button>
         </div>}
-        {ready && <span className="pf-demo-stage-label" aria-hidden="true">{spread === 0 ? (cs ? "Složená platforma" : "Zložená platforma") : "Rozložená platforma"}</span>}
+        {ready && <span className="pf-demo-stage-label" aria-hidden="true">{spread === 0 ? (en ? "Assembled platform" : cs ? "Složená platforma" : "Zložená platforma") : en ? "Exploded platform" : "Rozložená platforma"}</span>}
       </div>
     </figure>
-    <div className="bl-demo-panel" role="region" aria-label={cs ? "Ovládání platformy" : "Ovládanie platformy"} tabIndex={0}>
-    <div className="pf-demo-modes" role="group" aria-label={cs ? "Co platforma dělá" : "Čo platforma robí"}>
-      {(["load", "rotation", "parts"] as const).map((item, index) => <button key={item} type="button" disabled={!ready} aria-pressed={mode === item} onClick={() => chooseMode(item)}>{(cs ? ["Přenáší hmotnost", "Otáčí ramenem", "Prohlédnout díly"] : ["Prenáša hmotnosť", "Otáča ramenom", "Prezrieť diely"])[index]}</button>)}
+    <div className="bl-demo-panel" role="region" aria-label={en ? "Platform controls" : cs ? "Ovládání platformy" : "Ovládanie platformy"} tabIndex={0}>
+    <div className="pf-demo-modes" role="group" aria-label={en ? "What the platform does" : cs ? "Co platforma dělá" : "Čo platforma robí"}>
+      {(["load", "rotation", "parts"] as const).map((item, index) => <button key={item} type="button" disabled={!ready} aria-pressed={mode === item} onClick={() => chooseMode(item)}>{(en ? ["Carries the load", "Rotates the arm", "Explore the parts"] : cs ? ["Přenáší hmotnost", "Otáčí ramenem", "Prohlédnout díly"] : ["Prenáša hmotnosť", "Otáča ramenom", "Prezrieť diely"])[index]}</button>)}
     </div>
 
     <div className="pf-demo-toolbar">
       <label className="pf-demo-field" htmlFor={`${uid}-variant`}>
-        <span>{cs ? "Uchycení ramene" : "Uchytenie ramena"}</span>
+        <span>{en ? "Arm mount" : cs ? "Uchycení ramene" : "Uchytenie ramena"}</span>
         <select id={`${uid}-variant`} value={variant} disabled={!ready} onChange={event => { stop(); setVariant(event.target.value as PlatformVariant); }}>
-          <option value="top-dual">{cs ? "Úprava pro dvě serva" : "Úprava pre dve servá"}</option>
-          <option value="top-original">{cs ? "Původní vrch · jedno servo" : "Pôvodný vrch · jedno servo"}</option>
+          <option value="top-dual">{en ? "Modified for two servos" : cs ? "Úprava pro dvě serva" : "Úprava pre dve servá"}</option>
+          <option value="top-original">{en ? "Original upper part · one servo" : cs ? "Původní vrch · jedno servo" : "Pôvodný vrch · jedno servo"}</option>
         </select>
       </label>
       <button className="pf-demo-play" type="button" disabled={!ready} onClick={play}>
@@ -181,39 +186,39 @@ export default function PlatformExplainer({ cs = false }: { cs?: boolean }) {
 
     <div className="pf-demo-sliders">
       <label className="pf-demo-field" htmlFor={`${uid}-spread`}>
-        <span>{cs ? "Rozložení" : "Rozloženie"}<output htmlFor={`${uid}-spread`}>{spread} %</output></span>
+        <span>{en ? "Exploded view" : cs ? "Rozložení" : "Rozloženie"}<output htmlFor={`${uid}-spread`}>{spread} %</output></span>
         <input id={`${uid}-spread`} type="range" min="0" max="100" step="1" value={spread} disabled={!ready} onChange={event => { stop(); setMode("parts"); setSpread(Number(event.target.value)); }} />
-        <span className="pf-demo-range-ends" aria-hidden="true"><span>{cs ? "Složené" : "Zložené"}</span><span>Rozložené</span></span>
+        <span className="pf-demo-range-ends" aria-hidden="true"><span>{en ? "Assembled" : cs ? "Složené" : "Zložené"}</span><span>{en ? "Exploded" : "Rozložené"}</span></span>
       </label>
       <label className="pf-demo-field" htmlFor={`${uid}-yaw`}>
-        <span>{cs ? "Otočení základny" : "Otočenie základne"}<output htmlFor={`${uid}-yaw`}>{yaw}°</output></span>
+        <span>{en ? "Base rotation" : cs ? "Otočení základny" : "Otočenie základne"}<output htmlFor={`${uid}-yaw`}>{yaw}°</output></span>
         <input id={`${uid}-yaw`} type="range" min="-90" max="90" step="1" value={yaw} disabled={!ready} aria-valuetext={`${yaw}°`} onChange={event => { stop(); if (mode === "load") setMode("rotation"); setYaw(Number(event.target.value)); }} />
         <span className="pf-demo-range-ends" aria-hidden="true"><span>−90°</span><span>90°</span></span>
       </label>
     </div>
 
-      <div className="pf-demo-part-buttons" role="group" aria-label={cs ? "Vybrat díl sestavy" : "Vybrať diel zostavy"}>
+      <div className="pf-demo-part-buttons" role="group" aria-label={en ? "Select an assembly part" : cs ? "Vybrat díl sestavy" : "Vybrať diel zostavy"}>
         {parts.map((part, index) => <button type="button" key={part.id} disabled={!ready} aria-pressed={selected === part.id} onClick={() => choosePart(part.id)}><span aria-hidden="true">{index + 1}</span>{part.label}</button>)}
       </div>
       <p className={`pf-demo-focus-copy pf-demo-focus-${mode}`} role="status">{focusDescription}</p>
       <p className="pf-demo-caption" id={`${uid}-caption`}>
-        {cs ? "Tištěné díly z vlastního návrhu. Ložisko a serva mají zjednodušené tvary podle rozměrů; jejich umístění v sestavě je orientační." : "Tlačené diely z vlastného návrhu. Ložisko a servá majú zjednodušené tvary podľa rozmerov; ich umiestnenie v zostave je orientačné."}
+        {en ? "Printed parts from my own design. The bearing and servos use simplified shapes based on their dimensions; their positions in the assembly are approximate." : cs ? "Tištěné díly z vlastního návrhu. Ložisko a serva mají zjednodušené tvary podle rozměrů; jejich umístění v sestavě je orientační." : "Tlačené diely z vlastného návrhu. Ložisko a servá majú zjednodušené tvary podľa rozmerov; ich umiestnenie v zostave je orientačné."}
       </p>
 
-    <div className="pf-demo-views" role="group" aria-label={cs ? "Pohled na platformu" : "Pohľad na platformu"}>
+    <div className="pf-demo-views" role="group" aria-label={en ? "Platform view" : cs ? "Pohled na platformu" : "Pohľad na platformu"}>
       {viewLabels.map(([value, label]) => <button key={value} type="button" disabled={!ready} aria-pressed={view === value} onClick={() => chooseView(value)}>{label}</button>)}
     </div>
-    <p className="pf-demo-help" id={`${uid}-help`}>{cs ? "Pohled otočíte tažením nebo šipkami na klávesnici. Klávesa Home obnoví zvolený pohled." : "Pohľad otočíte potiahnutím alebo šípkami na klávesnici. Kláves Home obnoví zvolený pohľad."}</p>
+    <p className="pf-demo-help" id={`${uid}-help`}>{en ? "Drag or use the arrow keys to rotate the view. Home restores the selected view." : cs ? "Pohled otočíte tažením nebo šipkami na klávesnici. Klávesa Home obnoví zvolený pohled." : "Pohľad otočíte potiahnutím alebo šípkami na klávesnici. Kláves Home obnoví zvolený pohľad."}</p>
 
     <div className="pf-demo-explanation">
-      <p className="pf-demo-path-label">{cs ? "Kam se přenáší hmotnost" : "Kam sa prenáša hmotnosť"}</p>
+      <p className="pf-demo-path-label">{en ? "Where the load goes" : cs ? "Kam se přenáší hmotnost" : "Kam sa prenáša hmotnosť"}</p>
       <ol className="pf-demo-load-path">
-        {(cs ? ["Rameno", "Horní díl", "Ložisko", "Pevný rám"] : ["Rameno", "Horný diel", "Ložisko", "Pevný rám"]).map(item => <li key={item}>{item}</li>)}
+        {(en ? ["Arm", "Upper part", "Bearing", "Fixed frame"] : cs ? ["Rameno", "Horní díl", "Ložisko", "Pevný rám"] : ["Rameno", "Horný diel", "Ložisko", "Pevný rám"]).map(item => <li key={item}>{item}</li>)}
       </ol>
-      <p>{cs ? "Spodní servo vytváří otáčení. Hmotnost ruky se přes ložisko přenáší do nosné konstrukce." : "Spodné servo vytvára otáčanie. Hmotnosť ruky sa cez ložisko prenáša do nosnej konštrukcie."}</p>
+      <p>{en ? "The bottom servo produces rotation. The arm's weight passes through the bearing into the supporting structure." : cs ? "Spodní servo vytváří otáčení. Hmotnost ruky se přes ložisko přenáší do nosné konstrukce." : "Spodné servo vytvára otáčanie. Hmotnosť ruky sa cez ložisko prenáša do nosnej konštrukcie."}</p>
       <p className="pf-demo-variant-copy" aria-live="polite">{variant === "top-dual"
-        ? (cs ? "Zvýšený vrch a boční plošina vytvářejí místo pro dvě ramenní serva. Jejich společný účinek závisí na uchycení, synchronizaci a zatížení." : "Zvýšený vrch a bočná plošina vytvárajú miesto pre dve ramenné servá. Ich spoločný účinok závisí od uchytenia, synchronizácie a zaťaženia.")
-        : (cs ? "Původní vrch má nižší uložení a výřez u osy otáčení. Zde je zobrazený s jedním ramenním servem." : "Pôvodný vrch má nižšie uloženie a výrez pri osi otáčania. Tu je zobrazený s jedným ramenným servom.")}</p>
+        ? (en ? "The raised upper part and side platform provide space for two shoulder servos. Their combined effect depends on mounting, synchronisation and load." : cs ? "Zvýšený vrch a boční plošina vytvářejí místo pro dvě ramenní serva. Jejich společný účinek závisí na uchycení, synchronizaci a zatížení." : "Zvýšený vrch a bočná plošina vytvárajú miesto pre dve ramenné servá. Ich spoločný účinok závisí od uchytenia, synchronizácie a zaťaženia.")
+        : (en ? "The original upper part has a lower mount and a cutout near the rotation axis. It is shown here with one shoulder servo." : cs ? "Původní vrch má nižší uložení a výřez u osy otáčení. Zde je zobrazený s jedním ramenním servem." : "Pôvodný vrch má nižšie uloženie a výrez pri osi otáčania. Tu je zobrazený s jedným ramenným servom.")}</p>
     </div>
     </div>
     </div>

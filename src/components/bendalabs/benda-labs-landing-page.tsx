@@ -8,7 +8,6 @@ import SiteBrand from "@/components/bendalabs/site-brand";
 import {
   getHomePageContent,
   type SiteCard,
-  type SiteLocale,
 } from "@/lib/bendalabs/site-content";
 
 function scrollToSection(sectionId: string) {
@@ -34,7 +33,7 @@ function AudienceCard({ title, text }: SiteCard) {
 }
 
 type BendaLabsLandingPageProps = {
-  locale: SiteLocale;
+  locale: "sk" | "cs";
 };
 
 export default function BendaLabsLandingPage({ locale }: BendaLabsLandingPageProps) {

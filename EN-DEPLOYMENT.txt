@@ -1,0 +1,39 @@
+BendaLabs – zverejnenie anglickej verzie
+Dátum: 4. októbra 2026, Europe/Paris
+
+Výsledok: READY, produkcia
+Verejná adresa: https://bendalabs.sk/en
+Projekt: mareks-projects-6d793694/bendalabs-ai
+Deployment: dpl_4VtAuyPudntLK9MW2WnqXVWTdP5k
+Deployment URL: https://bendalabs-gfi0ouavj-mareks-projects-6d793694.vercel.app
+Predchádzajúca produkcia: dpl_G2fmeYGjgJL2s57Tf5CVonajfYYQ
+
+Nasadené priamo z pripraveného worktree codex/english-production.
+Báza origin/main: b1420986e9d332302be5f87e93f44f393b20e313.
+Main bol pred nasadením znovu overený; od prípravy EN verzie sa nezmenil.
+Zdroj obsahuje necommitnuté EN zmeny. Commit ani push nebol vykonaný.
+Pôvodné lokálne zmeny v C:\Projects\BendaLabs_AI zostali nedotknuté.
+
+Postup: vercel deploy --prod --skip-domain, kontrola pripraveného nasadenia,
+potom vercel promote. Produkčné premenné zostali zachované.
+Cloud build Next.js 16.1.6 prešiel vrátane TypeScriptu; Vercel build trval 23 s.
+Pridaná .vercelignore vylučuje lokálne testovacie výstupy, prostredia a protokoly.
+Prepojenie Vercel pridalo .vercel do .gitignore.
+
+Overenie verejnej produkcie: PASS (4. októbra 2026 00:58 CEST)
+- Všetkých deväť EN verejných trás: HTTP 200, desktop 1440 px a mobil 390 px.
+- Prepínanie SK/CS/EN vrátane zachovania #kontakt.
+- Anglické html lang, viditeľné texty, metadáta, canonical a hreflang.
+- Sitemap, robots.txt a zdieľací obrázok.
+- Anglické klientske validácie auditu, návrhu a kontaktu.
+- Serverová validácia: audit HTTP 400, návrh HTTP 400, kontakt HTTP 303
+  na anglickú chybovú stránku.
+- Bez JavaScriptových chýb aplikácie a bez vodorovného pretečenia stránok.
+- https://www.bendalabs.sk/en tiež vracia anglickú stránku s HTTP 200.
+- Okamžitá kontrola error logov tohto nasadenia: žiadne nájdené záznamy.
+
+Produkčné overenie neodoslalo platný dopyt ani nevytvorilo testovací lead.
+Úplné úspešné a chybové priechody boli overené pred nasadením lokálne;
+podrobnosti sú v EN-VERIFICATION.txt.
+Výsledok verejného testu: .tmp-en/published/report.json
+Snímky verejného webu: .tmp-en/published/home-1440.png a home-390.png.

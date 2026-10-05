@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/bendalabs/seo";
 import type { Metadata } from "next";
 import AuditBot from "@/components/bendalabs/audit-bot";
 import ServicePageTemplate from "@/components/bendalabs/service-page-template";
@@ -5,10 +6,7 @@ import { getFinancePageContent } from "@/lib/bendalabs/site-content";
 
 const content = getFinancePageContent("cs");
 
-export const metadata: Metadata = {
-  title: content.metadataTitle,
-  description: content.metadataDescription,
-};
+export const metadata: Metadata = pageMetadata("/cs/ai-vrstva-pro-financni-a-pojistne-weby", content.metadataTitle, content.metadataDescription);
 
 export default function CzechFinanceAndInsurancePage() {
   return (

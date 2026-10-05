@@ -14,7 +14,7 @@ function bounds(points: Iterable<{x: number; y: number}>) {
   return [{x:minX,y:minY},{x:maxX,y:maxY}];
 }
 
-function ArmModel({ pose, view, cs, task = null }: { pose: ArmPose; view: ArmView; cs: boolean; task?: CubeTaskState | null }) {
+function ArmModel({ pose, view, cs, en = false, task = null }: { pose: ArmPose; view: ArmView; cs: boolean; en?: boolean; task?: CubeTaskState | null }) {
   const uid = useId();
   const canvas = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({width:600,height:470});
@@ -47,8 +47,8 @@ function ArmModel({ pose, view, cs, task = null }: { pose: ArmPose; view: ArmVie
   const gridPoint = (p: Vec3) => screen(projectPoint(p, view));
   const labelPoint = (p: Vec3) => { const projected = projectPoint(p, view); return { x: offsetX + projected.x * scale, y: offsetY + projected.y * scale }; };
   return <svg ref={canvas} className="bl-study-svg" viewBox={`0 0 ${size.width} ${size.height}`} fontFamily="Arial, sans-serif" role="img" aria-labelledby={`${uid}-title ${uid}-desc`}>
-    <title id={`${uid}-title`}>{cs ? "Model robotické ruky se šesti ovládanými osami" : "Model robotickej ruky so šiestimi ovládanými osami"}</title>
-    <desc id={`${uid}-desc`}>{cs
+    <title id={`${uid}-title`}>{en ? "Model of a robotic arm with six controlled axes" : cs ? "Model robotické ruky se šesti ovládanými osami" : "Model robotickej ruky so šiestimi ovládanými osami"}</title>
+    <desc id={`${uid}-desc`}>{en ? "A circular base, black brackets, a metal connecting cylinder and a two-finger gripper based on Benda Robotics photographs. Sliders control the base, shoulder, elbow, wrist tilt and rotation, and gripper opening." : cs
       ? "Kruhová základna, černé držáky, kovový spojovací válec a dvouprsté chapadlo podle fotografií Benda Robotics. Posuvníky ovládají základnu, rameno, loket, náklon a rotaci zápěstí a otevření chapadla."
       : "Kruhová základňa, čierne držiaky, kovový spojovací valec a dvojprstové chápadlo podľa fotografií Benda Robotics. Posuvníky ovládajú základňu, rameno, lakeť, náklon a rotáciu zápästia a otvorenie chápadla."}</desc>
     <defs><pattern id={`${uid}-grid`} width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#789386" opacity=".2" /></pattern></defs>
@@ -64,12 +64,12 @@ function ArmModel({ pose, view, cs, task = null }: { pose: ArmPose; view: ArmVie
       {mesh.map((face, index) => <polygon key={index} points={face.points.map(screen).join(" ")} fill={face.fill} stroke={face.edge} />)}
     </g>
     {task && <g fontSize="11" fontWeight="600" textAnchor="middle" stroke="#111b18" strokeWidth="4" paintOrder="stroke">
-      <text {...labelPoint([TASK_SOURCE.origin[0], TASK_SURFACE_Y - 18, TASK_SOURCE.origin[2] + 40])} fill="#efbf7b">{cs ? "Kostka" : "Kocka"}</text>
-      <text {...labelPoint([TASK_TARGET.origin[0], TASK_SURFACE_Y - 18, TASK_TARGET.origin[2] - 40])} fill="#a5f1c5">{task.phase === "placed" ? "✓ " : ""}{cs ? "Cíl" : "Cieľ"}</text>
+      <text {...labelPoint([TASK_SOURCE.origin[0], TASK_SURFACE_Y - 18, TASK_SOURCE.origin[2] + 40])} fill="#efbf7b">{en ? "Cube" : cs ? "Kostka" : "Kocka"}</text>
+      <text {...labelPoint([TASK_TARGET.origin[0], TASK_SURFACE_Y - 18, TASK_TARGET.origin[2] - 40])} fill="#a5f1c5">{task.phase === "placed" ? "✓ " : ""}{en ? "Target" : cs ? "Cíl" : "Cieľ"}</text>
     </g>}
     <text x="24" y="31" fill="#c4d7ca" fontSize="10" letterSpacing="2">BENDA ROBOTICS</text>
     <text x={size.width-24} y="31" textAnchor="end" fill="#93e7bb" fontSize="11" letterSpacing="1.5">6 DOF</text>
-    <text x="24" y={size.height-18} fill="#9fb5a8" fontSize={Math.min(10,(size.width-48)/25)}> {task ? (cs ? "Uchopte kostku, zvedněte ji a položte do cíle." : "Uchopte kocku, zdvihnite ju a položte do cieľa.") : (cs ? "Model podle skutečné konstrukce" : "Model podľa skutočnej konštrukcie")}</text>
+    <text x="24" y={size.height-18} fill="#9fb5a8" fontSize={Math.min(10,(size.width-48)/25)}> {task ? (en ? "Grip the cube, lift it and place it on the target." : cs ? "Uchopte kostku, zvedněte ji a položte do cíle." : "Uchopte kocku, zdvihnite ju a položte do cieľa.") : (en ? "Model based on the physical structure" : cs ? "Model podle skutečné konstrukce" : "Model podľa skutočnej konštrukcie")}</text>
   </svg>;
 }
 

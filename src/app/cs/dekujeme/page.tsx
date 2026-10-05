@@ -1,3 +1,4 @@
+import { privatePageMetadata } from "@/lib/bendalabs/seo";
 import ContactRequestSuccessState from "@/components/bendalabs/contact-request-success-state";
 import { contactReturnPath } from "@/lib/bendalabs/contact-return";
 
@@ -12,3 +13,5 @@ export default async function CzechContactRequestThankYouPage({ searchParams }: 
     />
   );
 }
+
+export const metadata = privatePageMetadata("BendaLabs");

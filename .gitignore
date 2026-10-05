@@ -13,3 +13,5 @@ tsconfig.tsbuildinfo
 .tmp-*
 .sandbox-run-*
 .edge-test/
+.vercel
+.env*.local

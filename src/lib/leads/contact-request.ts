@@ -27,7 +27,7 @@ const contactRequestSourceValues = [
   "contact_section",
   "ai_navrh_na_mieru",
 ] as const satisfies readonly ContactRequestSource[];
-const localeValues = ["sk", "cs"] as const satisfies readonly SiteLocale[];
+const localeValues = ["sk", "cs", "en"] as const satisfies readonly SiteLocale[];
 const requestTypeValues = ["call_request", "proposal_request"] as const;
 
 function normalizeLocale(input: unknown): SiteLocale {

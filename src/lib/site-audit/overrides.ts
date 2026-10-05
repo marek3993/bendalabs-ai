@@ -1,3 +1,4 @@
+import { englishAuditOverride } from "./overrides.en";
 import type { SiteLocale } from "@/lib/bendalabs/site-content";
 import { getNormalizedDomain } from "@/lib/leads/domain";
 import { siteAuditSchema, type SiteAudit } from "@/lib/site-audit/schema";
@@ -33,7 +34,7 @@ type RealtyDomainOverride = {
   cs: LocalizedRealtyAuditContent;
 };
 
-function createBendaLabsAudit(locale: SiteLocale): SiteAudit {
+function createBendaLabsAudit(locale: Exclude<SiteLocale, "en">): SiteAudit {
   const localized = {
     sk: {
       summary:
@@ -139,7 +140,7 @@ function createBendaLabsAudit(locale: SiteLocale): SiteAudit {
   });
 }
 
-function createBazosAudit(locale: SiteLocale): SiteAudit {
+function createBazosAudit(locale: Exclude<SiteLocale, "en">): SiteAudit {
   const localized = {
     sk: {
       summary:
@@ -1067,7 +1068,7 @@ const realtyDomainOverrides: Record<string, RealtyDomainOverride> = {
 // TODO: Add "Realitne kancelarie Slovenska" domain override here once the canonical domain
 // is confirmed in the repo, to avoid introducing a broken or wrong domain entry.
 
-function createRealtyAudit(override: RealtyDomainOverride, locale: SiteLocale): SiteAudit {
+function createRealtyAudit(override: RealtyDomainOverride, locale: Exclude<SiteLocale, "en">): SiteAudit {
   const content = override[locale];
 
   return siteAuditSchema.parse({
@@ -1086,6 +1087,10 @@ function createRealtyAudit(override: RealtyDomainOverride, locale: SiteLocale): 
 
 export function getDomainAuditOverride(inputUrl: string, locale: SiteLocale = "sk"): SiteAudit | null {
   const normalizedDomain = getNormalizedDomain(inputUrl);
+  if (locale === "en") {
+    const original = getDomainAuditOverride(inputUrl, "sk");
+    return original && normalizedDomain ? englishAuditOverride(normalizedDomain, original) : null;
+  }
 
   if (normalizedDomain === "bendalabs.sk") {
     return createBendaLabsAudit(locale);
