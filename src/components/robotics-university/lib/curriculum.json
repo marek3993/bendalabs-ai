@@ -145,8 +145,8 @@
       }
     },
     "practical": {
-      "sk": "V laboratóriu ramena meňte natočenie základne a sledujte smer koncového bodu. Uhol ramena je meraný od vodorovnej roviny a uhol lakťa voči prvému článku. Ako samostatné cvičenie nakreslite rámce robota a kamery a prepočítajte bod 1 m pred kamerou posunutou o 0,2 m dopredu.",
-      "en": "In the arm lab, change base yaw and observe the endpoint direction. Shoulder angle is measured from horizontal, and elbow angle relative to the first link. As a separate exercise, draw robot and camera frames and transform a point 1 m ahead of a camera translated 0.2 m forward."
+      "sk": "Nastav bod v senzore na (1; 0) m, posun senzora na (0,2; 0) m a potom otoč senzor z 0° na 90°. Porovnaj súradnice toho istého bodu v robotovi.",
+      "en": "Set the sensor point to (1, 0) m and sensor offset to (0.2, 0) m, then turn the sensor from 0° to 90°. Compare the same point’s coordinates in the robot frame."
     },
     "pitfall": {
       "sk": "Stupne a radiány sú rozdielne jednotky; názov premennej s uhlom ich musí jasne rozlišovať.",
@@ -185,9 +185,13 @@
       {
         "title": "ROS REP 105: Coordinate Frames for Mobile Platforms",
         "url": "https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst"
+      },
+      {
+        "title": "Modern Robotics: Homogeneous Transformations",
+        "url": "https://modernrobotics.northwestern.edu/nu-gm-book-resource/3-3-1-homogeneous-transformation-matrices/"
       }
     ],
-    "lab": "kinematics"
+    "lab": "frames"
   },
   {
     "id": "timing",
@@ -242,8 +246,8 @@
       }
     },
     "practical": {
-      "sk": "V programovacom laboratóriu vložte medzi dva pohyby forward prestávku wait a pozorujte postupnosť príkazov. Brzdnú dráhu vypočítajte samostatne: pri 1 m/s, oneskorení 0,2 s a spomalení 1 m/s² vychádza 0,7 m. Pri 2 m/s vychádza 2,4 m. Tento výpočet nepredstavuje fyzikálny model vozíka v laboratóriu.",
-      "en": "In the coding lab, insert a wait between two forward movements and observe the command sequence. Calculate stopping distance separately: at 1 m/s, 0.2 s delay, and 1 m/s² deceleration, it is 0.7 m. At 2 m/s, it is 2.4 m. This calculation does not describe the lab rover's physics."
+      "sk": "Začni s rýchlosťou 1 m/s, oneskorením 0,2 s a spomalením 1 m/s². Zdvojnásob rýchlosť a sleduj dráhu do zastavenia. Potom predĺž vek merania až po limit watchdogu.",
+      "en": "Start at 1 m/s, 0.2 s delay and 1 m/s² deceleration. Double speed and observe total stopping distance. Then increase measurement age to the watchdog limit."
     },
     "pitfall": {
       "sk": "Priemerné oneskorenie skrýva zriedkavé dlhé výpadky; sledujte aj maximum alebo vysoký percentil.",
@@ -284,7 +288,7 @@
         "url": "https://docs.px4.io/main/en/config/safety"
       }
     ],
-    "lab": "code"
+    "lab": "timing"
   },
   {
     "id": "vision",
@@ -339,8 +343,8 @@
       }
     },
     "practical": {
-      "sk": "Samostatné výpočtové cvičenie: pre 18 správnych detekcií, 2 falošné poplachy a 6 zmeškaných objektov vypočítajte precision 90 % a recall 75 %. Vlastný obrazový detektor potom vyhodnoťte na oddelených snímkach. LiDAR laboratórium zobrazuje geometrické lúče, nie klasifikáciu obrazu.",
-      "en": "Separate calculation exercise: with 18 correct detections, 2 false alarms, and 6 missed objects, calculate 90% precision and 75% recall. Evaluate your own image detector on held-out images afterward. The LiDAR lab shows geometric rays rather than image classification."
+      "sk": "Zmeň prah detekcie z 0,5 na 0,7. Spočítaj falošné poplachy a prehliadnuté objekty; porovnaj precision a recall. Skús prah 1 a vysvetli, prečo precision nemá hodnotu.",
+      "en": "Move the detection threshold from 0.5 to 0.7. Count false alarms and missed objects; compare precision and recall. Try a threshold of 1 and explain why precision is undefined."
     },
     "pitfall": {
       "sk": "Skóre 0,9 nie je automaticky kalibrovaná 90 % pravdepodobnosť správnosti.",
@@ -381,7 +385,7 @@
         "url": "https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html"
       }
     ],
-    "lab": "lidar"
+    "lab": "vision"
   },
   {
     "id": "imitation",
@@ -436,8 +440,8 @@
       }
     },
     "practical": {
-      "sk": "V programovacom laboratóriu vytvorte pomocou forward a turn pevnú trasu okolo zobrazených prekážok. Ide o ručne zadané príkazy. Pre cvičenie s učením použite samostatný simulátor podporujúci tréning politík a porovnajte úspešnosť pred a po pridaní ukážok zotavenia z odchýlených stavov.",
-      "en": "In the coding lab, use forward and turn to create a fixed route around the displayed obstacles. These are manually specified commands. For the learning exercise, use a separate simulator supporting policy training and compare success before and after adding recovery demonstrations from deviated states."
+      "sk": "Začni s odchýlkou 1 m a politikou naučenou iba z malých odchýlok. Pridaj ukážky zotavenia a porovnaj prvú akciu aj odchýlku po desiatich krokoch. Vyskúšaj rovnaký pokus na opačnej strane.",
+      "en": "Start with a 1 m error and a policy learned only from small errors. Add recovery demonstrations and compare the first action and error after ten steps. Repeat on the opposite side."
     },
     "pitfall": {
       "sk": "Náhodné rozdelenie snímok z jednej epizódy medzi tréning a test spôsobuje únik podobných dát.",
@@ -478,7 +482,7 @@
         "url": "https://openvla.github.io/"
       }
     ],
-    "lab": "code"
+    "lab": "imitation"
   },
   {
     "id": "vla",
@@ -527,8 +531,8 @@
     ],
     "formula": null,
     "practical": {
-      "sk": "Cvičenie s externým VLA modelom a robotom alebo vhodným simulátorom: vytvorte maticu známych a nových predmetov, pôvodnej a posunutej kamery, bežného a slabého svetla. Vyhodnoťte každý variant samostatne. Programovacie laboratórium slúži na ručné príkazy vozíka a tieto podmienky VLA nevyhodnocuje.",
-      "en": "Exercise using an external VLA model and robot or suitable simulator: create a matrix of familiar and new objects, original and shifted cameras, and normal and dim lighting. Evaluate each combination separately. The coding lab runs manually specified rover commands and does not evaluate these VLA conditions."
+      "sk": "V hodnotiacej matici porovnaj celkovú úspešnosť s najslabšou podmienkou. Vymaž cvičné počty a zapíš vlastné pokusy; nulový počet zostáva neotestovaný, nie úspešný.",
+      "en": "Compare overall success with the weakest condition in the evaluation matrix. Clear the practice counts and enter your own trials; zero trials remains untested, not successful."
     },
     "pitfall": {
       "sk": "Úspech na inom robotovi alebo benchmarku neurčuje úspešnosť vašej konfigurácie.",
@@ -569,7 +573,7 @@
         "url": "https://openvla.github.io/"
       }
     ],
-    "lab": "code"
+    "lab": "vla"
   },
   {
     "id": "range",
@@ -721,8 +725,8 @@
       }
     },
     "practical": {
-      "sk": "Externé cvičenie s kamerou a OpenCV: nasnímajte kalibračný vzor z rôznych polôh a tri ďalšie snímky ponechajte iba na overenie. Porovnajte chybu uprostred aj pri krajoch obrazu. V LiDAR laboratóriu možno pozorovať zmenu geometrie pri posune snímača; kalibráciu kamery treba vykonať samostatne.",
-      "en": "External exercise with a camera and OpenCV: capture a calibration target from varied poses and reserve three additional images for validation. Compare errors at the centre and edges. The LiDAR lab can illustrate geometry changes when the sensor moves; camera calibration must be performed separately."
+      "sk": "Pri hĺbke 2 m zdvojnásob ohniskovú vzdialenosť z 500 na 1 000 px. Potom obnov referenciu a posuň kameru o 0,2 m. Sleduj rozdiel medzi zmenou vnútorného parametra a polohy kamery.",
+      "en": "At a depth of 2 m, double focal length from 500 to 1,000 px. Restore the reference and translate the camera by 0.2 m. Compare changing an intrinsic parameter with moving the camera."
     },
     "pitfall": {
       "sk": "Kalibrácia na jednej vzdialenosti nemusí odhaliť chybu mierky ani nevhodný model skreslenia.",
@@ -761,9 +765,13 @@
       {
         "title": "ROS REP 103: Coordinate Conventions",
         "url": "https://github.com/ros-infrastructure/rep/blob/master/rep-0103.rst"
+      },
+      {
+        "title": "OpenCV: Camera Calibration and Projection",
+        "url": "https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html"
       }
     ],
-    "lab": "lidar"
+    "lab": "calibration"
   },
   {
     "id": "fusion",
@@ -818,8 +826,8 @@
       }
     },
     "practical": {
-      "sk": "Externé cvičenie so záznamom senzorov a EKF: porovnajte inovácie pri priamej jazde a zatáčaní, potom posuňte čas jedného senzora. V LiDAR laboratóriu skúmajte iba účinok nastavenej amplitúdy šumu na jednotlivé vzdialenosti. Tento modelový šum nie je implementáciou EKF ani meraním jeho kovariancie.",
-      "en": "External exercise with recorded sensor data and an EKF: compare innovations during straight travel and turns, then shift one sensor's timestamps. In the LiDAR lab, examine only how the noise amplitude setting affects individual ranges. This model noise is neither an EKF implementation nor a measurement of its covariance."
+      "sk": "Porovnaj predikciu s meraním pri rôznych rozptyloch. Zvýš R a sleduj, ako korekcia menej dôveruje meraniu. Potom zvýš procesný rozptyl Q a porovnaj Kalmanovo zosilnenie.",
+      "en": "Compare prediction and measurement at different variances. Increase R and observe the correction trusting the measurement less. Then increase process variance Q and compare the Kalman gain."
     },
     "pitfall": {
       "sk": "Hladký odhad môže byť nesprávny a prehnane sebavedomý; sledujte aj kovarianciu a nezávislú referenciu.",
@@ -858,9 +866,13 @@
       {
         "title": "ROS REP 105: Coordinate Frames",
         "url": "https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst"
+      },
+      {
+        "title": "OpenCV: Kalman Filter Equations",
+        "url": "https://docs.opencv.org/4.13.0/dd/d6a/classcv_1_1KalmanFilter.html"
       }
     ],
-    "lab": "lidar"
+    "lab": "fusion"
   },
   {
     "id": "motors",
@@ -1016,8 +1028,8 @@
       }
     },
     "practical": {
-      "sk": "V PID laboratóriu nastavte Ki na nulu, zvoľte Kp a postupne meňte Kd. Sledujte prekmit a ustálenie k pevnej cieľovej polohe 1 modelová jednotka. Potom pridávajte Ki a porovnajte odozvu. Skúšku saturácie a anti-windup pripravte osobitne vo vlastnom modeli s obmedzeným výstupom.",
-      "en": "In the PID lab, set Ki to zero, choose Kp, and vary Kd. Inspect overshoot and settling toward the fixed position target of 1 model unit. Then add Ki and compare the response. Prepare saturation and anti-windup experiments separately in your own model with limited output."
+      "sk": "Porovnaj P = 4, I = 0, D = 0 s D = 3. Potom zvýš P a I a sleduj výstup regulátora u aj počet vzoriek na limite ±10. Integrál je v tomto modeli obmedzený na ±5.",
+      "en": "Compare P = 4, I = 0, D = 0 with D = 3. Then increase P and I and observe controller output u and samples at the ±10 limit. The integral in this model is clamped to ±5."
     },
     "pitfall": {
       "sk": "Koeficienty z inej frekvencie slučky či iných jednotiek nemusíte môcť priamo prevziať.",
@@ -1113,8 +1125,8 @@
       }
     },
     "practical": {
-      "sk": "V laboratóriu ramena zadávajte uhly ramena a lakťa a sledujte výslednú polohu; ide o doprednú kinematiku. Inverznú úlohu vypočítajte samostatne pre L1 = L2 = 0,3 m: nájdite obe vetvy pre cieľ (0,3; 0,3) m a dokážte, že (0,7; 0) m je nedosiahnuteľné.",
-      "en": "In the arm lab, enter shoulder and elbow angles and observe the resulting position; this is forward kinematics. Solve the inverse problem separately for L1 = L2 = 0.3 m: find both branches for target (0.3, 0.3) m and show that (0.7, 0) m is unreachable."
+      "sk": "Pre cieľ (0,3; 0,3) m porovnaj obe vetvy riešenia ramena s článkami 0,3 m. Potom presuň cieľ na (0,6; 0) a (0,7; 0) m: rozlíš singularitu a nedosiahnuteľný bod.",
+      "en": "For target (0.3, 0.3) m, compare both branches of an arm with 0.3 m links. Move the target to (0.6, 0) and (0.7, 0) m to distinguish a singularity from an unreachable point."
     },
     "pitfall": {
       "sk": "Dosiahnuteľný koncový bod nezaručuje bezkolíznu cestu celého ramena.",
@@ -1155,7 +1167,7 @@
         "url": "https://modernrobotics.northwestern.edu/nu-gm-book-resource/5-3-singularities/"
       }
     ],
-    "lab": "kinematics"
+    "lab": "ik"
   },
   {
     "id": "flight",
@@ -1210,8 +1222,8 @@
       }
     },
     "practical": {
-      "sk": "V dronovom laboratóriu meňte hmotnosť a maximálny ťah jedného motora, použite predvoľbu visenia a porovnajte súčet ťahov s tiažou. Následne zmeňte spoločný plyn. Náklony 30° a 45° vyhodnoťte samostatným výpočtom T/(m·g) = 1/cos(θ); laboratórium náklon nenastavuje.",
-      "en": "In the drone lab, vary mass and maximum thrust per motor, use the hover preset, and compare total thrust with weight. Then change collective throttle. Evaluate 30° and 45° tilt separately using T/(m·g) = 1/cos(θ); the lab has no tilt control."
+      "sk": "Nastav zvislú rovnováhu pri náklone 0° a potom zmeň náklon na 30°. Sleduj pokles zvislej zložky ťahu. Opäť vyrovnaj tiaž a všimni si, že dron stále zrýchľuje vodorovne.",
+      "en": "Balance vertical forces at 0° tilt, then change tilt to 30°. Observe the reduced vertical thrust. Balance weight again and notice that the drone still accelerates horizontally."
     },
     "pitfall": {
       "sk": "Polovičný plyn neznamená automaticky polovicu ťahu ani visenie.",
@@ -1301,8 +1313,8 @@
     ],
     "formula": null,
     "practical": {
-      "sk": "V dronovom laboratóriu preskúmajte rezervu celkového ťahu zmenou hmotnosti a maximálneho ťahu motora. Pre skúšku regulačných vrstiev použite externú simuláciu PX4: zobrazte požadovanú a odhadovanú uhlovú rýchlosť, orientáciu a polohu. Táto analýza vyžaduje letové záznamy mimo jednoduchého modelu ťahu.",
-      "en": "In the drone lab, explore total thrust margin by changing mass and maximum motor thrust. To examine control layers, use an external PX4 simulation and plot requested and estimated angular rates, attitude, and position. This analysis requires flight logs beyond the simple thrust model."
+      "sk": "Pri cieli 1 m a nulovom odhade stavu sleduj požiadavky jednotlivých regulačných vrstiev. Nastav odhad rýchlosti na 1 m/s a vysvetli, prečo požadované zrýchlenie klesne na nulu.",
+      "en": "With a 1 m target and zero state estimates, trace the requests from each control layer. Set estimated velocity to 1 m/s and explain why requested acceleration becomes zero."
     },
     "pitfall": {
       "sk": "Ladenie polohy nezakryje nesprávne nastavený motor, vibrácie alebo zlý odhad orientácie.",
@@ -1343,7 +1355,7 @@
         "url": "https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf"
       }
     ],
-    "lab": "drone"
+    "lab": "autopilot"
   },
   {
     "id": "failsafe",
@@ -1398,8 +1410,8 @@
       }
     },
     "practical": {
-      "sk": "V samostatnej simulácii PX4 overte stratu riadenia, nízku batériu a stratu polohy jednotlivo aj v kombinácii. Ku každému testu uložte verziu, konfiguráciu a záznam. Dronové laboratórium na tejto stránke ilustruje ťah a visenie; nespúšťa autopilot ani skúšky porúch.",
-      "en": "In a separate PX4 simulation, test control loss, low battery, and position loss individually and together. Save the version, configuration, and log for every test. The drone lab on this page illustrates thrust and hover; it does not run an autopilot or fault scenarios."
+      "sk": "Zapni stratu spojenia s reakciou Návrat a potom kritickú batériu s reakciou Pristáť. Over výber závažnejšej reakcie. Vypni platnú polohu a preskúmaj, kedy požadovaný návrat nemožno vykonať.",
+      "en": "Enable link loss with Return, then a critical battery with Land. Check selection of the more severe action. Disable valid position and investigate when requested Return cannot execute."
     },
     "pitfall": {
       "sk": "Návrat domov nemožno považovať za zaručený výsledok pri strate spoľahlivej polohy.",
@@ -1440,7 +1452,7 @@
         "url": "https://docs.px4.io/main/en/simulation/"
       }
     ],
-    "lab": "drone"
+    "lab": "failsafe"
   },
   {
     "id": "energy",
@@ -1495,8 +1507,8 @@
       }
     },
     "practical": {
-      "sk": "V kalkulačke napájania ponechajte napätie, Ah, príkon a účinnosť rovnaké a zvýšte energetickú rezervu; porovnajte výdrž. Samostatný príklad: batéria 11,1 V a 2 Ah má 22,2 Wh; pri využiteľných 80 % a priemernom odbere 12 W meranom na batérii vychádza približne 1,48 h. K tomuto odberu už znovu nepridávajte straty meniča.",
-      "en": "In the power calculator, keep voltage, Ah, load power, and efficiency unchanged while increasing the energy reserve; compare runtime. Separate example: an 11.1 V, 2 Ah battery has 22.2 Wh; at 80% usable energy and 12 W average battery-side draw, runtime is approximately 1.48 h. Do not add converter losses to that battery-side measurement again."
+      "sk": "Nastav 11,1 V, 2 Ah, rezervu 20 %, účinnosť 100 % a celkový príkon záťaže 12 W. Over výdrž 88,8 min; potom zníž účinnosť na 90 %. Výkony zadávaj na strane spotrebičov.",
+      "en": "Set 11.1 V, 2 Ah, 20% reserve, 100% efficiency and 12 W total load. Check a runtime of 88.8 min, then reduce efficiency to 90%. Enter power on the load side."
     },
     "pitfall": {
       "sk": "mAh najprv prepočítajte na Ah; 2 000 mAh sú 2 Ah, nie 2 000 Ah.",
@@ -1592,8 +1604,8 @@
       }
     },
     "practical": {
-      "sk": "Samostatné cvičenie s dokumentáciou hotovej batérie: nájdite chémiu, napäťový rozsah, trvalý a špičkový prúd, požadovanú nabíjačku a teplotné limity. Porovnajte ich s meraným odberom robota. Kalkulačka napájania pomôže s odhadom energie a výdrže, ale neoverí ochrany BMS ani bezpečnosť konkrétnej batérie.",
-      "en": "Separate exercise using a finished battery's documentation: identify chemistry, voltage range, continuous and peak current, required charger, and temperature limits. Compare them with measured robot demand. The power calculator helps estimate energy and runtime but does not validate BMS protection or the safety of a particular battery."
+      "sk": "Zníž druhý článok pod 3,0 V. Porovnaj napätie celej zostavy so stavom vybíjania. Potom skús prepätie článku a výpadok meraní; odlíš blokovanie nabíjania, vybíjania a neznámy stav.",
+      "en": "Lower the second cell below 3.0 V. Compare pack voltage with discharge status. Then try cell overvoltage and missing measurements; distinguish charge blocking, discharge blocking and unknown state."
     },
     "pitfall": {
       "sk": "BMS nie je automaticky nabíjačka a balancovanie nezaručuje zdravie článkov.",
@@ -1632,9 +1644,13 @@
       {
         "title": "Texas Instruments: Battery Monitors and Balancers",
         "url": "https://www.ti.com/product-category/battery-management-ics/battery-monitors-balancers/overview.html"
+      },
+      {
+        "title": "Texas Instruments: Battery Electronics Roles",
+        "url": "https://www.ti.com/lit/ta/sszt466/sszt466.pdf"
       }
     ],
-    "lab": "power"
+    "lab": "bms"
   },
   {
     "id": "distribution",
@@ -1689,8 +1705,8 @@
       }
     },
     "practical": {
-      "sk": "V kalkulačke napájania meňte účinnosť pri rovnakých príkonoch motorov, počítača a senzorov a porovnajte výdrž. Samostatne vypočítajte, že 20 W výstup pri účinnosti 90 % znamená približne 2,22 W strát. Teplotu meniča a poklesy napätia pri rozbehu treba overiť meraním na skutočnom zariadení.",
-      "en": "In the power calculator, vary efficiency while keeping motor, computer, and sensor loads unchanged and compare runtime. Separately calculate that 20 W output at 90% efficiency produces approximately 2.22 W loss. Converter temperature and startup voltage sag require measurements on actual hardware."
+      "sk": "Pre 12 V → 5 V, 4 A, účinnosť 90 % a vedenie 0,1 Ω porovnaj straty meniča a vedenia. Zdvojnásob prúd: ktoré straty narastú štvornásobne?",
+      "en": "For 12 V → 5 V, 4 A, 90% efficiency and 0.1 Ω wiring, compare converter and cable losses. Double current: which losses increase fourfold?"
     },
     "pitfall": {
       "sk": "Údaj maximálneho prúdu spínača nie je automaticky prípustný trvalý výstupný prúd celého meniča.",
@@ -1731,7 +1747,7 @@
         "url": "https://www.pololu.com/docs/0J73/4"
       }
     ],
-    "lab": "power"
+    "lab": "distribution"
   },
   {
     "id": "states",
@@ -1786,8 +1802,8 @@
       }
     },
     "practical": {
-      "sk": "V programovacom laboratóriu zostavte krátku postupnosť forward, wait a turn a sledujte poradie vykonávania. Na vlastnom mikrokontroléri alebo v externom simulátore potom vytvorte stavy Čaká, Ide a Porucha s časovým limitom príkazu. Jednoduché API vozíka neposkytuje senzorový vstup ani test výpadku spojenia.",
-      "en": "In the coding lab, build a short sequence of forward, wait, and turn commands and observe their execution order. On your own microcontroller or in an external simulator, then implement Idle, Moving, and Fault states with a command timeout. The simple rover API provides neither sensor input nor a link-loss test."
+      "sk": "Spusti pohyb, prepnúť ho môžeš do čakania a počas čakania vyvolaj poruchu senzora. Over vypnutie motora. Potom obnov senzor, resetuj automat a samostatne otestuj vypršanie príkazu pri 500 ms.",
+      "en": "Start motion, switch to waiting and trigger a sensor fault while waiting. Check that the motor turns off. Restore the sensor, reset the machine and separately test command expiry at 500 ms."
     },
     "pitfall": {
       "sk": "Premenná označujúca stav sama nezaručuje, že bol výstup motora skutočne zmenený.",
@@ -1824,7 +1840,7 @@
         "url": "https://github.com/arduino/arduino-examples/blob/main/examples/02.Digital/BlinkWithoutDelay/BlinkWithoutDelay.ino"
       }
     ],
-    "lab": "code"
+    "lab": "states"
   },
   {
     "id": "ros",
@@ -1873,8 +1889,8 @@
     ],
     "formula": null,
     "practical": {
-      "sk": "Externé cvičenie v nainštalovanom ROS 2 so simulovaným robotom: zistite uzly a témy, zaznamenajte požadovanú rýchlosť aj odhad polohy a prehrajte záznam v oddelenom prostredí. Programovacie laboratórium na tejto stránke vykonáva JavaScript príkazy vozíka; prostredie ROS 2 si pripravte samostatne.",
-      "en": "External exercise in an installed ROS 2 environment with a simulated robot: inspect nodes and topics, record commanded velocity and estimated pose, and replay the recording in an isolated environment. The coding lab on this page executes JavaScript rover commands; prepare the ROS 2 environment separately."
+      "sk": "Pre meranie vzdialenosti, krátky dotaz a zrušiteľný cieľ vyber Topic, Service alebo Action. Pri akcii pošli cieľ, posuň postup na 50 % a zruš ho. Prijatý cieľ ešte neznamená dokončenú úlohu.",
+      "en": "Choose Topic, Service or Action for distance readings, a short query and a cancellable goal. Send an action goal, advance to 50% and cancel it. An accepted goal is not a completed task."
     },
     "pitfall": {
       "sk": "Rovnaký názov témy nezaručuje komunikáciu: musia sedieť aj typ správy a QoS.",
@@ -1913,9 +1929,13 @@
       {
         "title": "ROS 2: Recording and Playing Back Data",
         "url": "https://github.com/ros2/ros2_documentation/blob/jazzy/source/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.rst"
+      },
+      {
+        "title": "ROS 2: Topics, Services and Actions",
+        "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/rolling/source/ROS-Framework/Interfaces-Topics-Services-Actions.rst"
       }
     ],
-    "lab": "code"
+    "lab": "ros"
   },
   {
     "id": "qos",
@@ -1970,8 +1990,8 @@
       }
     },
     "practical": {
-      "sk": "V samostatnom prostredí ROS 2 pripojte reliable odberateľa k best-effort vydavateľovi a overte nekompatibilitu. Potom upravte profil a porovnajte vek dát pri rôznych hĺbkach radu a záťaži siete. Toto cvičenie vyžaduje ROS 2; JavaScript laboratórium vozíka nemá nastavenia DDS ani QoS.",
-      "en": "In a separate ROS 2 environment, connect a reliable subscriber to a best-effort publisher and confirm incompatibility. Adjust the profile and compare data age across queue depths and network loads. This exercise requires ROS 2; the JavaScript rover lab has no DDS or QoS settings."
+      "sk": "Skús vydavateľa Best effort a odberateľa Reliable. Potom nastav kompatibilnú dvojicu a porovnaj hĺbku fronty 1 a 4 pri limite veku 100 ms. Vysvetli, prečo doručená správa môže byť stará.",
+      "en": "Try a Best effort publisher and Reliable subscriber. Then choose a compatible pair and compare queue depths 1 and 4 with a 100 ms age limit. Explain why a delivered message can be stale."
     },
     "pitfall": {
       "sk": "Reliable neznamená garantovanú latenciu ani potvrdenie, že prijatý príkaz bol vykonaný.",
@@ -2008,7 +2028,7 @@
         "url": "https://github.com/ros2/ros2_documentation/blob/jazzy/source/Concepts/Intermediate/About-Quality-of-Service-Settings.rst"
       }
     ],
-    "lab": "code"
+    "lab": "qos"
   },
   {
     "id": "prototype",
@@ -2057,8 +2077,8 @@
     ],
     "formula": null,
     "practical": {
-      "sk": "Projektové cvičenie: napíšte požiadavky na náklad, rýchlosť a zastavenie malého vozíka vrátane podmienok a kritérií úspechu. V kalkulačke napájania zostavte odhad spotreby motorov, počítača a senzorov. Nosnosť, zastavenie a mechanickú stabilitu následne overte samostatnými skúškami prototypu.",
-      "en": "Design exercise: specify payload, speed, and stopping requirements for a small rover, including conditions and pass criteria. In the power calculator, estimate motor, computer, and sensor demand. Validate load capacity, stopping, and mechanical stability through separate prototype tests."
+      "sk": "Zvoľ merateľnú požiadavku, zapíš podmienky a tri merania. Pri brzdnej dráhe ≤ 30 cm porovnaj výsledky 25, 27, 29 cm s výsledkami 25, 27, 33 cm. Stiahni si skúšobný protokol.",
+      "en": "Choose a measurable requirement, record conditions and three measurements. For stopping distance ≤ 30 cm, compare 25, 27, 29 cm with 25, 27, 33 cm. Download the test record."
     },
     "pitfall": {
       "sk": "Prvý úspešný pohyb ešte neoveruje tepelnú výdrž, opakovateľnosť ani správanie pri poruche.",
@@ -2099,7 +2119,7 @@
         "url": "https://modernrobotics.northwestern.edu/nu-gm-book-resource/8-9-actuation-gearing-and-friction/"
       }
     ],
-    "lab": "power"
+    "lab": "prototype"
   },
   {
     "id": "odometry",
@@ -2154,8 +2174,8 @@
       }
     },
     "practical": {
-      "sk": "Samostatný výpočet diferenciálneho podvozka: pre r = 0,05 m, b = 0,3 m, ωR = 4 rad/s a ωL = 2 rad/s vypočítajte v = 0,15 m/s a ω ≈ 0,333 rad/s. Overenie enkodérmi vyžaduje vlastný vozík alebo externý simulátor; laboratórium ramena zobrazuje kinematiku článkov, nie odometriu kolies.",
-      "en": "Separate differential-drive calculation: for r = 0.05 m, b = 0.3 m, ωR = 4 rad/s, and ωL = 2 rad/s, calculate v = 0.15 m/s and ω ≈ 0.333 rad/s. Encoder validation requires your own rover or an external simulator; the arm lab shows link kinematics rather than wheel odometry."
+      "sk": "Začni s ľavým kolesom 2 rad/s a pravým 4 rad/s. Porovnaj oblúk s rovnakými otáčkami oboch kolies a potom s opačnými otáčkami. Sleduj polohu aj natočenie podvozka.",
+      "en": "Start with left wheel 2 rad/s and right wheel 4 rad/s. Compare the arc with equal wheel rates, then with opposite rates. Observe both position and heading."
     },
     "pitfall": {
       "sk": "Vysoké rozlíšenie enkodéra neodstraňuje sklz ani chybu priemeru kolies.",
@@ -2196,7 +2216,7 @@
         "url": "https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst"
       }
     ],
-    "lab": "kinematics"
+    "lab": "odometry"
   },
   {
     "id": "validation",
@@ -2251,8 +2271,8 @@
       }
     },
     "practical": {
-      "sk": "V laboratóriu ramena porovnajte koncovú polohu pri dvoch súboroch uhlov a vymyslite niekoľko medziľahlých konfigurácií. Potom vo vlastnom dynamickom simulátore alebo na meranom pohone porovnajte skok cieľa s obmedzenou trajektóriou. Prúd, prekmit a čas ustálenia patria k tejto samostatnej dynamickej skúške, nie k statickej kinematike ramena.",
-      "en": "In the arm lab, compare endpoint positions for two sets of angles and propose several intermediate configurations. Then use your own dynamic simulator or an instrumented actuator to compare a setpoint jump with a constrained trajectory. Current, overshoot, and settling time belong to that separate dynamic test, not the arm's static kinematics."
+      "sk": "Pre dráhu 1 m porovnaj trvanie 2 s a 1 s. Sleduj maximálnu rýchlosť aj zrýchlenie a nastav čas tak, aby kubický profil splnil oba zadané limity.",
+      "en": "For a 1 m path, compare durations of 2 s and 1 s. Observe peak velocity and acceleration, then select a duration that satisfies both entered limits."
     },
     "pitfall": {
       "sk": "Úspešná simulácia neoveruje fyzické pripojenie, teploty ani všetky kontaktné javy.",
@@ -2291,8 +2311,12 @@
       {
         "title": "PX4: Simulation",
         "url": "https://docs.px4.io/main/en/simulation/"
+      },
+      {
+        "title": "Modern Robotics: Time Scaling",
+        "url": "https://modernrobotics.northwestern.edu/nu-gm-book-resource/9-1-and-9-2-point-to-point-trajectories-part-2-of-2/"
       }
     ],
-    "lab": "kinematics"
+    "lab": "validation"
   }
 ]

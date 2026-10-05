@@ -10,7 +10,7 @@ export function motorSizing(payloadKg:number,armKg:number,lengthM:number,reducti
  return {payloadTorque,armTorque,loadTorque,motorTorque:loadTorque/(reduction*efficiencyPercent/100),outputRpm:motorRpm/reduction};
 }
 export function simulatePID(kp:number,ki:number,kd:number){let y=0,v=0,integral=0;const samples=[{t:0,value:0,target:1,control:Math.max(-10,Math.min(10,kp))}];for(let i=1;i<=800;i++){const error=1-y;integral=Math.max(-5,Math.min(5,integral+error*.01));const u=Math.max(-10,Math.min(10,kp*error+ki*integral-kd*v));v+=(u-1.2*v)*.01;y+=v*.01;if(i%5===0)samples.push({t:Number((i*.01).toFixed(2)),value:y,target:1,control:u});}return samples;}
-export function droneEstimate(mass:number,maxN:number,throttle:number){const thrust=4*maxN*(throttle/100)**2;return {thrust,acceleration:thrust/mass-9.81,hover:Math.sqrt(mass*9.81/(4*maxN))*100,ratio:4*maxN/(mass*9.81)};}
+export function droneEstimate(mass:number,maxN:number,throttle:number,tilt=0){const angle=tilt*Math.PI/180,thrust=4*maxN*(throttle/100)**2,vertical=thrust*Math.cos(angle),horizontal=thrust*Math.sin(angle);return {thrust,vertical,horizontal,horizontalAcceleration:horizontal/mass,acceleration:vertical/mass-9.81,hover:Math.sqrt(mass*9.81/(4*maxN*Math.cos(angle)))*100,ratio:4*maxN/(mass*9.81)};}
 export const obstacles=[{x:245,y:150,w:105,h:100},{x:390,y:220,w:80,h:100}];
 export type RobotCommand={type:'forward'|'turn'|'wait';value:number};
 export function validateCommands(value:unknown):value is RobotCommand[]{
