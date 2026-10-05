@@ -17,8 +17,8 @@ export default function AutomationPreview({ initialTab = "nastup" }: { initialTa
   const [emailOpen, setEmailOpen] = useState(false);
 
   return <div className="auto-preview" id="ukazka">
-    <div className="auto-preview-bar"><span><i aria-hidden="true" /> Firemný prehľad</span><span className="auto-demo-tag">Ukážka systému</span></div>
-    <div className="auto-preview-heading"><div><span className="auto-micro">PRACOVNÝ PRIESTOR</span><h2>Dokumenty a príležitosti</h2></div><span className="auto-avatar" aria-hidden="true">B</span></div>
+    <div className="auto-preview-bar"><span><i aria-hidden="true" /> Dashboard</span><span className="auto-demo-tag">Ukážka systému</span></div>
+    <div className="auto-preview-heading"><div><span className="auto-micro">DASHBOARD</span><h2>Dokumenty a príležitosti</h2></div><span className="auto-avatar" aria-hidden="true">B</span></div>
     <div className="auto-preview-tabs" role="tablist" aria-label="Príklady použitia systému">
       {scenarios.map((scenario, index) => <button key={scenario.id} id={`demo-tab-${scenario.id}`} role="tab" aria-selected={active === scenario.id} aria-controls="demo-panel" tabIndex={active === scenario.id ? 0 : -1} onClick={() => setActive(scenario.id)} onKeyDown={event => {
         if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
