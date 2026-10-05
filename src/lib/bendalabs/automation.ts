@@ -2,7 +2,7 @@ export const automationModules = [
   {
     id: "dokumenty", number: "01", title: "Automatizácia firemných dokumentov", shortTitle: "Dokumenty",
     setup: 350, monthly: 25, totalSetup: 500, totalMonthly: 44.5,
-    description: "Od načítania údajov z dokladov až po prípravu zmlúv, dodatkov a ďalších dokumentov. V jednom systéme, ktorý si údaje pamätá.",
+    description: "Systém načíta údaje z dokladov a doplní ich do vašich zmlúv, dodatkov a formulárov. Údaje zostanú uložené pre ďalšie použitie.",
     input: "Doklady a vaše firemné vzory", output: "Vyplnené dokumenty z uložených údajov",
     benefits: ["Načítanie údajov z OP, živnostenského oprávnenia a ďalších podkladov", "Profil zamestnanca, klienta alebo firmy s uloženými údajmi", "Nástupné dokumenty, zmluvy aj personalizované dodatky", "Vaše šablóny a história dokumentov na jednom mieste"],
     question: "Ktoré dokumenty chcete pripravovať automaticky?", placeholder: "Napr. pri nástupe zamestnanca načítať údaje z OP a pripraviť zmluvu aj ostatné nástupné dokumenty…",
@@ -11,11 +11,11 @@ export const automationModules = [
   {
     id: "prilezitosti", number: "02", title: "Vyhľadávanie zákaziek", shortTitle: "Príležitosti",
     setup: 350, monthly: 30, totalSetup: 500, totalMonthly: 49.5,
-    description: "Systém pravidelne prehľadáva vybrané zdroje a zbiera zákazky podľa toho, čo vaša firma robí a kde pôsobí.",
+    description: "Systém vyhľadáva zákazky podľa zamerania vašej firmy a ku každej pripraví návrh e-mailu na oslovenie potenciálneho klienta.",
     input: "Váš odbor, región a typ zákaziek", output: "Relevantné príležitosti v jednom prehľade",
-    benefits: ["Vyhľadávanie podľa služieb a zamerania vašej firmy", "Pravidelné sledovanie dohodnutých zdrojov", "Odkazy, termíny a podmienky pri každej príležitosti", "Menej ručného hľadania, viac času na prípravu ponuky"],
+    benefits: ["Vyhľadávanie podľa služieb a zamerania vašej firmy", "Pravidelné sledovanie dohodnutých zdrojov", "Odkaz na zadanie, dostupné podmienky a kontakt", "Automaticky pripravený oslovovací e-mail k zákazke"],
     question: "Aké zákazky a v akom regióne hľadáte?", placeholder: "Napr. elektroinštalácie pre firmy, západné Slovensko…",
-    choiceDescription: "Pravidelné hľadanie príležitostí podľa vašej firmy",
+    choiceDescription: "Vyhľadanie zákaziek a príprava oslovovacích e-mailov",
   },
 ] as const;
 

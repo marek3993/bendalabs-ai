@@ -9,16 +9,16 @@ const scenarios = [
 ] as const;
 type Scenario = (typeof scenarios)[number]["id"];
 
-export default function AutomationPreview() {
-  const [active, setActive] = useState<Scenario>("nastup");
+export default function AutomationPreview({ initialTab = "nastup" }: { initialTab?: Scenario }) {
+  const [active, setActive] = useState<Scenario>(initialTab);
   const [generated, setGenerated] = useState(false);
   const [amended, setAmended] = useState(false);
   const [position, setPosition] = useState("Vedúca tímu");
-  const [saved, setSaved] = useState(false);
+  const [emailOpen, setEmailOpen] = useState(false);
 
   return <div className="auto-preview" id="ukazka">
-    <div className="auto-preview-bar"><span><i aria-hidden="true" /> Váš firemný systém</span><span className="auto-demo-tag">Interaktívna ukážka</span></div>
-    <div className="auto-preview-heading"><div><span className="auto-micro">TAKTO TO MÔŽE FUNGOVAŤ</span><h2>Údaje raz. Hotové podklady.</h2></div><span className="auto-avatar" aria-hidden="true">B</span></div>
+    <div className="auto-preview-bar"><span><i aria-hidden="true" /> Firemný prehľad</span><span className="auto-demo-tag">Ukážka systému</span></div>
+    <div className="auto-preview-heading"><div><span className="auto-micro">PRACOVNÝ PRIESTOR</span><h2>Dokumenty a príležitosti</h2></div><span className="auto-avatar" aria-hidden="true">B</span></div>
     <div className="auto-preview-tabs" role="tablist" aria-label="Príklady použitia systému">
       {scenarios.map((scenario, index) => <button key={scenario.id} id={`demo-tab-${scenario.id}`} role="tab" aria-selected={active === scenario.id} aria-controls="demo-panel" tabIndex={active === scenario.id ? 0 : -1} onClick={() => setActive(scenario.id)} onKeyDown={event => {
         if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
@@ -51,11 +51,11 @@ export default function AutomationPreview() {
         <div className="auto-demo-label"><span>Nová príležitosť</span><span className="auto-chip">Váš odbor a región</span></div>
         <h3>Elektroinštalácia prevádzky</h3>
         <dl className="auto-demo-fields"><div><dt>Región</dt><dd>Bratislavský kraj</dd></div><div><dt>Typ zákazky</dt><dd>Dodávka a montáž</dd></div><div><dt>Zdroj</dt><dd>Dopytový portál · vzorový záznam</dd></div></dl>
-        <p className="auto-demo-notice">Systém našiel zákazku podľa zamerania firmy. Podmienky a odkaz na zadanie máte pri nej.</p>
-        <button className="auto-demo-action" onClick={() => setSaved(value => !value)}>{saved ? "Odobrať zo zoznamu" : "Uložiť príležitosť"}<span aria-hidden="true">{saved ? "✓" : "+"}</span></button>
-        {saved && <div className="auto-demo-result" role="status"><strong>Uložené na prípravu ponuky</strong><p>Príležitosť nájdete vo svojom firemnom prehľade.</p></div>}
+        <p className="auto-demo-notice">K zákazke je pripravený e-mail podľa zadania a služieb vašej firmy.</p>
+        <button className="auto-demo-action" onClick={() => setEmailOpen(value => !value)}>{emailOpen ? "Skryť návrh e-mailu" : "Pozrieť pripravený e-mail"}<span aria-hidden="true">↗</span></button>
+        {emailOpen && <div className="auto-demo-result auto-demo-email" role="status"><strong>Predmet: Elektroinštalácia prevádzky v Bratislave</strong><p>Dobrý deň, zaujalo nás vaše zadanie elektroinštalácie novej prevádzky. Naša firma sa venuje elektroinštalačným prácam pre firemné priestory.</p><p>Môžete nám poslať bližší rozsah prác a požadovaný termín? Radi si prejdeme možnosti spolupráce.</p><span>Návrh pripravený na vašu kontrolu a odoslanie.</span></div>}
       </>}
     </div>
-    <p className="auto-preview-caption">Ukážka s fiktívnymi údajmi. Váš systém vytvoríme podľa postupov vašej firmy.</p>
+    <p className="auto-preview-caption">Modelový príklad s fiktívnymi údajmi. Kliknutím si môžete pozrieť jednotlivé kroky.</p>
   </div>;
 }

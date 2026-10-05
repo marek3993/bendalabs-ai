@@ -291,3 +291,109 @@
   .auto-demo-label { flex-wrap: wrap; }
   .auto-module-card > a { font-size: 11px; gap: 10px; }
 }
+
+/* A restrained presentation with readable examples and a direct point of contact. */
+.auto-site { background: #fcfcfa; color: #252a26; }
+.auto-site .bl-eyebrow { font-size: 10px; letter-spacing: .09em; }
+.auto-site h2 { text-wrap: pretty; }
+.auto-header { background: #fcfcfaf5; }
+.auto-hero { align-items: start; padding-block: 68px 72px; gap: 68px; }
+.auto-kicker { font-size: 10px; letter-spacing: .075em; font-weight: 500; color: #777d73; margin-bottom: 27px; }
+.auto-hero h1 { font-size: clamp(40px, 3.7vw, 54px); line-height: 1.12; letter-spacing: -.035em; text-wrap: pretty; }
+.auto-hero h1 > span { color: #4a6953; }
+.auto-lead { max-width: 500px; font-size: 16px; line-height: 1.8; margin-top: 26px; }
+.auto-hero-actions { gap: 20px; }
+.auto-hero-actions .bl-button { font-size: 13px; gap: 16px; }
+.auto-hero-actions .bl-text-link { font-size: 12px; }
+.auto-hero-price { max-width: 500px; }
+.auto-intro-note { color: #5c685d; line-height: 1.7; }
+.auto-preview { border-radius: 7px; background: #f0f2ed; box-shadow: 0 6px 20px #202a2308; padding-inline: 20px; }
+.auto-preview-heading { padding-block: 22px; }
+.auto-preview-heading h2 { font-size: 23px; }
+.auto-demo-panel { border-radius: 4px; }
+.auto-demo-action { background: #e2eade; border-color: #d2decb; }
+.auto-demo-action:hover { background: #d5e2cf; }
+.auto-demo-result { background: #f4f6f0; border-left-color: #839879; }
+.auto-demo-email { font-size: 11px; line-height: 1.75; }
+.auto-demo-email p { margin-top: 10px; }
+.auto-heading-row { grid-template-columns: 1.2fr 1fr; gap: 65px; }
+.auto-heading-row > div { min-width: 0; }
+.auto-heading-row h2, .auto-section-heading h2, .auto-faq h2 { font-size: clamp(29px, 3.2vw, 40px); line-height: 1.2; letter-spacing: -.03em; }
+.auto-modules { background: #f5f5ef; padding-block: 64px; border-block: 1px solid #e3e5db; }
+.auto-module-card { padding: 31px; border-radius: 5px; background: #fff; }
+.auto-module-grid > :first-child { border-color: #dce4d9; }
+.auto-module-number { margin-bottom: 21px; }
+.auto-module-number > span { font-size: 10px; color: #72806b; letter-spacing: .05em; }
+.auto-module-card h3 { font-size: 28px; min-height: 66px; }
+.auto-module-card > p { font-size: 14px; min-height: 80px; }
+.auto-module-card ul { gap: 12px; padding-left: 0; }
+.auto-module-card li::before { content: '—'; color: #9aa591; }
+.auto-how { padding-block: 74px 68px; }
+.auto-document-example { margin-top: 38px; display: grid; grid-template-columns: .8fr 1.2fr; border-block: 1px solid #dce2d6; padding-block: 34px; gap: 65px; }
+.auto-example-label { font-size: 11px; color: #6a7761; }
+.auto-example-intro h3 { font-size: 27px; line-height: 1.3; margin-top: 17px; }
+.auto-example-intro p { color: #6e7967; font-size: 14px; line-height: 1.8; margin-top: 19px; max-width: 315px; }
+.auto-example-steps { display: grid; gap: 26px; }
+.auto-example-steps li { display: flex; gap: 19px; }
+.auto-example-steps li > span { width: 27px; height: 27px; border: 1px solid #c8d2c0; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; font-size: 11px; color: #66775b; }
+.auto-example-steps h3 { font-size: 17px; margin-top: 3px; }
+.auto-example-steps p { font-size: 14px; color: #616f59; line-height: 1.8; margin-top: 9px; }
+.auto-practical-benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-top: 35px; }
+.auto-practical-benefits h3 { font-size: 16px; }
+.auto-practical-benefits p { font-size: 13px; line-height: 1.8; color: #687560; margin-top: 10px; }
+.auto-opportunity-section { background: #edf1e9; padding-block: 68px; border-block: 1px solid #dce3d5; }
+.auto-opportunity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 76px; align-items: center; }
+.auto-opportunity-grid h2 { font-size: clamp(29px, 3.2vw, 40px); line-height: 1.2; margin-top: 15px; }
+.auto-opportunity-grid > div > p:not(.bl-eyebrow) { font-size: 15px; line-height: 1.85; color: #56644e; margin-top: 21px; max-width: 470px; }
+.auto-opportunity-grid .bl-text-link { font-size: 13px; margin-top: 24px; }
+.auto-email-example { background: #fff; border: 1px solid #d4ddd0; border-radius: 5px; padding: 25px; }
+.auto-email-top { display: flex; justify-content: space-between; font-size: 12px; color: #3e5137; padding-bottom: 18px; }
+.auto-email-top > span:last-child { color: #7a8473; font-size: 10px; }
+.auto-email-example dl > div { display: grid; grid-template-columns: 72px 1fr; gap: 10px; border-top: 1px solid #e9ede5; padding-block: 11px; font-size: 11px; }
+.auto-email-example dt { color: #7a8373; }
+.auto-email-example dd { color: #33412c; }
+.auto-email-body { border-top: 1px solid #e9ede5; padding-top: 8px; }
+.auto-email-body p { font-size: 13px; line-height: 1.8; margin-top: 13px; color: #4e5947; }
+.auto-email-foot { margin-top: 23px; font-size: 10px; color: #788171; border-top: 1px solid #e9ede5; padding-top: 15px; }
+.auto-founder { padding-block: 65px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 65px; }
+.auto-founder-id { display: flex; align-items: flex-start; gap: 21px; }
+.auto-founder-mark { width: 62px; height: 68px; display: grid; place-items: center; background: #e4e8df; color: #4b5e41; font-size: 22px; flex-shrink: 0; border-radius: 3px; }
+.auto-founder-id h2 { font-size: 23px; margin-top: 1px; }
+.auto-founder-id p { font-size: 12px; color: #78816f; margin-block: 9px 19px; }
+.auto-founder-id a { display: block; color: #4d6444; font-size: 12px; margin-top: 7px; }
+.auto-founder-copy h3 { font-size: 24px; line-height: 1.35; }
+.auto-founder-copy p { font-size: 14px; line-height: 1.9; color: #677160; margin-top: 17px; }
+.auto-founder-copy .bl-text-link { margin-top: 19px; font-size: 12px; }
+.auto-config-section { background: #f4f5ef; padding-block: 66px; }
+.auto-module-choice, .auto-price-summary, .auto-success { border-radius: 5px; }
+.auto-offer-label { background: #eff1e8; border-color: #e0e6d6; color: #6a795b; }
+.auto-faq { padding-block: 52px 70px; }
+@media (max-width: 1100px) {
+  .auto-hero { gap: 38px; }
+  .auto-hero h1 { font-size: 45px; }
+  .auto-opportunity-grid { gap: 40px; }
+  .auto-document-example, .auto-founder { gap: 38px; }
+}
+@media (max-width: 800px) {
+  .auto-header nav { display: none; }
+  .auto-hero { padding-block: 43px; }
+  .auto-hero h1 { font-size: clamp(38px, 6.8vw, 50px); max-width: 610px; }
+  .auto-heading-row, .auto-document-example, .auto-opportunity-grid, .auto-founder { grid-template-columns: 1fr; gap: 27px; }
+  .auto-modules, .auto-how, .auto-opportunity-section, .auto-founder, .auto-config-section { padding-block: 48px; }
+  .auto-module-card h3, .auto-module-card > p { min-height: 0; }
+  .auto-example-intro h3 br { display: none; }
+  .auto-example-intro p { max-width: 550px; }
+  .auto-practical-benefits { grid-template-columns: 1fr; gap: 23px; }
+}
+@media (max-width: 540px) {
+  .auto-hero h1 { font-size: clamp(33px, 8.9vw, 46px); }
+  .auto-hero-actions { gap: 17px; }
+  .auto-kicker { font-size: 9px; letter-spacing: .035em; }
+  .auto-preview { padding-inline: 15px; }
+  .auto-preview-heading h2 { font-size: 21px; }
+  .auto-module-card { padding: 25px; }
+  .auto-module-card h3 { font-size: 25px; }
+  .auto-email-example { padding: 20px; }
+  .auto-email-example dl > div { grid-template-columns: 1fr; gap: 4px; }
+  .auto-founder-id { gap: 17px; }
+}
