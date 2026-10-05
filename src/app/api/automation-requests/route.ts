@@ -14,14 +14,14 @@ const schema = z.object({
   email: z.string().trim().email().max(180).transform(value => value.toLowerCase()),
   business: z.string().trim().min(1).max(180),
   website: z.string().trim().max(500).default("").refine(value => !value || Boolean(normalizeWebsiteUrl(value))),
-  users: z.enum(["1–5", "viac ako 5"]),
-  modules: z.array(z.enum(["dokumenty", "spracovanie", "prilezitosti"])).max(3).transform(value => [...new Set(value)]),
-  details: z.object({ dokumenty: shortText, spracovanie: shortText, prilezitosti: shortText }),
+  users: z.enum(["1–5", "6–20", "viac ako 20", "zatiaľ neviem"]),
+  modules: z.array(z.enum(["dokumenty", "prilezitosti"])).max(3).transform(value => [...new Set(value)]),
+  details: z.object({ dokumenty: shortText, prilezitosti: shortText }),
   custom: z.string().trim().max(1200).default(""),
   company: z.string().max(200).default(""),
   campaign: z.string().max(400).default(""),
 }).refine(value => value.modules.length > 0 || value.custom.length >= 10, {
-  message: "Vyberte modul alebo opíšte vlastnú požiadavku aspoň 10 znakmi.", path: ["modules"],
+  message: "Vyberte službu alebo opíšte vlastnú požiadavku aspoň 10 znakmi.", path: ["modules"],
 });
 
 export async function POST(request: Request) {
@@ -36,16 +36,15 @@ export async function POST(request: Request) {
   try { const text = await request.text(); if (text.length > 16000) return NextResponse.json({ error: "Dopyt je príliš dlhý." }, { status: 413 }); raw = JSON.parse(text); }
   catch { return NextResponse.json({ error: "Skontrolujte vyplnené údaje." }, { status: 400 }); }
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) return NextResponse.json({ error: "Skontrolujte kontaktné údaje a vyberte modul alebo opíšte vlastnú požiadavku." }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: "Skontrolujte kontaktné údaje a vyberte službu alebo opíšte vlastnú požiadavku." }, { status: 400 });
   const data = parsed.data;
   const quote = getAutomationQuote(data.modules);
   const selected = automationModules.filter(module => data.modules.includes(module.id));
   const message = [
     "BendaLabs — modulárna automatizácia /automatizacia",
     `Firma: ${data.business}`, `Používatelia: ${data.users}`,
-    `Moduly: ${selected.map(module => module.title).join(", ") || "Vlastná požiadavka"}`,
-    selected.length ? `Uvádzacia cena pre uvedený rozsah: ${euro(quote.setup)} jednorazovo + ${euro(quote.monthly)} mesačne` : "Cena: individuálne nacenenie",
-    data.users === "viac ako 5" ? "Viac ako 5 používateľov — cenu treba potvrdiť." : "",
+    `Služby: ${selected.map(module => module.title).join(", ") || "Vlastná požiadavka"}`,
+    selected.length ? `Orientačná uvádzacia cena od: ${euro(quote.setup)} jednorazovo + ${euro(quote.monthly)} mesačne` : "Cena: individuálne nacenenie",
     ...selected.map(module => `${module.question}\n${data.details[module.id] || "Klient doplní pri konzultácii."}`),
     `Čo ďalšie potrebujete automatizovať?\n${data.custom || "Bez ďalšej požiadavky."}`,
     data.campaign ? `Kampaň: ${data.campaign}` : "",
