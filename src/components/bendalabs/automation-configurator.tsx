@@ -30,17 +30,21 @@ export default function AutomationConfigurator({ initialModules }: { initialModu
     setPending(true); setError("");
     const url = new URL(window.location.href);
     const campaign = ["utm_source", "utm_medium", "utm_campaign", "utm_content"].map(key => url.searchParams.has(key) ? `${key}=${url.searchParams.get(key)}` : "").filter(Boolean).join("; ").slice(0, 400);
+    let failureMessage = "Dopyt sa nepodarilo odoslať. Skúste znova alebo napíšte na info@bendalabs.sk.";
     try {
       const response = await fetch("/api/automation-requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
         name: values.get("name"), email: values.get("email"), business: values.get("business"), website: values.get("website"), users,
         modules: selected, details: Object.fromEntries(automationModules.map(module => [module.id, values.get(`details-${module.id}`) || ""])), custom, company: values.get("company"), campaign,
       }) });
-      const result = await response.json();
-      if (!response.ok || result.success !== true) throw new Error(result.error || "Dopyt sa nepodarilo odoslať.");
+      const result = await response.json().catch(() => null);
+      if (!response.ok || result?.success !== true) {
+        if (typeof result?.error === "string") failureMessage = result.error;
+        throw new Error("Automation submission failed");
+      }
       setSuccess(true);
       requestAnimationFrame(() => document.getElementById("automation-success")?.focus());
-    } catch (failure) {
-      setError(`${failure instanceof Error ? failure.message : "Dopyt sa nepodarilo odoslať."} Vaše zadanie zostalo vyplnené.`);
+    } catch {
+      setError(`${failureMessage} Vaše zadanie zostalo vyplnené.`);
       requestAnimationFrame(() => errorRef.current?.focus());
     } finally { inFlight.current = false; setPending(false); }
   }
