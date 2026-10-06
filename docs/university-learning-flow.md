@@ -6,8 +6,9 @@ conversion tracking, private lead storage, localization and SEO stay intact.
 ## Learning and progress
 
 The default entry is `#start`. Five rover missions contain one demonstration
-and four assessed tasks. A task requires a successful simulated route and an
-explanation. Command limits count emitted actions, including actions in loops.
+and four assessed tasks. A task requires a successful simulated route. Completion is recorded immediately;
+a clear next-task action is shown beside the result. Binary reflection and
+prediction gates were removed from rover missions and all six lab challenges. Command limits count emitted actions, including actions in loops.
 Six further challenges assess PID, LiDAR, runtime, arm position, vertical thrust
 and gearing. They use bounded inputs and numerical criteria; these simplified
 models do not certify a physical robot.
@@ -64,7 +65,7 @@ missions, all six challenges, an infinite-loop timeout, SK/EN, inline chapter
 navigation, mobile layouts and transfer into a clean browser origin.
 
 The source Site is maintained separately. Its verified source revision is
-`3000f9f6231fba25973a37d86c073989472db7ab`. Its exporter scopes CSS and copies
+`d47b84a`. Its exporter scopes CSS and copies
 the application into `src/components/robotics-university`; preserve the native
 wrapper, feedback/support components and integration stylesheet on export.
 
