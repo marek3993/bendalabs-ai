@@ -16,7 +16,7 @@ export default function AutomationPreview({ initialTab = "nastup" }: { initialTa
   const [position, setPosition] = useState("Vedúca tímu");
   const [emailOpen, setEmailOpen] = useState(false);
 
-  return <div className="auto-preview" id="ukazka">
+  return <div className="auto-preview">
     <div className="auto-preview-bar"><span><i aria-hidden="true" /> Dashboard</span><span className="auto-demo-tag">Ukážka systému</span></div>
     <div className="auto-preview-heading"><div><span className="auto-micro">DASHBOARD</span><h2>Dokumenty a príležitosti</h2></div><span className="auto-avatar" aria-hidden="true">B</span></div>
     <div className="auto-preview-tabs" role="tablist" aria-label="Príklady použitia systému">
