@@ -64,6 +64,10 @@ missions, all six challenges, an infinite-loop timeout, SK/EN, inline chapter
 navigation, mobile layouts and transfer into a clean browser origin.
 
 The source Site is maintained separately. Its verified source revision is
-`64df5578003a433d988a57c438b83f3c42c817f3`. Its exporter scopes CSS and copies
+`3000f9f6231fba25973a37d86c073989472db7ab`. Its exporter scopes CSS and copies
 the application into `src/components/robotics-university`; preserve the native
 wrapper, feedback/support components and integration stylesheet on export.
+
+The rover runner iframe mounts after client hydration. A cold production load
+was verified through the demo, the first assessed task and the next-task action;
+it must not depend on an iframe load event emitted before React attaches.
