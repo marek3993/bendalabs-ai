@@ -52,16 +52,16 @@ export default function AutomationConfigurator({ initialModules }: { initialModu
   return <section className="auto-intake" id="konfigurator" aria-labelledby="intake-heading">
     <p className="bl-eyebrow">Začnime vašou situáciou</p>
     <h2 id="intake-heading">Čo potrebujete vyriešiť?</h2>
-    <p className="auto-intake-lead">Napíšte pár viet. Vašu situáciu zanalyzujem a ozvem sa s návrhom ďalšieho postupu.</p>
+    <p className="auto-intake-lead">Napíšte pár viet. Vašu situáciu zanalyzujeme a ozveme sa s návrhom ďalšieho postupu.</p>
     {success ? <div className="auto-success" id="automation-success" role="status" tabIndex={-1}>
       <span aria-hidden="true">✓</span><h3>Vaša situácia je odoslaná.</h3>
-      <p>Ďakujem. Pozriem sa na váš opis a ozvem sa na uvedený e-mail.</p>
+      <p>Ďakujeme. Pozrieme sa na váš opis a ozveme sa na uvedený e-mail.</p>
       <p>Odoslaním ste si nič neobjednali. Prípadnú realizáciu a cenu si dohodneme osobitne.</p>
     </div> : <form className="auto-intake-form" onSubmit={submit} aria-busy={pending}>
       <div className="auto-form-fields">
         <label htmlFor="automation-situation">Vaša situácia v krátkosti<textarea id="automation-situation" name="situation" required minLength={10} maxLength={1200} rows={3} placeholder={jobs ? "Napr. sme elektroinštalačná firma v Bratislave a zákazky dnes hľadáme ručne na viacerých portáloch…" : "Napr. pri každom novom zamestnancovi prepisujeme tie isté údaje do zmluvy aj ďalších formulárov…"} /></label>
         <label htmlFor="automation-email">E-mail na odpoveď<input id="automation-email" name="email" required type="email" maxLength={180} autoComplete="email" placeholder="vas@email.sk" /></label>
-        <label htmlFor="automation-name">Meno <span className="auto-optional">nepovinné</span><input id="automation-name" name="name" maxLength={120} autoComplete="name" placeholder="Ako vás mám osloviť?" /></label>
+        <label htmlFor="automation-name">Meno <span className="auto-optional">nepovinné</span><input id="automation-name" name="name" maxLength={120} autoComplete="name" placeholder="Ako vás máme osloviť?" /></label>
         <label className="auto-honeypot" aria-hidden="true">Nechajte prázdne<input name="company" tabIndex={-1} autoComplete="off" /></label>
       </div>
       {error && <p ref={errorRef} className="bl-form-error" role="alert" tabIndex={-1}>{error}</p>}

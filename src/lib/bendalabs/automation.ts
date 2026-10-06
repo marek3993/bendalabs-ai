@@ -11,9 +11,9 @@ export const automationModules = [
   {
     id: "prilezitosti", number: "02", title: "AI vyhľadávanie zákaziek", shortTitle: "Príležitosti",
     setup: 350, monthly: 30, totalSetup: 500, totalMonthly: 49.5,
-    description: "AI každý deň prejde dohodnuté weby a portály. Vyberie vhodné zákazky, zhrnie zadanie, dohľadá dostupné kontakty a pripraví prvý e-mail. Vy si vyberiete, koho oslovíte.",
+    description: "AI každý deň prehľadáva internet a hľadá nové zákazky pre vašu firmu. Vyberie vhodné zákazky, zhrnie zadanie, dohľadá dostupné kontakty a pripraví prvý e-mail. Vy si vyberiete, koho oslovíte.",
     input: "Váš odbor, región a typ zákaziek", output: "Relevantné príležitosti v jednom prehľade",
-    benefits: ["Denné hľadanie na weboch a portáloch vybraných pre váš odbor", "Výber najvhodnejších nájdených zákaziek podľa vašich kritérií", "Stručný opis, dostupné podmienky, dohľadaný kontakt a zdroj", "Prvý e-mail pripravený AI podľa zákazky a služieb vašej firmy"],
+    benefits: ["Denné prehľadávanie internetu — vhodné zdroje nájdeme my", "Výber najvhodnejších nájdených zákaziek podľa vašich kritérií", "Stručný opis, dostupné podmienky, dohľadaný kontakt a zdroj", "Prvý e-mail pripravený AI podľa zákazky a služieb vašej firmy"],
     question: "Aké zákazky a v akom regióne hľadáte?", placeholder: "Napr. elektroinštalácie pre firmy, západné Slovensko…",
     choiceDescription: "Vyhľadanie zákaziek a príprava oslovovacích e-mailov",
   },

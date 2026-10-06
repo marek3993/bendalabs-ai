@@ -45,9 +45,9 @@ export function Header({ locale = "sk", contactHref }: { locale?: SiteLocale; co
   </header>;
 }
 
-export function Footer({ locale = "sk" }: { locale?: SiteLocale }) {
+export function Footer({ locale = "sk", showPersonalName = true }: { locale?: SiteLocale; showPersonalName?: boolean }) {
   const root = locale === "sk" ? "" : `/${locale}`;
-  return <footer className="bl-footer"><div className="bl-wrap bl-footer-inner"><span>© {new Date().getFullYear()} BendaLabs · Marek Benda</span><nav aria-label={locale === "en" ? "Footer links" : locale === "cs" ? "Odkazy v zápatí" : "Odkazy v pätičke"}><Link href={`${root}/labs`}>BendaLabs</Link><Link href={`${root}/robotics`}>BendaRobotics</Link><Link href={pagePath("university", locale === "en" ? "en" : "sk")}>{locale === "en" ? "Robotics University" : "Robotická univerzita"}</Link><a href="mailto:info@bendalabs.sk">info@bendalabs.sk</a></nav></div></footer>;
+  return <footer className="bl-footer"><div className="bl-wrap bl-footer-inner"><span>© {new Date().getFullYear()} BendaLabs{showPersonalName ? " · Marek Benda" : ""}</span><nav aria-label={locale === "en" ? "Footer links" : locale === "cs" ? "Odkazy v zápatí" : "Odkazy v pätičke"}><Link href={`${root}/labs`}>BendaLabs</Link><Link href={`${root}/robotics`}>BendaRobotics</Link><Link href={pagePath("university", locale === "en" ? "en" : "sk")}>{locale === "en" ? "Robotics University" : "Robotická univerzita"}</Link><a href="mailto:info@bendalabs.sk">info@bendalabs.sk</a></nav></div></footer>;
 }
 
 export function PageShell({ locale = "sk", children, contactHref }: { locale?: SiteLocale; dark?: boolean; children: ReactNode; contactHref?: string }) {
