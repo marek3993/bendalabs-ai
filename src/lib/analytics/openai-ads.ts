@@ -1,40 +1,46 @@
 "use client";
 
-// Pixel setup: https://developers.openai.com/ads/measurement-pixel
-// Keep empty until a real pixel has been created in this advertiser's account.
 export const openAiAdsPixelId = process.env.NEXT_PUBLIC_OPENAI_ADS_PIXEL_ID?.trim();
-type PixelQueue = ((...args: unknown[]) => void) & { q?: unknown[][] };
-declare global { interface Window { oaiq?: PixelQueue } }
-let initialized = false;
 let consented = false;
+let frame: HTMLIFrameElement | undefined;
+let ready = false;
+const pending: string[] = [];
 const sentEvents = new Set<string>();
+
+function send(message: object) {
+  frame?.contentWindow?.postMessage(message, window.location.origin);
+}
 
 export function setOpenAiAdsConsent(granted: boolean) {
   if (!openAiAdsPixelId || typeof window === "undefined") return;
   consented = granted;
-  if (!initialized && granted) {
-    if (!window.oaiq) {
-      const queue: PixelQueue = (...args: unknown[]) => { queue.q?.push(args); };
-      queue.q = [];
-      window.oaiq = queue;
-      const script = document.createElement("script");
-      script.async = true;
-      script.src = "https://bzrcdn.openai.com/sdk/oaiq.min.js";
-      document.head.appendChild(script);
-    }
-    window.oaiq("consent", false);
-    window.oaiq("init", { pixelId: openAiAdsPixelId });
-    initialized = true;
+  if (!frame && granted) {
+    // Keep automatic form matching away from customer input fields.
+    frame = document.createElement("iframe");
+    frame.hidden = true;
+    frame.title = "Meranie účinnosti reklamy";
+    const url = new URL("/api/ads-pixel", window.location.origin);
+    const oppref = new URL(window.location.href).searchParams.get("oppref");
+    if (oppref) url.searchParams.set("oppref", oppref);
+    frame.src = url.href;
+    window.addEventListener("message", event => {
+      if (event.origin !== window.location.origin || event.source !== frame?.contentWindow || event.data?.kind !== "pixel-ready") return;
+      ready = true;
+      send({ kind: "consent", granted: consented });
+      if (consented) for (const eventId of pending.splice(0)) send({ kind: "lead", eventId });
+      else pending.length = 0;
+    });
+    document.body.appendChild(frame);
   }
-  if (initialized) window.oaiq?.("consent", granted);
+  if (!granted) pending.length = 0;
+  if (ready) send({ kind: "consent", granted });
 }
 
 export function measureAutomationLead(eventId: unknown) {
-  if (!consented || !initialized || typeof eventId !== "string" || !eventId || sentEvents.has(eventId)) return;
-  // The API returns this id only for a persisted request, never for spam or errors.
-  // A lead is not a paid order: no invented purchase value or personal data.
+  if (!consented || !frame || typeof eventId !== "string" || !eventId || sentEvents.has(eventId)) return;
   try {
-    window.oaiq?.("measure", "lead_created", { type: "customer_action" }, { event_id: eventId });
     sentEvents.add(eventId);
-  } catch { /* Measurement must never prevent a successful form submission. */ }
+    if (ready) send({ kind: "lead", eventId });
+    else pending.push(eventId);
+  } catch { /* Measurement must never prevent a successful submission. */ }
 }
