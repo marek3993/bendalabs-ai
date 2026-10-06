@@ -432,3 +432,5 @@
 .auto-measurement-consent { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: #65705e; line-height: 1.6; margin-top: 18px; }
 .auto-measurement-consent input { margin-top: 4px; flex-shrink: 0; }
 .auto-measurement-consent a { text-decoration: underline; }
+
+.auto-intake .auto-form-fields > label { margin-bottom: 0; }

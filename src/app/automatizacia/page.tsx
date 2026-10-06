@@ -45,7 +45,7 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
     <main id="main">
       <section className="auto-hero bl-wrap">
         <div className="auto-hero-copy"><p className="auto-kicker">BENDA LABS / ONLINE DASHBOARD NA MIERU</p>
-          <h1>{jobs ? <>Zákazky pre váš odbor.<span>Prvé oslovenie pripravené.</span></> : docs ? <>Zmluvy a dodatky<span>z údajov, ktoré už máte.</span></> : <>Vlastný online dashboard.<span>Podľa potrieb vašej firmy.</span></>}</h1>
+          <h1>{jobs ? <>Zákazky pre váš odbor. <span>Prvé oslovenie pripravené.</span></> : docs ? <>Zmluvy a dodatky <span>z údajov, ktoré už máte.</span></> : <>Vlastný online dashboard. <span>Podľa potrieb vašej firmy.</span></>}</h1>
           <p className="auto-lead">{jobs ? "Príležitosti podľa odboru a regiónu, dostupné kontakty a návrhy e-mailov na jednom mieste." : docs ? "Údaje uložíte raz. Zmluvy, dodatky a nástupné dokumenty pripravíte z vlastných firemných vzorov." : "Zmluvy, dokumenty alebo vyhľadávanie zákaziek v jednom prehľadnom systéme v prehliadači."}</p>
           <p className="auto-custom-note">Dashboard nastavím a upravím presne pre vás — od obrazoviek a funkcií až po vaše šablóny a pracovné postupy.</p>
           <div className="auto-hero-actions"><a className="bl-button" href="#konfigurator">Opísať moju situáciu <Arrow /></a><a className="bl-text-link" href="#ukazka">Pozrieť ukážku dashboardu</a></div>
