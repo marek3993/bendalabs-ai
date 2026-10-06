@@ -9,8 +9,9 @@ The default entry is `#start`. Five rover missions contain one demonstration
 and four assessed tasks. A task requires a successful simulated route. Completion is recorded immediately;
 a clear next-task action is shown beside the result. Binary reflection and
 prediction gates were removed from rover missions and all six lab challenges. Command limits count emitted actions, including actions in loops.
-Six further challenges assess PID, LiDAR, runtime, arm position, vertical thrust
-and gearing. They use bounded inputs and numerical criteria; these simplified
+Five parameter challenges assess PID, LiDAR, runtime, arm position and gearing.
+A sixth challenge simulates vertical drone landings, first at 1 kg and then
+with a 0.4 kg payload. They use bounded inputs and numerical criteria; these simplified
 models do not certify a physical robot.
 
 `robotics-journey-v2` stores practical achievements; existing chapter quizzes
@@ -58,14 +59,14 @@ node scripts/university-learning-journey.mjs
 npx tsc --noEmit
 ```
 
-The learning-journey regression has 64 independent checks, including continuous
+The learning-journey regression has 67 independent checks, including continuous
 collision geometry, invalid starts, command-budget boundaries, challenge
 solutions and progress validation. Browser verification covers all five rover
 missions, all six challenges, an infinite-loop timeout, SK/EN, inline chapter
 navigation, mobile layouts and transfer into a clean browser origin.
 
 The source Site is maintained separately. Its verified source revision is
-`5da908d`. Its exporter scopes CSS and copies
+`aaf05b7`. Its exporter scopes CSS and copies
 the application into `src/components/robotics-university`; preserve the native
 wrapper, feedback/support components and integration stylesheet on export.
 
@@ -84,3 +85,20 @@ Numerical criteria, quiz answer keys, sources and safety guidance remain intact.
 
 The source TypeScript check and both production builds passed. The revised
 mission-four hint was checked in Slovak and English in the browser.
+
+## Drone landing exercise
+
+Replaces the static tilted-force task at every entry point with animated vertical
+flight. Throttle changes actual height and velocity; ground contact records the
+impact speed before stopping. Landings at or below 0.8 m/s earn the existing
+vertical-flight skill. Legacy progress never displays a landing verdict.
+The next action opens the payload task, then the flight chapter.
+
+The bounded model uses motor lag, 120 Hz substeps and half-speed playback.
+Hidden tabs pause automatically; pausing preserves velocity and motor state.
+Equations and model limitations are optional below the controls. The detailed
+thrust/tilt experiment remains available separately.
+
+Verified with 67 independent checks and browser interaction: hard impact, pause,
+keyboard throttle, a 0.65 m/s landing, continuation to the 1.4 kg task, and mobile
+visibility of the drone/pad and brake controls.

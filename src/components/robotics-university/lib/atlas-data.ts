@@ -10,5 +10,5 @@ export const categories=[
  {id:'code',sk:'Kód a riadenie',en:'Code & control',subSk:'Od algoritmu k správaniu',subEn:'From algorithms to behaviour',icon:Code2,color:'#b8b5e7'},
  {id:'building',sk:'Elektronika a stavba',en:'Electronics & building',subSk:'Z komponentov celok',subEn:'Turn components into a system',icon:CircuitBoard,color:'#dcab92'},
 ];
-export const labNames={code:{sk:'Naprogramuj rover',en:'Program a rover'},pid:{sk:'Vylaď PID regulátor',en:'Tune a PID controller'},lidar:{sk:'Preskúmaj meranie LiDARom',en:'Explore LiDAR measurements'},power:{sk:'Navrhni napájanie',en:'Design the power system'},kinematics:{sk:'Nastav polohu ramena',en:'Position the robotic arm'},drone:{sk:'Udrž dron vo vzduchu',en:'Keep a drone airborne'},motors:{sk:'Preskúmaj moment a prevod',en:'Explore torque and gearing'}};
+export const labNames={code:{sk:'Naprogramuj rover',en:'Program a rover'},pid:{sk:'Vylaď PID regulátor',en:'Tune a PID controller'},lidar:{sk:'Preskúmaj meranie LiDARom',en:'Explore LiDAR measurements'},power:{sk:'Navrhni napájanie',en:'Design the power system'},kinematics:{sk:'Nastav polohu ramena',en:'Position the robotic arm'},drone:{sk:'Pristaň s dronom',en:'Land a drone'},motors:{sk:'Preskúmaj moment a prevod',en:'Explore torque and gearing'}};
 export type LabId=keyof typeof labNames;

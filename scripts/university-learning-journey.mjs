@@ -139,9 +139,9 @@ test('command validator rejects invalid, nonfinite and excessive streams', () =>
 
 const solutions = {
   pid:{p:4,i:0,d:3}, lidar:{x:120,y:325}, power:{ah:3.4,computer:6},
-  kinematics:{a:60,b:-60}, drone:{throttle:89}, motors:{ratio:15},
+  kinematics:{a:60,b:-60}, motors:{ratio:15},
 };
-test('exactly six practical challenges have independent fixtures', () => assert.deepEqual(Object.keys(challenges).sort(), Object.keys(solutions).sort()));
+test('five parameter challenges have independent fixtures', () => assert.deepEqual(Object.keys(challenges).sort(), Object.keys(solutions).sort()));
 for (const [id, def] of Object.entries(challenges)) {
   test(`${id}: initial values do not pass`, () => assert.equal(evaluateChallenge(id,Object.fromEntries(def.controls.map(c=>[c.id,c.initial]))).passed,false));
   test(`${id}: independently calculated valid solution passes`, () => assert.equal(evaluateChallenge(id,solutions[id]).passed,true));
@@ -189,8 +189,6 @@ test('tilted drone solution balances vertical thrust but retains lateral acceler
   close(throttle,89.04677757813766);
   const r=sim.droneEstimate(1.4,5,throttle,30);
   close(r.acceleration,0); close(r.horizontalAcceleration,9.81*Math.tan(Math.PI/6));
-  assert.equal(evaluateChallenge('drone',{throttle}).passed,true);
-  assert.equal(evaluateChallenge('drone',{throttle:-throttle}).passed,false);
 });
 test('motor design must satisfy both torque and output-speed requirements', () => {
   const r=sim.motorSizing(.5,.2,.2,15,80,3000);
@@ -205,5 +203,60 @@ test('progress separates demo, deduplicates mastery, and rejects unknown entries
   assert.deepEqual(mergeJourney(parseJourney({missions:['turn'],demo:true}),parseJourney({missions:['turn','slalom'],challenges:['lidar']})),{missions:['turn','slalom'],challenges:['lidar'],demo:true});
 });
 
+const flight = loadSource(path.join(root, 'lib/drone-landing.ts'));
+test('landing: hover remains airborne for both masses and does not earn a landing',()=>{
+  for(const mass of [1,1.4]){
+    let s={...flight.createFlight(mass),phase:'flying'};
+    for(let i=0;i<600;i++)s=flight.advanceFlight(s,flight.balanceThrottle(mass),mass,1/60);
+    close(s.height,6,1e-8);close(s.velocity,0,1e-8);assert.equal(s.phase,'flying');
+  }
+});
+test('landing: zero thrust follows analytical free fall',()=>{
+  let s={...flight.createFlight(1),phase:'flying',thrust:0};
+  for(let i=0;i<120;i++)s=flight.advanceFlight(s,0,1,1/120);
+  close(s.height,6-9.81/2,1e-8);close(s.velocity,-9.81,1e-8);
+});
+test('landing: braking reduces descent speed without teleporting or reversing immediately',()=>{
+  const s={...flight.createFlight(1),phase:'flying',velocity:-2};
+  const r=flight.advanceFlight(s,90,1,.1);
+  assert.ok(r.velocity>-2&&r.velocity<0);assert.ok(r.height<s.height);assert.ok(r.thrust>s.thrust&&r.thrust<16.2);
+});
+test('landing: first-contact speed determines success including the threshold',()=>{
+  for(const [velocity,phase] of [[-.4,'landed'],[-.8,'landed'],[-.801,'hard'],[-3,'hard']]){
+    const s={...flight.createFlight(1),phase:'flying',height:.001,velocity};
+    const r=flight.advanceFlight(s,flight.balanceThrottle(1),1,.02);
+    assert.equal(r.phase,phase);close(r.impact,Math.abs(velocity),1e-8);assert.equal(r.height,0);assert.equal(r.velocity,0);
+    assert.strictEqual(flight.advanceFlight(r,100,1,.1),r);
+  }
+});
+test('landing: independently calculated feedback controller lands both payloads',()=>{
+  for(const mass of [1,1.4]){
+    let s={...flight.createFlight(mass),phase:'flying'};
+    for(let i=0;i<3600&&s.phase==='flying';i++){
+      const target=-Math.min(1.5,.45+s.height*.5);
+      const acceleration=2*(target-s.velocity);
+      const u=100*Math.sqrt(Math.max(0,mass*(9.81+acceleration)/20));
+      s=flight.advanceFlight(s,u,mass,1/60);
+    }
+    assert.equal(s.phase,'landed');assert.ok(s.impact<=flight.landingLimit&&s.impact>0);
+  }
+});
+test('landing: render step size does not change the trajectory',()=>{
+  const run=dt=>{let s={...flight.createFlight(1.4),phase:'flying'};for(let i=0;i<Math.round(2/dt);i++)s=flight.advanceFlight(s,80,1.4,dt);return s;};
+  const a=run(1/60),b=run(1/30);close(a.height,b.height,1e-8);close(a.velocity,b.velocity,1e-8);
+});
+test('landing: ready, paused and invalid frames cannot advance flight',()=>{
+  const initial=flight.createFlight(1);
+  assert.strictEqual(flight.advanceFlight(initial,0,1,.1),initial);
+  const paused={...initial,phase:'paused'};
+  assert.strictEqual(flight.advanceFlight(paused,0,1,.1),paused);
+  for(const args of [[NaN,1,.1],[70,0,.1],[70,1,NaN],[70,1,-1]]){const s={...initial,phase:'flying'};assert.strictEqual(flight.advanceFlight(s,...args),s);}
+  assert.deepEqual(flight.createFlight(1),initial);
+});
+test('landing: ceiling and time limits produce failure, never success',()=>{
+  const initial={...flight.createFlight(1),phase:'flying'};
+  assert.equal(flight.advanceFlight({...initial,height:11.999,velocity:1},flight.balanceThrottle(1),1,.02).phase,'ceiling');
+  assert.equal(flight.advanceFlight({...initial,elapsed:59.99},flight.balanceThrottle(1),1,.02).phase,'timeout');
+});
 console.log(`\n${passed} passed; ${failures.length} failed. Source was read from ${root}.`);
 if(failures.length){console.error(JSON.stringify(failures,null,2));process.exitCode=1;}
