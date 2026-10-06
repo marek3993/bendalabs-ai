@@ -78,7 +78,7 @@ async function run() {
     const page = await browser.newPage({ viewport: { width, height: 950 } });
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(base + '/automatizacia?utm_source=openai&utm_medium=ads&utm_campaign=verification&utm_content=service&utm_term=documents&utm_id=test');
-    assert.match(await page.locator('h1').innerText(), /Vlastný online dashboard/);
+    assert.match(await page.locator('h1').innerText(), /AI pripraví dokumenty/);
     assert.equal(await page.locator('html').getAttribute('lang'), 'sk');
     assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'), 'https://bendalabs.sk/automatizacia');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal overflow');
@@ -113,10 +113,10 @@ async function run() {
     await page.locator('#automation-success').waitFor();
     for (const value of ['utm_source=openai', 'utm_term=documents', 'utm_id=test', 'Zachované podklady po chybe']) assert.ok(records.at(-1).message.includes(value), value);
     await page.goto(base + '/automatizacia?modul=prilezitosti');
-    assert.match(await page.locator('h1').innerText(), /Zákazky pre váš odbor/);
+    assert.match(await page.locator('h1').innerText(), /AI hľadá zákazky za vás/);
     assert.equal(await page.getByRole('tab', { name: 'Príležitosti', exact: true }).getAttribute('aria-selected'), 'true');
     await page.goto(base + '/automatizacia?modul=spracovanie');
-    assert.match(await page.locator('h1').innerText(), /Zmluvy a dodatky/);
+    assert.match(await page.locator('h1').innerText(), /Nahrajte doklad/);
     await page.close();
   }
   assert.deepEqual(errors, []);
