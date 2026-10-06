@@ -43,7 +43,7 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
     return `/automatizacia?${query.toString()}#konfigurator`;
   }
   return <div className="bl-site auto-site"><a href="#main" className="bl-skip">Prejsť na obsah</a>
-    <header className="auto-header"><div className="bl-wrap auto-header-inner"><Brand /><nav aria-label="Navigácia ponuky"><a href="#moduly">Služby a ceny</a><a href="#ako-to-funguje">Ako to funguje</a><a href="#ako-zacneme">Ako začneme</a></nav><a className="bl-button bl-button-small" href="#konfigurator">Opísať situáciu <Arrow /></a></div></header>
+    <header className="auto-header"><div className="bl-wrap auto-header-inner"><Brand /><nav aria-label="Navigácia ponuky"><a href="#moduly">Služby a ceny</a><a href="#ako-to-funguje">Ako to funguje</a><a href="#o-mne">Kto to pripraví</a></nav><a className="bl-button bl-button-small" href="#konfigurator">Opísať situáciu <Arrow /></a></div></header>
     <main id="main">
       <section className="auto-hero bl-wrap">
         <div className="auto-hero-copy"><p className="auto-kicker">BENDA LABS / AUTOMATIZÁCIA POMOCOU AI</p>
@@ -80,8 +80,9 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
         <div className="auto-email-example"><div className="auto-email-top"><span>Návrh e-mailu</span><span>Ukážka</span></div><dl><div><dt>K zákazke</dt><dd>Elektroinštalácia novej prevádzky</dd></div><div><dt>Predmet</dt><dd>Spolupráca na elektroinštalácii v Bratislave</dd></div></dl><div className="auto-email-body"><p>Dobrý deň,</p><p>zaujalo nás vaše zadanie elektroinštalácie novej prevádzky v Bratislave. Naša firma sa venuje elektroinštalačným prácam pre firemné priestory.</p><p>Radi by sme si prešli rozsah prác a požadovaný termín. Môžete nám, prosím, poslať bližšie podklady?</p><p>Ďakujeme,<br />tím vašej firmy</p></div><p className="auto-email-foot">Pripravené na kontrolu a odoslanie · fiktívny príklad</p></div>
       </div></section>
 
+      <section className="auto-founder bl-wrap" id="o-mne"><div className="auto-founder-id"><span className="auto-founder-mark" aria-hidden="true">MB</span><div><h2>Marek Benda</h2><p>Tvorca BendaLabs</p><a href="mailto:info@bendalabs.sk">info@bendalabs.sk</a><a href="tel:+421944388123">+421 944 388 123</a></div></div><div className="auto-founder-copy"><h3>Vaše zadanie prejdete priamo so mnou.</h3><p>V BendaLabs tvorím automatizácie pomocou AI. Ukážete mi dokument, ktorý ručne vypĺňate, alebo zákazku, akú chcete nájsť. Na tomto konkrétnom príklade navrhnem, čo za vás bude robiť AI a čo zostane na vašej kontrole.</p><p>Podobnej práci s dokladmi a zmluvami sa venujem aj v projekte Zmluvomat. Výsledný systém nastavím podľa potrieb vašej firmy a ukážem vášmu tímu, ako ho používať.</p><Link href="/labs" className="bl-text-link">Pozrieť moje ďalšie projekty <Arrow /></Link></div></section>
       <div className="auto-final-cta bl-wrap"><h2>Začnime tým, čo dnes riešite.</h2><a className="bl-button" href="#konfigurator">Poslať krátky opis situácie <Arrow /></a></div>
       <section className="auto-faq bl-wrap"><div><p className="bl-eyebrow">Pred spoluprácou</p><h2>Časté otázky</h2></div><div>{faqs.map(([question, answer]) => <details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>
-    </main><Footer showPersonalName={false} />
+    </main><Footer />
   </div>;
 }
