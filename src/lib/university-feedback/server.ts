@@ -19,7 +19,7 @@ function getConfiguration() {
   } catch { return null; }
 }
 
-async function callFeedbackService(body: Record<string, unknown>): Promise<{ status: number; data: Record<string, unknown> } | null> {
+export async function callFeedbackService(body: Record<string, unknown>): Promise<{ status: number; data: Record<string, unknown> } | null> {
   const config = getConfiguration();
   if (!config) return null;
   try {

@@ -1,0 +1,6 @@
+'use client';
+import {useState,Fragment} from 'react';
+import content from '@/components/robotics-university/lib/lesson-journey.json';
+import type {Lang} from '@/components/robotics-university/lib/atlas-data';
+export function Glossary({lang}:{lang:Lang}){return <details className="lesson-glossary"><summary>{lang==='sk'?'Slovník · vysvetliť odborné názvy':'Glossary · explain technical terms'}</summary><div>{content.glossary.map(g=><details key={g.id}><summary>{g.term[lang]}</summary><p>{g.definition[lang]}</p></details>)}</div></details>;}
+export function GlossaryText({text,lang}:{text:string;lang:Lang}){const [open,setOpen]=useState<string|null>(null);const terms=content.glossary.filter(g=>text.toLocaleLowerCase().includes(g.term[lang].split(' ·')[0].toLocaleLowerCase()));if(!terms.length)return <>{text}</>;const pattern=new RegExp('('+terms.map(g=>g.term[lang].split(' ·')[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).sort((a,b)=>b.length-a.length).join('|')+')','gi');return <>{text.split(pattern).map((part,i)=>{const g=terms.find(g=>g.term[lang].toLocaleLowerCase()===part.toLocaleLowerCase());return g?<Fragment key={i}><button className="glossary-term" aria-expanded={open===g.id} onClick={()=>setOpen(open===g.id?null:g.id)}>{part}</button>{open===g.id&&<span className="glossary-definition" role="note">{g.definition[lang]}</span>}</Fragment>:part;})}</>;}

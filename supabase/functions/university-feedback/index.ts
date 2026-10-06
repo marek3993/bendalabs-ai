@@ -19,7 +19,7 @@ export async function authorized(key: string | null, expectedHash = EXPECTED_KEY
 async function bodyJson(request: Request): Promise<Record<string, unknown> | null> {
   if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return null;
   const length = request.headers.get("content-length");
-  if (length && (!/^\d+$/.test(length) || Number(length) > 16_000)) return null;
+  if (length && (!/^\d+$/.test(length) || Number(length) > 32_000)) return null;
   if (!request.body) return null;
   const reader = request.body.getReader();
   let size = 0;
@@ -29,7 +29,7 @@ async function bodyJson(request: Request): Promise<Record<string, unknown> | nul
       const { done, value } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > 16_000) { await reader.cancel(); return null; }
+      if (size > 32_000) { await reader.cancel(); return null; }
       parts.push(value);
     }
     const bytes = new Uint8Array(size);
@@ -60,6 +60,50 @@ export async function handler(request: Request): Promise<Response> {
   const input = await bodyJson(request);
   if (!input) return reply({ error: "invalid" }, 400);
   try {
+    if (input.action === "support-submit") {
+      const support = input.support as Record<string, unknown> | null;
+      const control = /[\u0000-\u001f\u007f]/;
+      if (!support || typeof support !== "object" || Array.isArray(support)
+        || typeof support.submissionId !== "string" || !UUID.test(support.submissionId)
+        || (support.kind !== "question" && support.kind !== "project") || (support.lang !== "sk" && support.lang !== "en")
+        || typeof support.name !== "string" || support.name.length > 100 || control.test(support.name)
+        || typeof support.email !== "string" || support.email.length > 254 || control.test(support.email) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(support.email.trim())
+        || typeof support.projectUrl !== "string" || support.projectUrl.length > 2000 || control.test(support.projectUrl)
+        || typeof support.message !== "string" || support.message.length > 4000 || support.message.trim().length < 20 || /\u0000/.test(support.message)
+        || support.consent !== true
+        || typeof input.actorHash !== "string" || !/^[0-9a-f]{64}$/.test(input.actorHash)) return reply({ error: "invalid" }, 400);
+      let projectUrl = support.projectUrl.trim();
+      if (projectUrl) {
+        let url: URL;
+        try { url = new URL(projectUrl); } catch { return reply({ error: "invalid" }, 400); }
+        if (url.protocol !== "https:" || url.username || url.password || !url.hostname || url.toString().length > 2000) return reply({ error: "invalid" }, 400);
+        projectUrl = url.toString();
+      }
+      const response = await database("rpc/university_submit_support", { method: "POST", body: JSON.stringify({ p_submission_id: support.submissionId, p_kind: support.kind, p_lang: support.lang, p_name: support.name.trim(), p_email: support.email.trim(), p_project_url: projectUrl, p_message: support.message.trim(), p_consent: true, p_actor_hash: input.actorHash }) });
+      const outcome: unknown = await response.json();
+      if (outcome === "stored" || outcome === "duplicate") return reply({ ok: true });
+      if (outcome === "rate_limited") return reply({ error: "rate_limited" }, 429);
+      if (outcome === "invalid" || outcome === "conflict") return reply({ error: "invalid" }, outcome === "conflict" ? 409 : 400);
+      return reply({ error: "unavailable" }, 503);
+    }
+    if (input.action === "support-list") {
+      if (typeof input.kind !== "string" || !["all", "question", "project"].includes(input.kind) || typeof input.status !== "string" || !["all", "new", "reviewed"].includes(input.status)
+        || !Number.isInteger(input.page) || Number(input.page) < 1 || Number(input.page) > 10_000) return reply({ error: "invalid" }, 400);
+      const query = new URLSearchParams({ select: "submission_id,kind,lang,name,email,project_url,message,created_at,status", order: "created_at.desc,submission_id.desc", limit: "25", offset: String((Number(input.page) - 1) * 25) });
+      if (input.kind !== "all") query.set("kind", `eq.${input.kind}`);
+      if (input.status !== "all") query.set("status", `eq.${input.status}`);
+      const response = await database(`university_student_support?${query}`, { headers: { prefer: "count=exact" } });
+      const total = Number(response.headers.get("content-range")?.split("/")[1]);
+      if (!Number.isFinite(total)) return reply({ error: "unavailable" }, 503);
+      return reply({ rows: await response.json(), total });
+    }
+    if (input.action === "support-review") {
+      if (typeof input.submissionId !== "string" || !UUID.test(input.submissionId)) return reply({ error: "invalid" }, 400);
+      const query = new URLSearchParams({ submission_id: `eq.${input.submissionId}`, select: "submission_id" });
+      const response = await database(`university_student_support?${query}`, { method: "PATCH", headers: { prefer: "return=representation" }, body: JSON.stringify({ status: "reviewed", reviewed_at: new Date().toISOString() }) });
+      const rows = await response.json();
+      return Array.isArray(rows) && rows.length === 1 ? reply({ ok: true }) : reply({ error: "invalid" }, 404);
+    }
     if (input.action === "submit") {
       const feedback = input.feedback as Record<string, unknown> | null;
       if (!feedback || typeof feedback !== "object" || Array.isArray(feedback)

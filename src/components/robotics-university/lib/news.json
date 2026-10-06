@@ -1,8 +1,89 @@
 [
   {
+    "id": "mit-aquabot",
+    "date": "2026-09-29",
+    "category": "motion",
+    "title": {
+      "sk": "Tenký robot pláva pomocou svalových buniek",
+      "en": "A thin robot swims using muscle cells"
+    },
+    "summary": {
+      "sk": "MIT predstavilo biohybridného plavca s dvoma plutvami riadenými svetlom. Stimuláciou svalových buniek výskumníci menili smer a rýchlosť v jednoduchom bludisku. Ukazuje, že robotický pohon môže mať aj inú podobu než elektromotor.",
+      "en": "MIT presented a biohybrid swimmer with two light-controlled fins. Stimulating muscle cells changed its speed and direction through a simple maze. It shows that robotic actuation can take forms beyond electric motors."
+    },
+    "status": {
+      "sk": "Výskumný prototyp.",
+      "en": "Research prototype."
+    },
+    "source": {
+      "title": "MIT News",
+      "url": "https://news.mit.edu/2026/powered-by-muscle-cells-paper-thin-robot-swims-through-watery-maze-0929"
+    },
+    "related": "motors",
+    "dateLabel": {
+      "sk": "29. 9. 2026",
+      "en": "29/09/2026"
+    }
+  },
+  {
+    "id": "mit-optics",
+    "date": "2026-09-17",
+    "category": "motion",
+    "title": {
+      "sk": "Robotické laboratórium si samo dolaďuje optiku",
+      "en": "A robotic laboratory tunes its own optics"
+    },
+    "summary": {
+      "sk": "Rameno, kamery a jemné motorické nastavovanie v systéme MIT zostavili laserovú dutinu a opravovali jej nastavenie po vyrušení. Spätná väzba spojila meranie výsledku s ďalším zásahom. Rovnaký základný princíp si môžeš vyskúšať v kapitole o regulácii.",
+      "en": "MIT combined an arm, cameras and fine motor adjustments to assemble a laser cavity and recover its alignment after disturbances. Feedback connected measurements to subsequent corrections. Explore that underlying principle in the control chapter."
+    },
+    "status": {
+      "sk": "Výskumná ukážka autonómneho optického experimentu.",
+      "en": "Research demonstration of an autonomous optics experiment."
+    },
+    "source": {
+      "title": "MIT News",
+      "url": "https://news.mit.edu/2026/robotic-lab-runs-optics-experiments-on-demand-0917"
+    },
+    "related": "loop",
+    "dateLabel": {
+      "sk": "17. 9. 2026",
+      "en": "17/09/2026"
+    }
+  },
+  {
+    "id": "mit-hardflow",
+    "date": "2026-09-14",
+    "category": "ai",
+    "title": {
+      "sk": "HardFlow pridáva generovaným plánom pevné obmedzenia",
+      "en": "HardFlow adds hard constraints to generated plans"
+    },
+    "summary": {
+      "sk": "Metóda MIT vedie predtrénované generatívne modely k riešeniam, ktoré rešpektujú zadané obmedzenia. Tím ju skúšal aj pri manipulácii a navigácii. Pri robotovi nestačí dosiahnuť cieľ: plán musí dodržať aj limity pohybu a prostredia.",
+      "en": "The MIT method guides pretrained generative models towards solutions that respect specified constraints. The team tested it on manipulation and navigation. Reaching the target is only part of a robot’s task: the plan must also respect motion and environmental limits."
+    },
+    "status": {
+      "sk": "Výskumná metóda; výsledky závisia od konkrétnej úlohy.",
+      "en": "Research method; results depend on the specific task."
+    },
+    "source": {
+      "title": "MIT News",
+      "url": "https://news.mit.edu/2026/new-method-enables-ai-safety-critical-situations-0914"
+    },
+    "related": "validation",
+    "dateLabel": {
+      "sk": "14. 9. 2026",
+      "en": "14/09/2026"
+    }
+  },
+  {
     "id": "gemini-robotics-2",
     "date": "2026-07-30",
-    "dateLabel": { "sk": "30. júla 2026", "en": "30 July 2026" },
+    "dateLabel": {
+      "sk": "30. júla 2026",
+      "en": "30 July 2026"
+    },
     "category": "ai",
     "title": {
       "sk": "Gemini Robotics 2 prepája pohyb celého tela s plánovaním",
@@ -19,12 +100,16 @@
     "source": {
       "title": "Google DeepMind",
       "url": "https://deepmind.google/blog/gemini-robotics-2-brings-whole-body-intelligence-to-robots/"
-    }
+    },
+    "related": "vla"
   },
   {
     "id": "ros2-lyrical",
     "date": "2026-05-22",
-    "dateLabel": { "sk": "22. mája 2026", "en": "22 May 2026" },
+    "dateLabel": {
+      "sk": "22. mája 2026",
+      "en": "22 May 2026"
+    },
     "category": "code",
     "title": {
       "sk": "ROS 2 Lyrical prináša podporu do roku 2031",
@@ -41,12 +126,16 @@
     "source": {
       "title": "Open Robotics · ROS 2 Release Team",
       "url": "https://discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021"
-    }
+    },
+    "related": "ros"
   },
   {
     "id": "px4-117",
     "date": "2026-05-18",
-    "dateLabel": { "sk": "18. mája 2026 · správa o vydaní", "en": "18 May 2026 · release announcement" },
+    "dateLabel": {
+      "sk": "18. mája 2026 · správa o vydaní",
+      "en": "18 May 2026 · release announcement"
+    },
     "category": "drones",
     "title": {
       "sk": "PX4 1.17 rozširuje riadenie cez ROS 2",
@@ -63,12 +152,16 @@
     "source": {
       "title": "PX4 Autopilot",
       "url": "https://px4.io/px4-autopilot-release-v1-17-what-you-need-to-know/"
-    }
+    },
+    "related": "autopilot"
   },
   {
     "id": "nvidia-reference-humanoid",
     "date": "2026-06-01",
-    "dateLabel": { "sk": "1. júna 2026", "en": "1 June 2026" },
+    "dateLabel": {
+      "sk": "1. júna 2026",
+      "en": "1 June 2026"
+    },
     "category": "ai",
     "title": {
       "sk": "NVIDIA predstavila referenčného humanoida pre výskum",
@@ -85,12 +178,16 @@
     "source": {
       "title": "NVIDIA",
       "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-NVIDIA-Isaac-GR00T-Reference-Humanoid-Robot-for-Academic-Research/default.aspx"
-    }
+    },
+    "related": "vla"
   },
   {
     "id": "bosch-bmi5",
     "date": "2026-01-01",
-    "dateLabel": { "sk": "CES 2026", "en": "CES 2026" },
+    "dateLabel": {
+      "sk": "CES 2026",
+      "en": "CES 2026"
+    },
     "category": "sensors",
     "title": {
       "sk": "Bosch BMI5 cieli na pohyb v náročných podmienkach",
@@ -107,12 +204,16 @@
     "source": {
       "title": "Bosch Sensortec",
       "url": "https://www.bosch-sensortec.com/en/news/from-immersive-xr-to-advanced-robotics-and-wearables-bosch-sensortec-launches-bmi5-motion-sensor-platform.html"
-    }
+    },
+    "related": "prototype"
   },
   {
     "id": "ti-bms-open-wire",
     "date": "2026-08-18",
-    "dateLabel": { "sk": "18. augusta 2026", "en": "18 August 2026" },
+    "dateLabel": {
+      "sk": "18. augusta 2026",
+      "en": "18 August 2026"
+    },
     "category": "power",
     "title": {
       "sk": "Diagnostika BMS musí odhaliť aj prerušený vodič",
@@ -129,6 +230,7 @@
     "source": {
       "title": "Texas Instruments · Open-Wire Detection in BMS Systems",
       "url": "https://www.ti.com/lit/pdf/SDAA369"
-    }
+    },
+    "related": "energy"
   }
 ]

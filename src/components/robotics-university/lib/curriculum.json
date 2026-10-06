@@ -9,7 +9,7 @@
       "en": "A robot as a control loop"
     },
     "summary": {
-      "sk": "Prepojte meranie, rozhodovanie a pohyb do systému, ktorý opravuje vlastné chyby.",
+      "sk": "Prepoj meranie, rozhodovanie a pohyb do systému, ktorý opravuje vlastné chyby.",
       "en": "Connect sensing, decisions, and motion into a system that corrects its own errors."
     },
     "sections": [
@@ -19,7 +19,7 @@
           "en": "What repeats inside the loop"
         },
         "body": {
-          "sk": "Robot pravidelne meria prostredie, odhaduje svoj stav a posiela príkazy pohonom. Senzor však neposkytuje celú pravdu: meranie obsahuje šum, oneskorenie a niekedy chýba. Preto odlišujte želanú hodnotu, nameranú hodnotu a príkaz motoru. Pri regulácii rýchlosti kolesa je cieľ v metroch za sekundu, meranie pochádza z enkodéra a výstup regulátora môže byť strieda PWM alebo požadovaný prúd.",
+          "sk": "Robot pravidelne meria prostredie, odhaduje svoj stav a posiela príkazy pohonom. Senzor však neposkytuje celú pravdu: meranie obsahuje šum, oneskorenie a niekedy chýba. Preto odlišuj želanú hodnotu, nameranú hodnotu a príkaz motoru. Pri regulácii rýchlosti kolesa je cieľ v metroch za sekundu, meranie pochádza z enkodéra a výstup regulátora môže byť strieda PWM alebo požadovaný prúd.",
           "en": "A robot repeatedly measures its surroundings, estimates its state, and sends commands to actuators. A sensor does not provide complete truth: measurements contain noise, delay, and occasional gaps. Distinguish the desired value, measured value, and motor command. For wheel speed control, the target is in metres per second, feedback comes from an encoder, and the controller output may be PWM duty cycle or requested current."
         }
       },
@@ -39,7 +39,7 @@
           "en": "How to judge the result"
         },
         "body": {
-          "sk": "Dobrý regulátor neposudzujte iba podľa konečnej polohy. Sledujte čas nábehu, maximálny prekmit, ustálenú chybu a reakciu na poruchu. Rovnakú skúšku zopakujte s iným zaťažením a zaznamenajte aj príkaz pohonu. Ak meraná rýchlosť kmitá, príčina môže byť v regulátore, mechanickej vôli alebo meraní. Najprv overte smer spätnej väzby a jednotky, až potom zvyšujte zosilnenie v ďalšom pokuse.",
+          "sk": "Dobrý regulátor neposudzuj iba podľa konečnej polohy. Sleduj čas nábehu, maximálny prekmit, ustálenú chybu a reakciu na poruchu. Rovnakú skúšku zopakuj s iným zaťažením a zaznamenaj aj príkaz pohonu. Ak meraná rýchlosť kmitá, príčina môže byť v regulátore, mechanickej vôli alebo meraní. Najprv over smer spätnej väzby a jednotky, až potom zvyšuj zosilnenie v ďalšom pokuse.",
           "en": "Do not judge a controller solely by its final position. Inspect rise time, maximum overshoot, steady-state error, and response to disturbances. Repeat the same experiment under a different load and record the actuator command too. Oscillating speed can come from controller tuning, mechanical backlash, or measurement problems. Verify feedback direction and units first, then increase gain in the next experiment."
         }
       }
@@ -52,7 +52,7 @@
       }
     },
     "practical": {
-      "sk": "V PID laboratóriu ponechajte Ki a Kd na nule a porovnajte odozvu pri menšom a väčšom Kp. Cieľová poloha je pevne 1 modelová jednotka; sledujte rýchlosť priblíženia a prekmit. Skúška s meniacou sa záťažou vyžaduje vlastný model alebo fyzický pohon.",
+      "sk": "V PID laboratóriu ponechaj Ki a Kd na nule a porovnaj odozvu pri menšom a väčšom Kp. Cieľová poloha je pevne 1 modelová jednotka; sleduj rýchlosť priblíženia a prekmit. Skúška s meniacou sa záťažou vyžaduje vlastný model alebo fyzický pohon.",
       "en": "In the PID lab, leave Ki and Kd at zero and compare responses with smaller and larger Kp. The position target is fixed at 1 model unit; inspect approach speed and overshoot. Testing changing loads requires your own model or a physical actuator."
     },
     "pitfall": {
@@ -102,7 +102,7 @@
       "en": "Units and coordinate frames"
     },
     "summary": {
-      "sk": "Zistite, prečo bod potrebuje rámec, čas a jednotky, aby dával robotu zmysel.",
+      "sk": "Zisti, prečo bod potrebuje rámec, čas a jednotky, aby dával robotu zmysel.",
       "en": "Learn why a point needs a frame, timestamp, and units to make sense to a robot."
     },
     "sections": [
@@ -112,7 +112,7 @@
           "en": "Coordinates always belong somewhere"
         },
         "body": {
-          "sk": "Bod s hodnotami 1, 0, 0 je neúplná informácia. Potrebujete vedieť jednotky, počiatok a orientáciu osí. Jeden meter pred kamerou nemusí byť jeden meter pred robotom, ak je kamera otočená. V bežných telesových rámcoch ROS smeruje x dopredu, y doľava a z nahor. Optické rámce kamier majú odlišnú konvenciu, preto vždy skontrolujte označenie rámca konkrétneho ovládača.",
+          "sk": "Bod s hodnotami 1, 0, 0 je neúplná informácia. Potrebuješ vedieť jednotky, počiatok a orientáciu osí. Jeden meter pred kamerou nemusí byť jeden meter pred robotom, ak je kamera otočená. V bežných telesových rámcoch ROS smeruje x dopredu, y doľava a z nahor. Optické rámce kamier majú odlišnú konvenciu, preto vždy skontroluj označenie rámca konkrétneho ovládača.",
           "en": "A point with values 1, 0, 0 is incomplete information. You need its units, origin, and axis orientation. One metre in front of a camera may not mean one metre ahead of the robot when the camera is rotated. Standard ROS body frames use x forward, y left, and z up. Camera optical frames follow a different convention, so check the driver's frame identifier."
         }
       },
@@ -122,7 +122,7 @@
           "en": "Transforming a position"
         },
         "body": {
-          "sk": "Transformácia medzi dvoma pevnými rámcami kombinuje rotáciu a posunutie. Rotácia zmení smer súradnicových osí, posunutie prenesie ich počiatok. Poradie operácií je dôležité a transformačné matice sa všeobecne nedajú prehadzovať. Pred zložitým výpočtom si overte jednoduchý prípad: kamera je dvadsať centimetrov pred stredom robota a pozerá rovnakým smerom. Bod pred kamerou musí byť v robotickom rámci posunutý o túto vzdialenosť.",
+          "sk": "Transformácia medzi dvoma pevnými rámcami kombinuje rotáciu a posunutie. Rotácia zmení smer súradnicových osí, posunutie prenesie ich počiatok. Poradie operácií je dôležité a transformačné matice sa všeobecne nedajú prehadzovať. Pred zložitým výpočtom si over jednoduchý prípad: kamera je dvadsať centimetrov pred stredom robota a pozerá rovnakým smerom. Bod pred kamerou musí byť v robotickom rámci posunutý o túto vzdialenosť.",
           "en": "A transform between two rigid frames combines rotation and translation. Rotation changes the axis directions, while translation moves the origin. Operation order matters, and transformation matrices generally cannot be exchanged freely. Before a complicated calculation, verify a simple case: a camera sits twenty centimetres ahead of the robot centre and faces the same direction. A point in camera coordinates must acquire that offset in robot coordinates."
         }
       },
@@ -132,7 +132,7 @@
           "en": "Local and global position"
         },
         "body": {
-          "sk": "Rámec odom poskytuje plynulý lokálny pohyb, ale jeho poloha môže postupne driftovať. Rámec map slúži ako dlhodobá referencia a lokalizácia v ňom môže skokovo opraviť chybu. Riadenie plynulého pohybu preto nemá slepo predpokladať, že globálna poloha nikdy neskočí. Pri spájaní meraní používajte transformáciu platnú v čase merania, pretože aktuálna poloha už môže byť pri pohybujúcom sa robotovi odlišná.",
+          "sk": "Rámec odom poskytuje plynulý lokálny pohyb, ale jeho poloha môže postupne driftovať. Rámec map slúži ako dlhodobá referencia a lokalizácia v ňom môže skokovo opraviť chybu. Riadenie plynulého pohybu preto nemá slepo predpokladať, že globálna poloha nikdy neskočí. Pri spájaní meraní používaj transformáciu platnú v čase merania, pretože aktuálna poloha už môže byť pri pohybujúcom sa robotovi odlišná.",
           "en": "The odom frame provides continuous local motion, but its position can drift over time. The map frame provides a long-term reference, and localisation may correct its estimate abruptly. Smooth motion control must therefore not assume that global coordinates never jump. When combining measurements, use the transform valid at the measurement time, because the current pose can already differ on a moving robot."
         }
       }
@@ -145,8 +145,8 @@
       }
     },
     "practical": {
-      "sk": "Nastav bod v senzore na (1; 0) m, posun senzora na (0,2; 0) m a potom otoč senzor z 0° na 90°. Porovnaj súradnice toho istého bodu v robotovi.",
-      "en": "Set the sensor point to (1, 0) m and sensor offset to (0.2, 0) m, then turn the sensor from 0° to 90°. Compare the same point’s coordinates in the robot frame."
+      "sk": "Meň polohu a natočenie senzora. Sleduj, kam sa bod zadaný v senzore premietne v rámci robota.",
+      "en": "Change the sensor position and orientation. Observe where the sensor-frame point maps in the robot frame."
     },
     "pitfall": {
       "sk": "Stupne a radiány sú rozdielne jednotky; názov premennej s uhlom ich musí jasne rozlišovať.",
@@ -203,7 +203,7 @@
       "en": "Time, sampling, and delay"
     },
     "summary": {
-      "sk": "Oddeľte frekvenciu slučky od veku dát a navrhnite reakciu na výpadok merania.",
+      "sk": "Oddeľ frekvenciu slučky od veku dát a navrhni reakciu na výpadok merania.",
       "en": "Separate loop frequency from data age and design a response to missing measurements."
     },
     "sections": [
@@ -213,7 +213,7 @@
           "en": "Frequency is not freshness"
         },
         "body": {
-          "sk": "Slučka spustená stokrát za sekundu nemusí stokrát dostať nové meranie. Môže opakovane spracovať tú istú snímku alebo staré dáta z rastúceho radu správ. Zapisujte čas vzniku merania aj čas spracovania. Rozdiel ukazuje vek dát, ktorý je pre riadenie často dôležitejší než priemerná frekvencia. Pri kamere započítajte expozíciu, prenos, dekódovanie aj čas výpočtu detekcie objektov v obraze.",
+          "sk": "Slučka spustená stokrát za sekundu nemusí stokrát dostať nové meranie. Môže opakovane spracovať tú istú snímku alebo staré dáta z rastúceho radu správ. Zapisuj čas vzniku merania aj čas spracovania. Rozdiel ukazuje vek dát, ktorý je pre riadenie často dôležitejší než priemerná frekvencia. Pri kamere započítaj expozíciu, prenos, dekódovanie aj čas výpočtu detekcie objektov v obraze.",
           "en": "A loop running one hundred times per second does not necessarily receive one hundred fresh measurements. It may process the same image repeatedly or consume old data from a growing queue. Record both acquisition and processing timestamps. Their difference reveals data age, which often matters more to control than average frequency. For cameras, include exposure, transfer, decoding, and object detection computation time."
         }
       },
@@ -223,7 +223,7 @@
           "en": "Discrete integration"
         },
         "body": {
-          "sk": "Digitálny regulátor pracuje v krokoch. Ak z rýchlosti odhadujete prejdenú dráhu, násobte ju skutočne uplynutým intervalom, nie predpokladanou konštantou pri nestabilnom časovaní. Príliš dlhý krok zhoršuje numerický odhad a môže zmeniť správanie regulátora. Vzorkovanie musí zachytiť relevantnú dynamiku; samotná Nyquistova hranica ešte nezaručuje dobrú reguláciu. Pred znížením frekvencie merania zvážte aj vhodný filter proti aliasingu signálu.",
+          "sk": "Digitálny regulátor pracuje v krokoch. Ak z rýchlosti odhaduješ prejdenú dráhu, násob ju skutočne uplynutým intervalom, nie predpokladanou konštantou pri nestabilnom časovaní. Príliš dlhý krok zhoršuje numerický odhad a môže zmeniť správanie regulátora. Vzorkovanie musí zachytiť relevantnú dynamiku; samotná Nyquistova hranica ešte nezaručuje dobrú reguláciu. Pred znížením frekvencie merania zváž aj vhodný filter proti aliasingu signálu.",
           "en": "A digital controller operates in steps. When estimating distance from speed, multiply by the actual elapsed interval rather than an assumed constant if timing is irregular. An excessively long step degrades numerical estimation and can change controller behaviour. Sampling must capture the relevant dynamics; satisfying the Nyquist limit alone does not ensure good control. Before reducing measurement frequency, also consider an appropriate antialiasing filter."
         }
       },
@@ -250,7 +250,7 @@
       "en": "Start at 1 m/s, 0.2 s delay and 1 m/s² deceleration. Double speed and observe total stopping distance. Then increase measurement age to the watchdog limit."
     },
     "pitfall": {
-      "sk": "Priemerné oneskorenie skrýva zriedkavé dlhé výpadky; sledujte aj maximum alebo vysoký percentil.",
+      "sk": "Priemerné oneskorenie skrýva zriedkavé dlhé výpadky; sleduj aj maximum alebo vysoký percentil.",
       "en": "Average delay hides occasional long stalls; inspect the maximum or a high percentile too."
     },
     "quiz": {
@@ -300,7 +300,7 @@
       "en": "From an image to a decision"
     },
     "summary": {
-      "sk": "Rozlišujte detekciu, geometriu a rozhodovanie; vysoké skóre modelu samo neurčuje bezpečný pohyb.",
+      "sk": "Rozlišuj detekciu, geometriu a rozhodovanie; vysoké skóre modelu samo neurčuje bezpečný pohyb.",
       "en": "Distinguish detection, geometry, and decisions; a high model score does not determine safe motion."
     },
     "sections": [
@@ -310,7 +310,7 @@
           "en": "What the model actually estimates"
         },
         "body": {
-          "sk": "Detektor objektov vracia kategórie, ohraničujúce obdĺžniky a skóre podľa svojho tréningu. Obdĺžnik v obraze ešte nie je trojrozmerná poloha uchopenia. Potrebujete kalibráciu kamery, informáciu o hĺbke alebo ďalšie geometrické predpoklady. Navyše názov triedy nehovorí nič spoľahlivé o hmotnosti či krehkosti predmetu. Výstup modelu preto používajte ako meranie s obmedzeniami, ktoré ďalšie časti systému musia overiť pred akciou.",
+          "sk": "Detektor objektov vracia kategórie, ohraničujúce obdĺžniky a skóre podľa svojho tréningu. Obdĺžnik v obraze ešte nie je trojrozmerná poloha uchopenia. Potrebuješ kalibráciu kamery, informáciu o hĺbke alebo ďalšie geometrické predpoklady. Navyše názov triedy nehovorí nič spoľahlivé o hmotnosti či krehkosti predmetu. Výstup modelu preto používaj ako meranie s obmedzeniami, ktoré ďalšie časti systému musia overiť pred akciou.",
           "en": "An object detector returns categories, bounding boxes, and scores according to its training. An image rectangle is not yet a three-dimensional grasp position. You need camera calibration, depth information, or additional geometric assumptions. A class label also provides no reliable information about an object's weight or fragility. Treat the model output as a measurement with limitations that other system components must check before acting."
         }
       },
@@ -320,17 +320,17 @@
           "en": "Accuracy has several meanings"
         },
         "body": {
-          "sk": "Pri rozpoznávaní prekážok sa pýtajte, koľko skutočných prekážok model zmeškal a koľko hlásení bolo falošných. Recall vyjadruje zachytený podiel pozitívnych prípadov, precision podiel správnych pozitívnych hlásení. Zmena prahu skóre zvyčajne mení obidve hodnoty. Pri zriedkavých prekážkach môže byť celková úspešnosť zavádzajúca: systém, ktorý stále hlási voľný priestor, môže vyzerať dobre, hoci v rozhodujúcej situácii úplne zlyhá.",
+          "sk": "Pri rozpoznávaní prekážok sa pýtaj, koľko skutočných prekážok model zmeškal a koľko hlásení bolo falošných. Recall vyjadruje zachytený podiel pozitívnych prípadov, precision podiel správnych pozitívnych hlásení. Zmena prahu skóre zvyčajne mení obidve hodnoty. Pri zriedkavých prekážkach môže byť celková úspešnosť zavádzajúca: systém, ktorý stále hlási voľný priestor, môže vyzerať dobre, hoci v rozhodujúcej situácii úplne zlyhá.",
           "en": "For obstacle detection, ask how many real obstacles the model missed and how many alarms were false. Recall measures the fraction of positive cases detected; precision measures the fraction of positive predictions that were correct. Changing the score threshold usually changes both. Overall accuracy can mislead when obstacles are rare: a system always predicting clear space may appear successful while failing in the crucial situation."
         }
       },
       {
         "title": {
-          "sk": "Testujte podmienky nasadenia",
+          "sk": "Testuj podmienky nasadenia",
           "en": "Test deployment conditions"
         },
         "body": {
-          "sk": "Vyhodnocovacie snímky oddeľte od tréningu podľa scény alebo záznamu, nie iba náhodným delením susedných políčok videa. Také políčka sú veľmi podobné a môžu nadhodnotiť schopnosť zovšeobecnenia. Skúste protisvetlo, rozmazanie pohybom, čiastočné zakrytie aj inú kameru. Výsledky rozdeľte podľa podmienok a merajte celý čas od expozície po rozhodnutie. Model, ktorý príde neskoro, môže byť pre pohyb nepoužiteľný.",
+          "sk": "Vyhodnocovacie snímky oddeľ od tréningu podľa scény alebo záznamu, nie iba náhodným delením susedných políčok videa. Také políčka sú veľmi podobné a môžu nadhodnotiť schopnosť zovšeobecnenia. Skús protisvetlo, rozmazanie pohybom, čiastočné zakrytie aj inú kameru. Výsledky rozdeľ podľa podmienok a meraj celý čas od expozície po rozhodnutie. Model, ktorý príde neskoro, môže byť pre pohyb nepoužiteľný.",
           "en": "Separate evaluation images from training by scene or recording, rather than randomly splitting neighbouring video frames. Adjacent frames are very similar and can inflate apparent generalisation. Test backlighting, motion blur, partial occlusion, and a different camera. Break results down by condition and measure the entire time from exposure to decision. A model that responds too late may be unusable for motion control."
         }
       }
@@ -397,7 +397,7 @@
       "en": "Learning from demonstrations and distribution shift"
     },
     "summary": {
-      "sk": "Pochopte behaviorálne klonovanie, kumuláciu chýb a návrh dôveryhodného vyhodnotenia.",
+      "sk": "Pochop behaviorálne klonovanie, kumuláciu chýb a návrh dôveryhodného vyhodnotenia.",
       "en": "Understand behavioural cloning, compounding errors, and credible evaluation."
     },
     "sections": [
@@ -423,11 +423,11 @@
       },
       {
         "title": {
-          "sk": "Vyhodnoťte celú epizódu",
+          "sk": "Vyhodnoť celú epizódu",
           "en": "Evaluate the complete episode"
         },
         "body": {
-          "sk": "Nízka chyba predikcie akcie v uloženom súbore nezaručuje úspešné dokončenie úlohy. Spustite celé epizódy a vopred definujte úspech, časový limit a podmienky prerušenia. Sledujte aj kolízie, počet zásahov človeka a schopnosť zastaviť pri neznámom stave. Výsledky uvádzajte s počtom pokusov a rozdelením scén. Niekoľko vydarených videí neukazuje, ako často politika zlyháva pri opakovanom nasadení na robotovi.",
+          "sk": "Nízka chyba predikcie akcie v uloženom súbore nezaručuje úspešné dokončenie úlohy. Spusti celé epizódy a vopred definuj úspech, časový limit a podmienky prerušenia. Sleduj aj kolízie, počet zásahov človeka a schopnosť zastaviť pri neznámom stave. Výsledky uvádzaj s počtom pokusov a rozdelením scén. Niekoľko vydarených videí neukazuje, ako často politika zlyháva pri opakovanom nasadení na robotovi.",
           "en": "Low action prediction error on recorded data does not guarantee task completion. Run full episodes and define success, time limits, and stopping conditions beforehand. Track collisions, human interventions, and the ability to stop in unfamiliar states. Report the number of trials and the distribution of scenes alongside results. A few successful videos do not reveal how often a policy fails during repeated robot deployment."
         }
       }
@@ -494,7 +494,7 @@
       "en": "Vision–language–action models"
     },
     "summary": {
-      "sk": "Preskúmajte prechod od jazykového zadania k robotickej akcii aj limity zovšeobecnenia.",
+      "sk": "Preskúmaj prechod od jazykového zadania k robotickej akcii aj limity zovšeobecnenia.",
       "en": "Explore the path from language instructions to robot actions and the limits of generalisation."
     },
     "sections": [
@@ -514,7 +514,7 @@
           "en": "Generalisation is not a guarantee"
         },
         "body": {
-          "sk": "Nový predmet, iné osvetlenie, posunutá kamera či odlišný uchopovač menia rozdelenie vstupov a dôsledky akcií. Výsledok benchmarku preto prenášajte iba na primerane podobné podmienky. Pri adaptácii skontrolujte orientáciu osí, normalizáciu akcií a význam otvorenia uchopovača. Model môže porozumieť pokynu, ale napriek tomu minúť predmet. Sémantické pochopenie a presná fyzická realizácia sú dve samostatné schopnosti, ktoré musíte merať.",
+          "sk": "Nový predmet, iné osvetlenie, posunutá kamera či odlišný uchopovač menia rozdelenie vstupov a dôsledky akcií. Výsledok benchmarku preto prenášaj iba na primerane podobné podmienky. Pri adaptácii skontroluj orientáciu osí, normalizáciu akcií a význam otvorenia uchopovača. Model môže porozumieť pokynu, ale napriek tomu minúť predmet. Sémantické pochopenie a presná fyzická realizácia sú dve samostatné schopnosti, ktoré musíš merať.",
           "en": "New objects, lighting, camera positions, or grippers change the input distribution and the consequences of actions. Transfer benchmark conclusions only to reasonably similar conditions. During adaptation, check axis orientation, action normalisation, and the meaning of gripper opening commands. A model may understand an instruction yet still miss the object. Semantic understanding and accurate physical execution are separate capabilities that must both be measured."
         }
       },
@@ -535,7 +535,7 @@
       "en": "Compare overall success with the weakest condition in the evaluation matrix. Clear the practice counts and enter your own trials; zero trials remains untested, not successful."
     },
     "pitfall": {
-      "sk": "Úspech na inom robotovi alebo benchmarku neurčuje úspešnosť vašej konfigurácie.",
+      "sk": "Úspech na inom robotovi alebo benchmarku neurčuje úspešnosť tvojej konfigurácie.",
       "en": "Success on another robot or benchmark does not establish success on your configuration."
     },
     "quiz": {
@@ -585,7 +585,7 @@
       "en": "LiDAR and range measurement"
     },
     "summary": {
-      "sk": "Premeňte čas letu na vzdialenosť a naučte sa čítať aj chýbajúce či nespoľahlivé odrazy.",
+      "sk": "Premeň čas letu na vzdialenosť a nauč sa čítať aj chýbajúce či nespoľahlivé odrazy.",
       "en": "Turn flight time into distance and learn to interpret missing or unreliable returns."
     },
     "sections": [
@@ -595,7 +595,7 @@
           "en": "The light travels out and back"
         },
         "body": {
-          "sk": "Impulzný LiDAR vyšle svetlo a meria čas návratu odrazu. Vzdialenosť k predmetu je polovica dráhy, ktorú svetlo prešlo počas nameraného času. Skenovací prístroj meria vo viacerých smeroch a vytvára body okolitého priestoru. Nie všetky zariadenia však používajú rovnakú metódu; existujú aj fázové a ďalšie princípy. Rozlíšenie, presnosť, dosah a rýchlosť preto čítajte pre konkrétny senzor a merací režim.",
+          "sk": "Impulzný LiDAR vyšle svetlo a meria čas návratu odrazu. Vzdialenosť k predmetu je polovica dráhy, ktorú svetlo prešlo počas nameraného času. Skenovací prístroj meria vo viacerých smeroch a vytvára body okolitého priestoru. Nie všetky zariadenia však používajú rovnakú metódu; existujú aj fázové a ďalšie princípy. Rozlíšenie, presnosť, dosah a rýchlosť preto čítaj pre konkrétny senzor a merací režim.",
           "en": "A pulsed LiDAR emits light and measures the return time of its reflection. Object distance is half the path travelled during that interval. A scanning device measures in multiple directions to produce points describing its surroundings. Not all devices use the same method; phase-based and other approaches also exist. Read resolution, accuracy, range, and update rate for the specific sensor and measurement mode."
         }
       },
@@ -605,7 +605,7 @@
           "en": "Returns depend on the surface"
         },
         "body": {
-          "sk": "Tmavý povrch môže vrátiť slabý signál, lesklý povrch odraziť lúč mimo prijímača a sklo vytvoriť nejednoznačný výsledok. Silné okolité svetlo, hmla či prach môžu meranie zhoršiť. Maximálny dosah z katalógu preto nie je garantovaný pre každý predmet. Pri skúšaní zaznamenajte materiál, uhol dopadu a svetelné podmienky. Neplatná vzorka znamená nedostatok informácie, nie dôkaz, že pred robotom nič nie je.",
+          "sk": "Tmavý povrch môže vrátiť slabý signál, lesklý povrch odraziť lúč mimo prijímača a sklo vytvoriť nejednoznačný výsledok. Silné okolité svetlo, hmla či prach môžu meranie zhoršiť. Maximálny dosah z katalógu preto nie je garantovaný pre každý predmet. Pri skúšaní zaznamenaj materiál, uhol dopadu a svetelné podmienky. Neplatná vzorka znamená nedostatok informácie, nie dôkaz, že pred robotom nič nie je.",
           "en": "A dark surface may return a weak signal, a shiny surface may reflect light away from the receiver, and glass can produce ambiguous results. Strong ambient light, fog, or dust may degrade measurements. Catalogue range is therefore not guaranteed for every object. During testing, record material, incidence angle, and lighting. An invalid sample means missing information, not proof that the robot's path is clear."
         }
       },
@@ -615,7 +615,7 @@
           "en": "A scan is not an instantaneous photograph"
         },
         "body": {
-          "sk": "Pri otáčajúcom sa LiDARe vznikajú jednotlivé body v rôznych časoch. Ak sa robot pohybuje, stena sa môže v surovom skene javiť zakrivená alebo posunutá. Korekcia pohybu potrebuje časové značky a odhad pohybu počas snímania. Aj po korekcii zostávajú slepé zóny a neistota. Pre vyhýbanie sa prekážkam používajte obal celého robota, rezervu a pravidlo pre zastarané či neplatné merania.",
+          "sk": "Pri otáčajúcom sa LiDARe vznikajú jednotlivé body v rôznych časoch. Ak sa robot pohybuje, stena sa môže v surovom skene javiť zakrivená alebo posunutá. Korekcia pohybu potrebuje časové značky a odhad pohybu počas snímania. Aj po korekcii zostávajú slepé zóny a neistota. Pre vyhýbanie sa prekážkam používaj obal celého robota, rezervu a pravidlo pre zastarané či neplatné merania.",
           "en": "A rotating LiDAR acquires individual points at different times. If the robot moves, a wall can appear curved or displaced in the raw scan. Motion compensation requires timestamps and an estimate of movement during acquisition. Blind spots and uncertainty remain even after compensation. Obstacle avoidance must consider the whole robot footprint, additional clearance, and explicit rules for stale or invalid measurements."
         }
       }
@@ -628,11 +628,11 @@
       }
     },
     "practical": {
-      "sk": "V LiDAR laboratóriu posúvajte snímač pomocou x a y v povolenej oblasti a meňte dosah, počet lúčov a amplitúdu modelového šumu. Porovnajte pokrytie rovnakých pevných prekážok. Samostatná skúška skutočného snímača na matnom, tmavom a priehľadnom povrchu preverí vlastnosti materiálov, ktoré toto laboratórium nemodeluje.",
+      "sk": "V LiDAR laboratóriu posúvaj snímač pomocou x a y v povolenej oblasti a meň dosah, počet lúčov a amplitúdu modelového šumu. Porovnaj pokrytie rovnakých pevných prekážok. Samostatná skúška skutočného snímača na matnom, tmavom a priehľadnom povrchu preverí vlastnosti materiálov, ktoré toto laboratórium nemodeluje.",
       "en": "In the LiDAR lab, move the sensor with x and y within the allowed area and vary range, ray count, and model noise amplitude. Compare coverage of the same fixed obstacles. A separate physical test on matte, dark, and transparent surfaces evaluates material properties that this lab does not model."
     },
     "pitfall": {
-      "sk": "Hodnotu bez návratu nekonvertujte automaticky na maximálnu voľnú vzdialenosť.",
+      "sk": "Hodnotu bez návratu nekonvertuj automaticky na maximálnu voľnú vzdialenosť.",
       "en": "Do not automatically convert a missing return into maximum clear distance."
     },
     "quiz": {
@@ -682,7 +682,7 @@
       "en": "Camera and sensor calibration"
     },
     "summary": {
-      "sk": "Oddeľte náhodný šum od systematickej chyby a overte kalibráciu na nezávislých meraniach.",
+      "sk": "Oddeľ náhodný šum od systematickej chyby a over kalibráciu na nezávislých meraniach.",
       "en": "Separate random noise from systematic error and validate calibration on independent measurements."
     },
     "sections": [
@@ -692,7 +692,7 @@
           "en": "Noise, offset, and scale"
         },
         "body": {
-          "sk": "Náhodný šum mení jednotlivé vzorky, zatiaľ čo systematický posun ovplyvňuje celé meranie podobným smerom. Priemerovanie môže zmenšiť náhodné kolísanie, ale samo neopraví nesprávnu mierku ani nulový bod. Overte snímač pri viacerých známych hodnotách a sledujte teplotu. Ak sa chyba mení s meranou veličinou, jednoduchá konštantná korekcia nemusí stačiť. Kalibračný model má zodpovedať pozorovanému správaniu, nie iba jednej peknej vzorke.",
+          "sk": "Náhodný šum mení jednotlivé vzorky, zatiaľ čo systematický posun ovplyvňuje celé meranie podobným smerom. Priemerovanie môže zmenšiť náhodné kolísanie, ale samo neopraví nesprávnu mierku ani nulový bod. Over snímač pri viacerých známych hodnotách a sleduj teplotu. Ak sa chyba mení s meranou veličinou, jednoduchá konštantná korekcia nemusí stačiť. Kalibračný model má zodpovedať pozorovanému správaniu, nie iba jednej peknej vzorke.",
           "en": "Random noise changes individual samples, while a systematic offset shifts measurements in a similar direction. Averaging may reduce random variation, but it cannot by itself fix an incorrect scale or zero point. Check the sensor against several known values and track temperature. If error changes with the measured quantity, a constant correction may be insufficient. The calibration model should fit observed behaviour, not one convenient sample."
         }
       },
@@ -702,7 +702,7 @@
           "en": "Camera intrinsic parameters"
         },
         "body": {
-          "sk": "Kalibrácia kamery odhaduje ohniskové parametre, hlavný bod a skreslenie objektívu. Pri bežnom postupe nasnímajte kalibračný vzor v rôznych polohách, vzdialenostiach a náklonoch, aby pokryl obraz. Mnoho takmer rovnakých záberov poskytuje menej informácií než rozmanité pohľady. Rozmery vzoru zadávajte v konzistentných jednotkách. Zmena rozlíšenia, zaostrenia alebo optiky môže vyžadovať úpravu parametrov či novú kalibráciu podľa povahy zmeny zariadenia.",
+          "sk": "Kalibrácia kamery odhaduje ohniskové parametre, hlavný bod a skreslenie objektívu. Pri bežnom postupe nasnímaj kalibračný vzor v rôznych polohách, vzdialenostiach a náklonoch, aby pokryl obraz. Mnoho takmer rovnakých záberov poskytuje menej informácií než rozmanité pohľady. Rozmery vzoru zadávaj v konzistentných jednotkách. Zmena rozlíšenia, zaostrenia alebo optiky môže vyžadovať úpravu parametrov či novú kalibráciu podľa povahy zmeny zariadenia.",
           "en": "Camera calibration estimates focal parameters, the principal point, and lens distortion. A common procedure records a calibration target at varied positions, distances, and orientations across the image. Many nearly identical images provide less information than diverse views. Enter target dimensions in consistent units. Changing resolution, focus, or optics may require adjusted parameters or recalibration, depending on the nature of the hardware change."
         }
       },
@@ -712,7 +712,7 @@
           "en": "Extrinsic parameters and validation"
         },
         "body": {
-          "sk": "Vonkajšia kalibrácia určuje polohu a orientáciu senzora voči robotu alebo inému senzoru. Aj presne kalibrovaná kamera dá nesprávne robotické súradnice, ak sa jej držiak pohne. Overte výsledok na bodoch, ktoré neboli použité pri výpočte. Malá reprojekčná chyba je užitočná, ale sama nedokazuje správnu mierku celého systému. Praktickým testom je porovnanie odhadnutej vzdialenosti a smeru s nezávislým fyzickým meraním.",
+          "sk": "Vonkajšia kalibrácia určuje polohu a orientáciu senzora voči robotu alebo inému senzoru. Aj presne kalibrovaná kamera dá nesprávne robotické súradnice, ak sa jej držiak pohne. Over výsledok na bodoch, ktoré neboli použité pri výpočte. Malá reprojekčná chyba je užitočná, ale sama nedokazuje správnu mierku celého systému. Praktickým testom je porovnanie odhadnutej vzdialenosti a smeru s nezávislým fyzickým meraním.",
           "en": "Extrinsic calibration determines sensor position and orientation relative to the robot or another sensor. Even a well-calibrated camera produces incorrect robot coordinates if its mount moves. Validate on points not used during fitting. Small reprojection error is useful, but alone does not prove that the complete system has the correct scale. A practical check compares estimated distance and direction with an independent physical measurement."
         }
       }
@@ -734,7 +734,7 @@
     },
     "quiz": {
       "question": {
-        "sk": "Priemerujete opakované merania konštantnej veličiny s nezávislým šumom s nulovou strednou hodnotou a konečným rozptylom. Čo sa samotným zvýšením počtu vzoriek nezmenší?",
+        "sk": "Priemeruješ opakované merania konštantnej veličiny s nezávislým šumom s nulovou strednou hodnotou a konečným rozptylom. Čo sa samotným zvýšením počtu vzoriek nezmenší?",
         "en": "You average repeated measurements of a constant quantity with independent zero-mean noise of finite variance. What does increasing sample count alone fail to reduce?"
       },
       "options": [
@@ -783,7 +783,7 @@
       "en": "Sensor fusion and the EKF"
     },
     "summary": {
-      "sk": "Spojte predikciu pohybu s meraním a sledujte neistotu, inovácie aj časové zarovnanie.",
+      "sk": "Spoj predikciu pohybu s meraním a sleduj neistotu, inovácie aj časové zarovnanie.",
       "en": "Combine motion prediction with measurements while tracking uncertainty, innovations, and timing."
     },
     "sections": [
@@ -803,7 +803,7 @@
           "en": "Uncertainty controls information weight"
         },
         "body": {
-          "sk": "Kovariancia merania R opisuje očakávanú chybu senzora, procesná kovariancia Q neistotu modelu. Príliš malé R prinúti filter veriť aj zlému meraniu; príliš malé Q môže vytvoriť prehnanú dôveru v predikciu. Dôležité sú tiež korelácie. Ak dvakrát použijete tú istú informáciu ako nezávislé merania, odhad neistoty bude nereálne malý. Hodnoty preto dolaďujte podľa rezíduí a reálnych skúšok, nie podľa hladkosti grafu.",
+          "sk": "Kovariancia merania R opisuje rozptyl a vzájomné súvislosti chýb merania, procesná kovariancia Q neistotu modelu. Príliš malé R prinúti filter veriť aj zlému meraniu; príliš malé Q môže vytvoriť prehnanú dôveru v predikciu. Dôležité sú tiež korelácie. Ak dvakrát použiješ tú istú informáciu ako nezávislé merania, odhad neistoty bude nereálne malý. Hodnoty preto dolaďuj podľa rezíduí a reálnych skúšok, nie podľa hladkosti grafu.",
           "en": "Measurement covariance R describes expected sensor error, while process covariance Q describes model uncertainty. An excessively small R makes the filter trust poor measurements; an excessively small Q can create overconfidence in prediction. Correlations matter too. Using the same information twice as independent measurements produces unrealistically low uncertainty. Tune values using residuals and real experiments rather than choosing whichever settings produce the smoothest plot."
         }
       },
@@ -813,7 +813,7 @@
           "en": "Innovations and delayed measurements"
         },
         "body": {
-          "sk": "Inovácia je rozdiel medzi skutočným a predpovedaným meraním. Veľká alebo systematicky posunutá inovácia upozorňuje na zlý model, kalibráciu, časovanie alebo chybný senzor. Merania s rôznym oneskorením musia byť časovo zarovnané; porovnávanie starej polohy s aktuálnou predikciou vytvára falošnú chybu. PX4 používa oneskorený horizont fúzie a dopredné prenesenie odhadu. Pri diagnostike sledujte aj odmietnuté merania a dostupnosť pozorovateľných stavov.",
+          "sk": "Inovácia je rozdiel medzi skutočným a predpovedaným meraním. Veľká alebo systematicky posunutá inovácia upozorňuje na zlý model, kalibráciu, časovanie alebo chybný senzor. Merania s rôznym oneskorením musia byť časovo zarovnané; porovnávanie starej polohy s aktuálnou predikciou vytvára falošnú chybu. PX4 používa oneskorený horizont fúzie a dopredné prenesenie odhadu. Pri diagnostike sleduj aj odmietnuté merania a dostupnosť pozorovateľných stavov.",
           "en": "An innovation is the difference between actual and predicted measurements. A large or consistently biased innovation can indicate a poor model, calibration, timing, or faulty sensor. Measurements with different delays need temporal alignment; comparing an old position with the current prediction creates a false error. PX4 uses a delayed fusion horizon and propagates estimates forward. Diagnosis should also inspect rejected measurements and state observability."
         }
       }
@@ -830,7 +830,7 @@
       "en": "Compare prediction and measurement at different variances. Increase R and observe the correction trusting the measurement less. Then increase process variance Q and compare the Kalman gain."
     },
     "pitfall": {
-      "sk": "Hladký odhad môže byť nesprávny a prehnane sebavedomý; sledujte aj kovarianciu a nezávislú referenciu.",
+      "sk": "Hladký odhad môže byť nesprávny a prehnane sebavedomý; sleduj aj kovarianciu a nezávislú referenciu.",
       "en": "A smooth estimate can be wrong and overconfident; inspect covariance and an independent reference too."
     },
     "quiz": {
@@ -884,7 +884,7 @@
       "en": "Torque, speed, and motor selection"
     },
     "summary": {
-      "sk": "Odvoďte potrebný moment zo záťaže a čítajte údaje motora v správnom pracovnom bode.",
+      "sk": "Odvoď potrebný moment zo záťaže a čítaj údaje motora v správnom pracovnom bode.",
       "en": "Derive required torque from the load and interpret motor ratings at the correct operating point."
     },
     "sections": [
@@ -894,7 +894,7 @@
           "en": "Force at a lever arm"
         },
         "body": {
-          "sk": "Motor vyberajte od požadovanej úlohy. Pri ramene vypočítajte moment od nákladu aj vlastnej hmotnosti článkov; vzdialenosť ťažiska od osi je rovnako dôležitá ako hmotnosť. Pri kolese súvisí ťažná sila s momentom a polomerom. Väčšie koleso pri rovnakom momente poskytne menšiu silu, hoci pri rovnakých otáčkach prejde viac metrov. K statickému výpočtu pridajte potrebu zrýchlenia, trenie a rezervu na neistotu.",
+          "sk": "Motor vyberaj od požadovanej úlohy. Pri ramene vypočítaj moment od nákladu aj vlastnej hmotnosti článkov; vzdialenosť ťažiska od osi je rovnako dôležitá ako hmotnosť. Pri kolese súvisí ťažná sila s momentom a polomerom. Väčšie koleso pri rovnakom momente poskytne menšiu silu, hoci pri rovnakých otáčkach prejde viac metrov. K statickému výpočtu pridaj potrebu zrýchlenia, trenie a rezervu na neistotu.",
           "en": "Choose a motor starting from the task. For an arm, calculate torque from both payload and link weight; centre-of-mass distance from the axis matters as much as mass. At a wheel, traction force depends on torque and radius. A larger wheel produces less force at the same torque, although it travels farther per revolution. Add acceleration demands, friction, and uncertainty margin to the static calculation."
         }
       },
@@ -904,17 +904,17 @@
           "en": "Gearing changes torque and speed"
         },
         "body": {
-          "sk": "Redukčný prevod zvýši výstupný moment a zníži otáčky približne podľa prevodového pomeru, pričom časť výkonu stratí trením. Nezískavate bezplatnú energiu. Prevodovka pridáva vôľu, zotrvačnosť a obmedzenia zaťaženia. Pri presnom polohovaní môže vôľa zhoršiť zmenu smeru aj pri kvalitnom enkodéri na motore. Zistite preto, či snímač meria pred prevodom alebo za ním a aké maximálne zaťaženie povoľuje samotná prevodovka.",
+          "sk": "Redukčný prevod zvýši výstupný moment a zníži otáčky približne podľa prevodového pomeru, pričom časť výkonu stratí trením. Nezískaš bezplatnú energiu. Prevodovka pridáva vôľu, zotrvačnosť a obmedzenia zaťaženia. Pri presnom polohovaní môže vôľa zhoršiť zmenu smeru aj pri kvalitnom enkodéri na motore. Zisti preto, či snímač meria pred prevodom alebo za ním a aké maximálne zaťaženie povoľuje samotná prevodovka.",
           "en": "A reduction gearbox increases output torque and reduces speed approximately according to its ratio, while losing some power to friction. It does not create free energy. Gearing adds backlash, inertia, and load limits. Backlash can degrade direction reversals even with a precise motor encoder. Check whether the encoder measures before or after the gearbox and what maximum load the gearbox itself permits."
         }
       },
       {
         "title": {
-          "sk": "Záberový moment nie je trvalý výkon",
-          "en": "Stall torque is not continuous capability"
+          "sk": "Moment pri zastavení a trvalý dovolený moment",
+          "en": "Stall torque and allowable continuous torque"
         },
         "body": {
-          "sk": "Záberový moment opisuje stav zastaveného hriadeľa pri daných podmienkach. V tomto stave môže motor odoberať veľký prúd a rýchlo sa prehriať. Na dlhodobú prevádzku používajte prípustný pracovný bod, tepelný model a údaje výrobcu. Napájací zdroj, budič aj vodiče musia zvládnuť rozbeh. Pri skúške sledujte prúd a teplotu; opakované zastavovanie motora pod napätím nie je vhodný spôsob merania jeho bežného výkonu.",
+          "sk": "Záberový moment opisuje stav zastaveného hriadeľa pri daných podmienkach. V tomto stave môže motor odoberať veľký prúd a rýchlo sa prehriať. Na dlhodobú prevádzku používaj prípustný pracovný bod, tepelný model a údaje výrobcu. Napájací zdroj, budič aj vodiče musia zvládnuť rozbeh. Pri skúške sleduj prúd a teplotu; opakované zastavovanie motora pod napätím nie je vhodný spôsob merania jeho bežného výkonu.",
           "en": "Stall torque describes a stopped shaft under specified conditions. The motor can draw substantial current and heat rapidly in this state. For sustained operation, use an allowable operating point, thermal model, and manufacturer data. The supply, driver, and wiring must handle startup demands. Monitor current and temperature during tests; repeatedly holding a powered motor stalled is not an appropriate measure of normal performance."
         }
       }
@@ -931,7 +931,7 @@
       "en": "Set the payload to 0.5 kg, arm length to 0.2 m, and arm mass to 0.2 kg. Check that the gearbox output requires approximately 1.18 N·m. At 80% efficiency, compare 10:1 and 20:1 reduction: how do required motor torque and output speed change? Then double the arm length and observe the torque."
     },
     "pitfall": {
-      "sk": "Nezamieňajte moment v N·m s energiou v jouloch, hoci majú rovnaký rozmer základných jednotiek.",
+      "sk": "Nezamieňaj moment v N·m s energiou v jouloch, hoci majú rovnaký rozmer základných jednotiek.",
       "en": "Do not confuse torque in N·m with energy in joules, despite matching base-unit dimensions."
     },
     "quiz": {
@@ -985,7 +985,7 @@
       "en": "PID from tuning to saturation"
     },
     "summary": {
-      "sk": "Pochopte úlohu P, I a D, obmedzte integrátor a merajte reakciu na poruchu.",
+      "sk": "Pochop úlohu P, I a D, obmedz integrátor a meraj reakciu na poruchu.",
       "en": "Understand P, I, and D, constrain the integrator, and measure disturbance response."
     },
     "sections": [
@@ -1015,7 +1015,7 @@
           "en": "Tune using observable evidence"
         },
         "body": {
-          "sk": "Začnite overením znamienka merania, pravidelnosti času a limitov pohonu. Pri malom bezpečnom pohybe postupne nastavte P, potom pridajte I iba na potrebnú korekciu ustálenej chyby. D pridávajte, keď meranie a dynamika umožňujú jeho užitočné použitie. Zapisujte cieľ, výstup, chybu a saturáciu. Skúšajte viac záťaží a zmenu cieľa oboma smermi. Pekná odozva bez záťaže nemusí platiť pri reálnej prevádzke robota.",
+          "sk": "Začni overením znamienka merania, pravidelnosti času a limitov pohonu. Pri malom bezpečnom pohybe postupne nastav P, potom pridaj I iba na potrebnú korekciu ustálenej chyby. D pridávaj, keď meranie a dynamika umožňujú jeho užitočné použitie. Zapisuj cieľ, výstup, chybu a saturáciu. Skúšaj viac záťaží a zmenu cieľa oboma smermi. Pekná odozva bez záťaže nemusí platiť pri reálnej prevádzke robota.",
           "en": "Begin by checking measurement sign, timing consistency, and actuator limits. During small controlled movements, tune P gradually, then add I only as needed to correct steady-state error. Add D when measurement quality and dynamics make it useful. Record the target, output, error, and saturation. Test several loads and setpoint changes in both directions. A pleasing unloaded response may not survive real robot operation."
         }
       }
@@ -1032,7 +1032,7 @@
       "en": "Compare P = 4, I = 0, D = 0 with D = 3. Then increase P and I and observe controller output u and samples at the ±10 limit. The integral in this model is clamped to ±5."
     },
     "pitfall": {
-      "sk": "Koeficienty z inej frekvencie slučky či iných jednotiek nemusíte môcť priamo prevziať.",
+      "sk": "Koeficienty z inej frekvencie slučky či iných jednotiek nemusíš môcť priamo prevziať.",
       "en": "Gains from another loop frequency or unit convention may not transfer directly."
     },
     "quiz": {
@@ -1082,7 +1082,7 @@
       "en": "Inverse kinematics and singularities"
     },
     "summary": {
-      "sk": "Nájdite uhly kĺbov pre cieľovú polohu a overte dosah, limity aj spojitosť riešenia.",
+      "sk": "Nájdi uhly kĺbov pre cieľovú polohu a over dosah, limity aj spojitosť riešenia.",
       "en": "Find joint angles for a target pose while checking reachability, limits, and solution continuity."
     },
     "sections": [
@@ -1102,7 +1102,7 @@
           "en": "Geometry of a two-link arm"
         },
         "body": {
-          "sk": "Pre rovinné rameno s dĺžkami L1 a L2 použite kosínusovú vetu na uhol druhého kĺbu. Hodnota vypočítaného kosínusu musí ležať medzi mínus jednotkou a jednotkou; väčšie prekročenie znamená nedosiahnuteľný cieľ. Malé numerické prekročenie možno tolerovať iba s jasne definovanou toleranciou. Prvý uhol určite pomocou atan2, ktoré správne rozlišuje kvadranty. Výsledok vždy spätne vložte do doprednej kinematiky a skontrolujte chybu.",
+          "sk": "Pre rovinné rameno s dĺžkami L1 a L2 použi kosínusovú vetu na uhol druhého kĺbu. Hodnota vypočítaného kosínusu musí ležať medzi mínus jednotkou a jednotkou; väčšie prekročenie znamená nedosiahnuteľný cieľ. Malé numerické prekročenie možno tolerovať iba s jasne definovanou toleranciou. Prvý uhol urči pomocou atan2, ktoré správne rozlišuje kvadranty. Výsledok vždy spätne vlož do doprednej kinematiky a skontroluj chybu.",
           "en": "For a planar arm with link lengths L1 and L2, use the cosine rule for the second joint angle. The computed cosine must lie between minus one and one; a substantial violation means the target is unreachable. A tiny numerical violation may be tolerated only within a defined tolerance. Compute the first angle with atan2 to preserve quadrant information. Always verify the result through forward kinematics."
         }
       },
@@ -1112,7 +1112,7 @@
           "en": "Why a singularity complicates motion"
         },
         "body": {
-          "sk": "Jacobiho matica prevádza rýchlosti kĺbov na okamžitú rýchlosť koncového člena. Pri singularite stratí hodnosť a niektoré smery pohybu nemožno lokálne vytvoriť. Blízko singularity môže malá požiadavka v priestore vyžadovať veľmi veľké rýchlosti kĺbov. Tlmená pseudoinverzia pomáha obmedziť numerické zosilnenie za cenu chyby sledovania. Stále potrebujete limity rýchlosti, test kolízie a kontrolu zvyškovej chyby každého kroku plánovanej trajektórie.",
+          "sk": "Jacobiho matica prevádza rýchlosti kĺbov na okamžitú rýchlosť koncového člena. Pri singularite stratí hodnosť a niektoré smery pohybu nemožno lokálne vytvoriť. Blízko singularity môže malá požiadavka v priestore vyžadovať veľmi veľké rýchlosti kĺbov. Tlmená pseudoinverzia pomáha obmedziť numerické zosilnenie za cenu chyby sledovania. Stále potrebuješ limity rýchlosti, test kolízie a kontrolu zvyškovej chyby každého kroku plánovanej trajektórie.",
           "en": "The Jacobian maps joint velocities to instantaneous end-effector velocity. At a singularity it loses rank, making some motion directions locally unavailable. Near a singularity, a small Cartesian request may demand very large joint speeds. A damped pseudoinverse limits numerical amplification at the cost of tracking error. Velocity limits, collision checks, and residual error checks remain necessary at every step of the planned trajectory."
         }
       }
@@ -1134,7 +1134,7 @@
     },
     "quiz": {
       "question": {
-        "sk": "Čo môže pri inverznej rýchlostnej kinematike nastať blízko singularity, ak žiadate pohyb v zle podmienenom smere?",
+        "sk": "Čo môže pri inverznej rýchlostnej kinematike nastať blízko singularity, ak žiadaš pohyb v zle podmienenom smere?",
         "en": "What can happen near a singularity during inverse velocity kinematics when motion is requested in an ill-conditioned direction?"
       },
       "options": [
@@ -1179,7 +1179,7 @@
       "en": "How a quadcopter changes direction"
     },
     "summary": {
-      "sk": "Prepojte ťah rotorov, náklon a rezervu výkonu s pohybom dronu.",
+      "sk": "Prepoj ťah rotorov, náklon a rezervu výkonu s pohybom dronu.",
       "en": "Connect rotor thrust, tilt, and power margin with drone movement."
     },
     "sections": [
@@ -1209,7 +1209,7 @@
           "en": "The propeller is part of the propulsion system"
         },
         "body": {
-          "sk": "Motor, vrtuľa, regulátor a batéria tvoria spoločný systém. Zmena priemeru alebo stúpania vrtule môže zvýšiť prúd a prekročiť limity komponentov. Nestačí preto porovnať iba menovité napätie. Použite overené merania ťahu konkrétnej kombinácie a kontrolujte teplotu. Smer otáčania a typ vrtule musia zodpovedať konfigurácii. Pri nastavovaní motorov na pracovnom stole demontujte vrtule a fyzicky overte ich označenie pred montážou.",
+          "sk": "Motor, vrtuľa, regulátor a batéria tvoria spoločný systém. Zmena priemeru alebo stúpania vrtule môže zvýšiť prúd a prekročiť limity komponentov. Nestačí preto porovnať iba menovité napätie. Použi overené merania ťahu konkrétnej kombinácie a kontroluj teplotu. Smer otáčania a typ vrtule musia zodpovedať konfigurácii. Pri nastavovaní motorov na pracovnom stole demontuj vrtule a fyzicky over ich označenie pred montážou.",
           "en": "Motor, propeller, speed controller, and battery form one propulsion system. Changing propeller diameter or pitch can increase current beyond component limits. Comparing nominal voltage alone is insufficient. Use verified thrust measurements for the actual combination and monitor temperature. Rotation direction and propeller type must match the configuration. Remove propellers while setting up motors on the bench, then physically verify their markings before installation."
         }
       }
@@ -1276,7 +1276,7 @@
       "en": "Layers of an autopilot"
     },
     "summary": {
-      "sk": "Sledujte cestu od polohy cez náklon a uhlovú rýchlosť až po rozdelenie príkazov motorom.",
+      "sk": "Sleduj cestu od polohy cez náklon a uhlovú rýchlosť až po rozdelenie príkazov motorom.",
       "en": "Trace commands from position through attitude and angular rate to motor allocation."
     },
     "sections": [
@@ -1296,7 +1296,7 @@
           "en": "State estimation is the shared foundation"
         },
         "body": {
-          "sk": "Regulátory potrebujú odhad orientácie, rýchlosti a polohy v správnych rámcoch. Gyroskop poskytuje uhlovú rýchlosť, no jeho integrácia bez korekcie driftuje. Ďalšie snímače pomáhajú obmedziť chybu podľa dostupných podmienok. Vibrácie môžu poškodiť meranie aj pri kvalitnom softvéri, preto kontrolujte mechanické upevnenie a vyváženie. Zvyšovanie filtrov bez rozmyslu pridáva oneskorenie; najprv odstráňte mechanickú príčinu a až potom dolaďujte spracovanie signálu.",
+          "sk": "Regulátory potrebujú odhad orientácie, rýchlosti a polohy v správnych rámcoch. Gyroskop poskytuje uhlovú rýchlosť, no jeho integrácia bez korekcie driftuje. Ďalšie snímače pomáhajú obmedziť chybu podľa dostupných podmienok. Vibrácie môžu poškodiť meranie aj pri kvalitnom softvéri, preto kontroluj mechanické upevnenie a vyváženie. Zvyšovanie filtrov bez rozmyslu pridáva oneskorenie; najprv odstráň mechanickú príčinu a až potom dolaďuj spracovanie signálu.",
           "en": "Controllers need attitude, velocity, and position estimates in the correct frames. A gyroscope measures angular rate, but integrating it without correction causes drift. Other sensors constrain error when conditions allow. Vibration can corrupt measurements despite good software, so inspect mounting and balance. Increasing filtering indiscriminately adds delay; address the mechanical cause first, then tune signal processing for the remaining measurement noise."
         }
       },
@@ -1306,7 +1306,7 @@
           "en": "Force allocation has limits"
         },
         "body": {
-          "sk": "Riadiaca alokácia prevádza požadovaný ťah a momenty na povely jednotlivým motorom podľa geometrie stroja. Každý motor má horný aj dolný limit a požiadavky môžu byť navzájom nezlučiteľné. Pri silnom stúpaní už nemusí zostať dosť rezervy na korekciu náklonu. V zázname preto sledujte saturáciu a rozdiel medzi požadovaným a dosiahnutým pohybom. Pri ladení najprv overte konfiguráciu rámu, poradie motorov a znamienka.",
+          "sk": "Riadiaca alokácia prevádza požadovaný ťah a momenty na povely jednotlivým motorom podľa geometrie stroja. Každý motor má horný aj dolný limit a požiadavky môžu byť navzájom nezlučiteľné. Pri silnom stúpaní už nemusí zostať dosť rezervy na korekciu náklonu. V zázname preto sleduj saturáciu a rozdiel medzi požadovaným a dosiahnutým pohybom. Pri ladení najprv over konfiguráciu rámu, poradie motorov a znamienka.",
           "en": "Control allocation converts requested thrust and torques into individual motor commands using vehicle geometry. Every motor has upper and lower limits, and requests can conflict. During strong climbing, insufficient margin may remain for attitude correction. Inspect saturation and the difference between requested and achieved motion in logs. When tuning, first verify frame configuration, motor ordering, and signs before adjusting controller gains."
         }
       }
@@ -1367,7 +1367,7 @@
       "en": "PX4: failsafes and fault testing"
     },
     "summary": {
-      "sk": "Navrhnite reakcie na výpadok spojenia, batérie a polohy a overte ich v simulácii.",
+      "sk": "Navrhni reakcie na výpadok spojenia, batérie a polohy a over ich v simulácii.",
       "en": "Design responses to link, battery, and position failures and verify them in simulation."
     },
     "sections": [
@@ -1377,7 +1377,7 @@
           "en": "A failure needs a specific response"
         },
         "body": {
-          "sk": "Failsafe je definované správanie pri detegovanej poruche, napríklad strate riadenia, dátového spojenia alebo poklese energie. Rovnaká reakcia nie je vhodná pre všetky situácie. Návrat potrebuje použiteľnú lokalizáciu, vhodnú trasu a dostatok energie. Pristátie vyžaduje prijateľné miesto pod strojom. Vypnutie motorov počas letu znamená stratu aktívneho ťahu. Preto zapisujte pre každú poruchu predpoklady, čas detekcie a očakávaný výsledný režim letu.",
+          "sk": "Failsafe je definované správanie pri detegovanej poruche, napríklad strate riadenia, dátového spojenia alebo poklese energie. Rovnaká reakcia nie je vhodná pre všetky situácie. Návrat potrebuje použiteľnú lokalizáciu, vhodnú trasu a dostatok energie. Pristátie vyžaduje prijateľné miesto pod strojom. Vypnutie motorov počas letu znamená stratu aktívneho ťahu. Preto zapisuj pre každú poruchu predpoklady, čas detekcie a očakávaný výsledný režim letu.",
           "en": "A failsafe defines behaviour after a detected failure, such as loss of control, telemetry, or remaining energy. One response is not appropriate for every situation. Return requires usable localisation, a suitable route, and sufficient energy. Landing requires an acceptable area beneath the aircraft. Disarming in flight removes active thrust. For each failure, document assumptions, detection time, and the expected resulting flight mode."
         }
       },
@@ -1387,7 +1387,7 @@
           "en": "Several failures can happen together"
         },
         "body": {
-          "sk": "Strata spojenia môže súčasne nastať s chybou polohy alebo nízkou batériou. PX4 rieši kombinácie podľa svojho stavového automatu a dostupných odhadov; konkrétne správanie závisí od verzie a konfigurácie. Overte preto dokumentáciu zodpovedajúcu nasadenému firmvéru. Geofence tiež nevytvára nepreniknuteľnú stenu: stroj má zotrvačnosť a reakčné oneskorenie. Hranicu nastavujte s rezervou na zastavenie, neistotu polohy, vietor a rozmery chráneného priestoru.",
+          "sk": "Strata spojenia môže súčasne nastať s chybou polohy alebo nízkou batériou. PX4 rieši kombinácie podľa svojho stavového automatu a dostupných odhadov; konkrétne správanie závisí od verzie a konfigurácie. Over preto dokumentáciu zodpovedajúcu nasadenému firmvéru. Geofence tiež nevytvára nepreniknuteľnú stenu: stroj má zotrvačnosť a reakčné oneskorenie. Hranicu nastavuj s rezervou na zastavenie, neistotu polohy, vietor a rozmery chráneného priestoru.",
           "en": "Link loss may coincide with position failure or low battery. PX4 handles combinations through its state machine and available estimates; exact behaviour depends on version and configuration. Check documentation matching the deployed firmware. A geofence is not an impenetrable wall either: the vehicle has inertia and response delay. Place boundaries with margin for stopping distance, position uncertainty, wind, and the dimensions of the protected area."
         }
       },
@@ -1397,7 +1397,7 @@
           "en": "Testing is part of configuration"
         },
         "body": {
-          "sk": "Najprv vytvorte scenáre v simulácii a overte prechody režimov aj návrat do normálneho stavu. Odpojte jednotlivé zdroje dát a potom skúste relevantné kombinácie porúch. Sledujte čas detekcie a skutočne vykonanú akciu, nie iba zobrazené nastavenie. Skúšky na hardvéri pripravte podľa konkrétneho rizika; nastavenie motorov kontrolujte bez vrtúľ. Simulácia znižuje neistotu v logike, ale neoverí všetky elektrické ani mechanické poruchy.",
+          "sk": "Najprv vytvor scenáre v simulácii a over prechody režimov aj návrat do normálneho stavu. Odpoj jednotlivé zdroje dát a potom skús relevantné kombinácie porúch. Sleduj čas detekcie a skutočne vykonanú akciu, nie iba zobrazené nastavenie. Skúšky na hardvéri priprav podľa konkrétneho rizika; nastavenie motorov kontroluj bez vrtúľ. Simulácia znižuje neistotu v logike, ale neoverí všetky elektrické ani mechanické poruchy.",
           "en": "Start with simulation scenarios and verify mode transitions as well as recovery to normal operation. Remove individual data sources, then test relevant combinations of failures. Measure detection time and the action actually performed, rather than inspecting settings alone. Plan hardware tests around the specific risk; verify motor configuration without propellers. Simulation reduces uncertainty in logic but cannot validate every electrical or mechanical failure."
         }
       }
@@ -1464,7 +1464,7 @@
       "en": "Battery energy and runtime"
     },
     "summary": {
-      "sk": "Rozlišujte ampérhodiny, watthodiny, príkon a reálne využiteľnú energiu.",
+      "sk": "Rozlišuj ampérhodiny, watthodiny, príkon a reálne využiteľnú energiu.",
       "en": "Distinguish amp-hours, watt-hours, power consumption, and usable energy."
     },
     "sections": [
@@ -1474,17 +1474,17 @@
           "en": "Capacity is not energy"
         },
         "body": {
-          "sk": "Ampérhodiny vyjadrujú elektrický náboj, zatiaľ čo watthodiny vyjadrujú energiu. Dve batérie s rovnakou hodnotou Ah môžu uchovávať rozdielnu energiu, ak majú iné napätie. Pre prvý odhad násobte menovité napätie kapacitou v Ah. Pri presnom meraní však integrujte okamžitý výkon, pretože napätie počas vybíjania nie je konštantné. Hodnota na štítku navyše nemusí byť celá dostupná pri vašom prúde, teplote a veku batérie.",
+          "sk": "Ampérhodiny vyjadrujú elektrický náboj, zatiaľ čo watthodiny vyjadrujú energiu. Dve batérie s rovnakou hodnotou Ah môžu uchovávať rozdielnu energiu, ak majú iné napätie. Pre prvý odhad násob menovité napätie kapacitou v Ah. Pri presnom meraní však integruj okamžitý výkon, pretože napätie počas vybíjania nie je konštantné. Hodnota na štítku navyše nemusí byť celá dostupná pri tvojom prúde, teplote a veku batérie.",
           "en": "Amp-hours express electric charge, while watt-hours express energy. Two batteries with identical Ah ratings can store different energy if their voltages differ. For an initial estimate, multiply nominal voltage by capacity in Ah. For precise measurement, integrate instantaneous power because voltage changes during discharge. Furthermore, the full labelled capacity may not be available at your current draw, temperature, and battery age."
         }
       },
       {
         "title": {
-          "sk": "Zostavte rozpočet spotreby",
+          "sk": "Zostav rozpočet spotreby",
           "en": "Build a consumption budget"
         },
         "body": {
-          "sk": "Spočítajte priemerný príkon motorov, počítača, senzorov a prevodníkov. Pohony často odoberajú výrazne iný výkon pri státí, zrýchlení a jazde po svahu. Priemer preto odvodzujte z pracovného cyklu, ktorý sa podobá plánovanej úlohe. Započítajte straty meničov a požadovanú rezervu energie. Odhad z prúdu nameraného pri zdvihnutých kolesách bude pre jazdu po podlahe spravidla príliš optimistický a neodhalí rozbehové špičky.",
+          "sk": "Spočítaj priemerný príkon motorov, počítača, senzorov a prevodníkov. Pohony často odoberajú výrazne iný výkon pri státí, zrýchlení a jazde po svahu. Priemer preto odvodzuj z pracovného cyklu, ktorý sa podobá plánovanej úlohe. Započítaj straty meničov a požadovanú rezervu energie. Odhad z prúdu nameraného pri zdvihnutých kolesách bude pre jazdu po podlahe spravidla príliš optimistický a neodhalí rozbehové špičky.",
           "en": "Add the average power demand of motors, computer, sensors, and converters. Actuators often draw very different power when stationary, accelerating, or climbing a slope. Derive the average from a duty cycle resembling the intended task. Include conversion losses and an energy reserve. An estimate based on current measured with wheels lifted will usually be optimistic for floor driving and will miss startup peaks."
         }
       },
@@ -1502,7 +1502,7 @@
     "formula": {
       "expression": "E_nom [Wh] ≈ V_nom [V] · Q [Ah]; t [h] ≈ E_usable [Wh] / P_avg [W]",
       "explanation": {
-        "sk": "Menovitá energia je prvý odhad; výdrž počítajte z využiteľnej energie a priemerného príkonu na rovnakej strane meniča.",
+        "sk": "Menovitá energia je prvý odhad; výdrž počítaj z využiteľnej energie a priemerného príkonu na rovnakej strane meniča.",
         "en": "Nominal energy is an initial estimate; runtime uses usable energy and average power measured on the same side of the converter."
       }
     },
@@ -1511,7 +1511,7 @@
       "en": "Set 11.1 V, 2 Ah, 20% reserve, 100% efficiency and 12 W total load. Check a runtime of 88.8 min, then reduce efficiency to 90%. Enter power on the load side."
     },
     "pitfall": {
-      "sk": "mAh najprv prepočítajte na Ah; 2 000 mAh sú 2 Ah, nie 2 000 Ah.",
+      "sk": "mAh najprv prepočítaj na Ah; 2 000 mAh sú 2 Ah, nie 2 000 Ah.",
       "en": "Convert mAh to Ah first; 2,000 mAh equals 2 Ah, not 2,000 Ah."
     },
     "quiz": {
@@ -1535,7 +1535,7 @@
       ],
       "answer": 1,
       "explanation": {
-        "sk": "Watthodiny vyjadrujú energiu. Ampérhodiny vyjadrujú náboj a watty výkon; pre prvý odhad energie v Wh násobte menovité napätie kapacitou v Ah.",
+        "sk": "Watthodiny vyjadrujú energiu. Ampérhodiny vyjadrujú náboj a watty výkon; pre prvý odhad energie v Wh násob menovité napätie kapacitou v Ah.",
         "en": "Watt-hours express energy. Amp-hours express charge and watts express power; for an initial Wh estimate, multiply nominal voltage by Ah capacity."
       }
     },
@@ -1561,7 +1561,7 @@
       "en": "Li-ion cells, BMS, and charging"
     },
     "summary": {
-      "sk": "Pochopte hranice ochrany batérie a rozdiel medzi nabíjačkou, monitorom a balancovaním.",
+      "sk": "Pochop hranice ochrany batérie a rozdiel medzi nabíjačkou, monitorom a balancovaním.",
       "en": "Understand battery protection limits and distinguish charging, monitoring, and balancing."
     },
     "sections": [
@@ -1571,7 +1571,7 @@
           "en": "Chemistry determines operating limits"
         },
         "body": {
-          "sk": "Označenie Li-ion zahŕňa viac chemických zložení s rozdielnymi napäťovými a tepelnými limitmi. Nepoužívajte univerzálne napätie článku bez overenia konkrétneho typu. Výrobca určuje maximálne nabíjacie napätie, prúd, rozsah teplôt a podmienky vybíjania. Limity celej súpravy zahŕňajú aj prepoje, konektory a ochrannú elektroniku. Batéria, ktorá elektricky vyhovuje pri krátkej skúške, ešte nemusí zvládnuť opakované prúdové špičky počas celej pracovnej zmeny robota.",
+          "sk": "Označenie Li-ion zahŕňa viac chemických zložení s rozdielnymi napäťovými a tepelnými limitmi. Nepoužívaj univerzálne napätie článku bez overenia konkrétneho typu. Výrobca určuje maximálne nabíjacie napätie, prúd, rozsah teplôt a podmienky vybíjania. Limity celej súpravy zahŕňajú aj prepoje, konektory a ochrannú elektroniku. Batéria, ktorá elektricky vyhovuje pri krátkej skúške, ešte nemusí zvládnuť opakované prúdové špičky počas celej pracovnej zmeny robota.",
           "en": "The Li-ion label covers several chemistries with different voltage and temperature limits. Do not assume a universal cell voltage without checking the specific type. The manufacturer defines maximum charging voltage, current, temperature range, and discharge conditions. Pack limits also include interconnects, connectors, and protection electronics. A battery that passes a brief electrical test may still be unsuitable for repeated current peaks throughout a robot's working shift."
         }
       },
@@ -1581,7 +1581,7 @@
           "en": "What a BMS monitors and disconnects"
         },
         "body": {
-          "sk": "Systém správy batérie môže merať napätia článkov, prúd a teplotu, odhadovať stav nabitia a odpájať záťaž pri poruche. Konkrétna výbava však závisí od návrhu; jednoduchá ochranná doska nemusí poskytovať všetky funkcie. Balancovanie obmedzuje rozdiely medzi článkami, nenahrádza však poškodený článok ani správnu nabíjačku. Pri výbere overte počet sériových článkov, chémiu, prúdové limity a správanie po vypnutí alebo opätovnom pripojení.",
+          "sk": "Systém správy batérie môže merať napätia článkov, prúd a teplotu, odhadovať stav nabitia a odpájať záťaž pri poruche. Konkrétna výbava však závisí od návrhu; jednoduchá ochranná doska nemusí poskytovať všetky funkcie. Balancovanie obmedzuje rozdiely medzi článkami, nenahrádza však poškodený článok ani správnu nabíjačku. Pri výbere over počet sériových článkov, chémiu, prúdové limity a správanie po vypnutí alebo opätovnom pripojení.",
           "en": "A battery management system may measure cell voltages, current, and temperature, estimate state of charge, and disconnect the load during faults. Exact capabilities depend on the design; a simple protection board may not provide every function. Balancing reduces differences between cells but cannot repair a damaged cell or replace a suitable charger. Check series cell count, chemistry, current limits, and shutdown and reconnection behaviour."
         }
       },
@@ -1591,7 +1591,7 @@
           "en": "The robot must handle disconnection"
         },
         "body": {
-          "sk": "Ochranné vypnutie batérie môže zastaviť počítač aj pohony naraz. Preto robot potrebuje včasné upozornenie na nízku energiu a plánované ukončenie úlohy ešte pred tvrdým odpojením. Stav nabitia nemožno spoľahlivo odvodiť iba z jedného merania napätia pod záťažou, keďže vplýva prúd aj teplota. Používajte odporúčaný spôsob merania, ukladajte priebeh odberu a nechajte rezervu na návrat či riadené odstavenie mechanizmu.",
+          "sk": "Ochranné vypnutie batérie môže zastaviť počítač aj pohony naraz. Preto robot potrebuje včasné upozornenie na nízku energiu a plánované ukončenie úlohy ešte pred tvrdým odpojením. Stav nabitia nemožno spoľahlivo odvodiť iba z jedného merania napätia pod záťažou, keďže vplýva prúd aj teplota. Používaj odporúčaný spôsob merania, ukladaj priebeh odberu a nechaj rezervu na návrat či riadené odstavenie mechanizmu.",
           "en": "A protective battery shutdown can stop computers and actuators simultaneously. The robot therefore needs early low-energy detection and planned task termination before hard disconnection. State of charge cannot be reliably inferred from a single loaded voltage reading because current and temperature affect it. Use the recommended estimation method, record consumption, and retain enough reserve for return or a controlled shutdown of the mechanism."
         }
       }
@@ -1662,7 +1662,7 @@
       "en": "Power rails, converters, and transients"
     },
     "summary": {
-      "sk": "Navrhnite napájanie podľa špičkového odberu, úbytku napätia a tepelnej bilancie.",
+      "sk": "Navrhni napájanie podľa špičkového odberu, úbytku napätia a tepelnej bilancie.",
       "en": "Design power distribution around peak demand, voltage drop, and thermal performance."
     },
     "sections": [
@@ -1672,7 +1672,7 @@
           "en": "Equal power does not mean equal current"
         },
         "body": {
-          "sk": "Menič mení napätie a tým aj prúd medzi vstupom a výstupom. Päťvoltová elektronika s odberom dva ampéry potrebuje približne desať wattov, pričom batéria dodá ešte výkon strát. Vstupný prúd preto nepočítajte jednoduchým sčítaním prúdov vetiev s rôznym napätím. Najprv preveďte vetvy na výkon a zohľadnite účinnosť v skutočnom pracovnom bode. Účinnosť nie je rovnaká pri každej záťaži a napätí.",
+          "sk": "Menič mení napätie a tým aj prúd medzi vstupom a výstupom. Päťvoltová elektronika s odberom dva ampéry potrebuje približne desať wattov, pričom batéria dodá ešte výkon strát. Vstupný prúd preto nepočítaj jednoduchým sčítaním prúdov vetiev s rôznym napätím. Najprv preveď vetvy na výkon a zohľadni účinnosť v skutočnom pracovnom bode. Účinnosť nie je rovnaká pri každej záťaži a napätí.",
           "en": "A converter changes voltage and therefore the current relationship between input and output. Five-volt electronics drawing two amperes need about ten watts, while the battery also supplies conversion losses. Do not calculate input current by simply adding currents from rails with different voltages. Convert each rail to power first and include efficiency at the actual operating point. Efficiency varies with load and voltage."
         }
       },
@@ -1682,7 +1682,7 @@
           "en": "Startup tests the complete power chain"
         },
         "body": {
-          "sk": "Krátky rozbehový prúd motora môže spôsobiť pokles napätia, reset počítača alebo zásah ochrany, hoci priemerný odber vyzerá prijateľne. Odpor vodičov a kontaktov sa prejaví úbytkom napätia a ohrevom. Merajte napätie pri spotrebiči, nie iba na svorkách zdroja. Kondenzátory môžu pomôcť s krátkymi prechodmi, ale nenahradia poddimenzovaný menič. Ich veľkosť a zapojenie musia rešpektovať stabilitu regulácie a odporúčania výrobcu.",
+          "sk": "Krátky rozbehový prúd motora môže spôsobiť pokles napätia, reset počítača alebo zásah ochrany, hoci priemerný odber vyzerá prijateľne. Odpor vodičov a kontaktov sa prejaví úbytkom napätia a ohrevom. Meraj napätie pri spotrebiči, nie iba na svorkách zdroja. Kondenzátory môžu pomôcť s krátkymi prechodmi, ale nenahradia poddimenzovaný menič. Ich veľkosť a zapojenie musia rešpektovať stabilitu regulácie a odporúčania výrobcu.",
           "en": "A brief motor startup surge can cause voltage sag, computer resets, or protection trips even when average current appears acceptable. Wiring and contact resistance create voltage drop and heat. Measure voltage at the load, not only at supply terminals. Capacitors can support brief transients but cannot replace an undersized converter. Their sizing and connection must respect control stability and the manufacturer's recommendations."
         }
       },
@@ -1692,7 +1692,7 @@
           "en": "Thermal and return-current paths"
         },
         "body": {
-          "sk": "Stratový výkon sa mení na teplo, ktoré musí odviesť doska, chladič a okolitý vzduch. Menovitý prúd modulu môže platiť iba pri určitom chladení. V uzavretom robotovi preto overte ustálenú teplotu pri realistickej záťaži. Vysokoprúdové návratové cesty veďte tak, aby nezhoršovali referenciu citlivých snímačov. Spoločná zem neznamená nulový odpor; zlé vedenie prúdov môže vytvoriť meraciu chybu, ktorú softvérový filter spoľahlivo neopraví.",
+          "sk": "Stratový výkon sa mení na teplo, ktoré musí odviesť doska, chladič a okolitý vzduch. Menovitý prúd modulu môže platiť iba pri určitom chladení. V uzavretom robotovi preto over ustálenú teplotu pri realistickej záťaži. Vysokoprúdové návratové cesty veď tak, aby nezhoršovali referenciu citlivých snímačov. Spoločná zem neznamená nulový odpor; zlé vedenie prúdov môže vytvoriť meraciu chybu, ktorú softvérový filter spoľahlivo neopraví.",
           "en": "Dissipated power becomes heat that must leave through the board, heatsink, and surrounding air. A module's rated current may apply only under specified cooling conditions. Check steady-state temperature inside the actual enclosure under realistic load. Route high-current return paths so they do not disturb sensitive sensor references. A shared ground has finite resistance; poor current routing can introduce measurement errors that software filtering cannot reliably fix."
         }
       }
@@ -1714,7 +1714,7 @@
     },
     "quiz": {
       "question": {
-        "sk": "Ako najlepšie odhalíte krátky pokles napätia spôsobujúci reset pri rozbehu motora?",
+        "sk": "Ako najlepšie odhalíš krátky pokles napätia spôsobujúci reset pri rozbehu motora?",
         "en": "How should you detect a brief voltage sag causing a reset during motor startup?"
       },
       "options": [
@@ -1759,7 +1759,7 @@
       "en": "Non-blocking code and state machines"
     },
     "summary": {
-      "sk": "Rozdeľte správanie robota na explicitné stavy, časované kroky a spracovanie porúch.",
+      "sk": "Rozdeľ správanie robota na explicitné stavy, časované kroky a spracovanie porúch.",
       "en": "Divide robot behaviour into explicit states, timed steps, and fault handling."
     },
     "sections": [
@@ -1769,7 +1769,7 @@
           "en": "Waiting need not stop the program"
         },
         "body": {
-          "sk": "Dlhé blokujúce čakanie zabráni jednoduchej hlavnej slučke čítať tlačidlá, senzory alebo nové príkazy. Namiesto čakania uložte čas začiatku udalosti a pri každom priechode overte, či už uplynul interval. Ostatná práca môže pokračovať. Tento princíp ukazuje aj príklad Arduino Blink Without Delay. V každom kroku spracujte obmedzené množstvo práce, aby pomalý výpis alebo komunikácia nepredĺžili reakciu celého robota.",
+          "sk": "Dlhé blokujúce čakanie zabráni jednoduchej hlavnej slučke čítať tlačidlá, senzory alebo nové príkazy. Namiesto čakania ulož čas začiatku udalosti a pri každom priechode over, či už uplynul interval. Ostatná práca môže pokračovať. Tento princíp ukazuje aj príklad Arduino Blink Without Delay. V každom kroku spracuj obmedzené množstvo práce, aby pomalý výpis alebo komunikácia nepredĺžili reakciu celého robota.",
           "en": "A long blocking wait prevents a simple main loop from reading buttons, sensors, or new commands. Instead, store the event start time and check on each iteration whether the interval has elapsed. Other work can continue. Arduino's Blink Without Delay demonstrates this principle. Perform a bounded amount of work per iteration so that slow logging or communication does not delay the robot's entire response."
         }
       },
@@ -1779,17 +1779,17 @@
           "en": "States give behaviour clear boundaries"
         },
         "body": {
-          "sk": "Stavový automat môže mať napríklad stavy Čaká, Ide, Zastavuje a Porucha. Každý stav určuje povolené výstupy a udalosti, ktoré spôsobia prechod. Rozlišujte vstupnú akciu vykonanú raz od činnosti opakovanej v každom cykle. Podmienky prechodu majú byť jednoznačné, najmä ak naraz príde cieľ aj chyba senzora. Prioritu poruchy a pravidlá návratu definujte výslovne, aby nevzniklo neúmyselné opätovné spustenie pohybu.",
+          "sk": "Stavový automat môže mať napríklad stavy Čaká, Ide, Zastavuje a Porucha. Každý stav určuje povolené výstupy a udalosti, ktoré spôsobia prechod. Rozlišuj vstupnú akciu vykonanú raz od činnosti opakovanej v každom cykle. Podmienky prechodu majú byť jednoznačné, najmä ak naraz príde cieľ aj chyba senzora. Prioritu poruchy a pravidlá návratu definuj výslovne, aby nevzniklo neúmyselné opätovné spustenie pohybu.",
           "en": "A state machine might contain Idle, Moving, Stopping, and Fault states. Each state defines allowed outputs and events that trigger transitions. Distinguish an entry action performed once from activity repeated every cycle. Transition conditions should be unambiguous, especially when a new target and sensor failure arrive together. Define fault priority and recovery rules explicitly to prevent unintended automatic movement after recovery."
         }
       },
       {
         "title": {
-          "sk": "Testujte udalosti, nielen úspešnú jazdu",
+          "sk": "Testuj udalosti, nielen úspešnú jazdu",
           "en": "Test events, not just successful motion"
         },
         "body": {
-          "sk": "Na stole alebo v simulácii odošlite neplatný príkaz, prerušte senzor a prekročte časový limit. Overte výsledný stav aj skutočný výstup pohonu. Tlačidlá môžu odskakovať a komunikácia môže doručiť opakovanú správu, takže prechody musia zvládnuť aj také vstupy. Časové počítadlá majú konečný rozsah; pri mikrokontroléri používajte odporúčaný spôsob výpočtu uplynutého času a overte správanie pri pretečení počítadla v danom jazyku.",
+          "sk": "Na stole alebo v simulácii odošli neplatný príkaz, preruš senzor a prekroč časový limit. Over výsledný stav aj skutočný výstup pohonu. Tlačidlá môžu odskakovať a komunikácia môže doručiť opakovanú správu, takže prechody musia zvládnuť aj také vstupy. Časové počítadlá majú konečný rozsah; pri mikrokontroléri používaj odporúčaný spôsob výpočtu uplynutého času a over správanie pri pretečení počítadla v danom jazyku.",
           "en": "On a bench or in simulation, send an invalid command, interrupt a sensor, and exceed a timeout. Verify both the resulting state and actual actuator output. Buttons can bounce and communication can duplicate messages, so transitions must handle these inputs too. Time counters have finite ranges; on a microcontroller, use the recommended elapsed-time calculation and verify counter rollover behaviour in the chosen language."
         }
       }
@@ -1802,7 +1802,7 @@
       }
     },
     "practical": {
-      "sk": "Spusti pohyb, prepnúť ho môžeš do čakania a počas čakania vyvolaj poruchu senzora. Over vypnutie motora. Potom obnov senzor, resetuj automat a samostatne otestuj vypršanie príkazu pri 500 ms.",
+      "sk": "Spusti pohyb, prepni do čakania a počas čakania vyvolaj poruchu senzora. Over vypnutie motora. Potom obnov senzor, resetuj automat a samostatne otestuj vypršanie príkazu pri 500 ms.",
       "en": "Start motion, switch to waiting and trigger a sensor fault while waiting. Check that the motor turns off. Restore the sensor, reset the machine and separately test command expiry at 500 ms."
     },
     "pitfall": {
@@ -1852,7 +1852,7 @@
       "en": "ROS 2: nodes and communication interfaces"
     },
     "summary": {
-      "sk": "Navrhnite malé spolupracujúce uzly a rozlišujte tok dát, krátku požiadavku a dlhú úlohu.",
+      "sk": "Navrhni malé spolupracujúce uzly a rozlišuj tok dát, krátku požiadavku a dlhú úlohu.",
       "en": "Design small cooperating nodes and distinguish data streams, short requests, and long-running tasks."
     },
     "sections": [
@@ -1862,7 +1862,7 @@
           "en": "A node has a clear responsibility"
         },
         "body": {
-          "sk": "Uzol ROS 2 vykonáva určitú funkciu, napríklad čítanie senzora, odhad polohy alebo riadenie pohonu. Jeden proces môže obsahovať viac uzlov, takže uzol nie je synonymom samostatného programu. Rozhrania medzi funkciami majú mať pomenované správy a určené jednotky. Tak môžete vymeniť simulovaný senzor za skutočný bez prepisovania celého systému. Zároveň však overte rozdiely v časovaní, presnosti a dostupnosti dát.",
+          "sk": "Uzol ROS 2 vykonáva určitú funkciu, napríklad čítanie senzora, odhad polohy alebo riadenie pohonu. Jeden proces môže obsahovať viac uzlov, takže uzol nie je synonymom samostatného programu. Rozhrania medzi funkciami majú mať pomenované správy a určené jednotky. Tak môžeš vymeniť simulovaný senzor za skutočný bez prepisovania celého systému. Zároveň však over rozdiely v časovaní, presnosti a dostupnosti dát.",
           "en": "A ROS 2 node performs a function such as sensor acquisition, localisation, or actuator control. A process can contain multiple nodes, so a node is not synonymous with a separate program. Functional interfaces should use named message types and defined units. This allows a simulated sensor to be replaced by hardware without rewriting the entire system, while still checking timing, accuracy, and data availability differences."
         }
       },
@@ -1882,7 +1882,7 @@
           "en": "Diagnosis starts at the interface"
         },
         "body": {
-          "sk": "Pri chýbajúcich dátach najprv zistite, ktoré uzly bežia a aké témy publikujú. Overte názov témy, typ správy, časové značky a kompatibilitu QoS. Potom merajte frekvenciu a vek správ. Záznam rosbag umožňuje opakovať analýzu nad rovnakým vstupom, ale prehrávanie príkazov na pripojený robot môže opäť vyvolať pohyb. Diagnostické prehrávanie preto smerujte do kontrolovaného prostredia a oddeľte ho od aktívnych pohonov.",
+          "sk": "Pri chýbajúcich dátach najprv zisti, ktoré uzly bežia a aké témy publikujú. Over názov témy, typ správy, časové značky a kompatibilitu QoS. Potom meraj frekvenciu a vek správ. Záznam rosbag umožňuje opakovať analýzu nad rovnakým vstupom, ale prehrávanie príkazov na pripojený robot môže opäť vyvolať pohyb. Diagnostické prehrávanie preto smeruj do kontrolovaného prostredia a oddeľ ho od aktívnych pohonov.",
           "en": "When data is missing, first identify running nodes and their published topics. Check topic names, message types, timestamps, and QoS compatibility. Then measure message frequency and age. A rosbag recording allows repeated analysis of the same input, but replaying commands to a connected robot can trigger movement again. Route diagnostic playback into a controlled environment and keep it separate from active actuators."
         }
       }
@@ -1947,7 +1947,7 @@
       "en": "ROS 2 QoS and data freshness"
     },
     "summary": {
-      "sk": "Vyberte spoľahlivosť, históriu a životnosť správ podľa významu dát a nárokov regulácie.",
+      "sk": "Vyber spoľahlivosť, históriu a životnosť správ podľa významu dát a nárokov regulácie.",
       "en": "Choose reliability, history, and lifespan according to data semantics and control requirements."
     },
     "sections": [
@@ -1957,7 +1957,7 @@
           "en": "Delivery versus freshness"
         },
         "body": {
-          "sk": "QoS určuje vlastnosti prenosu správ medzi uzlami. Reliable sa usiluje o spoľahlivé doručenie s možnými opakovaniami, best effort pripúšťa stratu vzoriek. Pre rýchly senzor môže byť nová vzorka užitočnejšia než neskoro doručená stará. Reliable preto nie je automaticky najlepšie nastavenie všetkých tém. Voľbu overte pri strate paketov a zaťažení siete, pričom merajte vek použitej správy aj počet prijatých správ.",
+          "sk": "QoS určuje vlastnosti prenosu správ medzi uzlami. Reliable sa usiluje o spoľahlivé doručenie s možnými opakovaniami, best effort pripúšťa stratu vzoriek. Pre rýchly senzor môže byť nová vzorka užitočnejšia než neskoro doručená stará. Reliable preto nie je automaticky najlepšie nastavenie všetkých tém. Voľbu over pri strate paketov a zaťažení siete, pričom meraj vek použitej správy aj počet prijatých správ.",
           "en": "QoS defines message transport behaviour between nodes. Reliable delivery may retry transmissions, while best effort allows samples to be lost. For a fast sensor, a fresh sample may be more valuable than an old one delivered late. Reliable is therefore not automatically the best setting for every topic. Test the choice under packet loss and network load, measuring message age as well as reception count."
         }
       },
@@ -1967,7 +1967,7 @@
           "en": "Compatibility is directional"
         },
         "body": {
-          "sk": "Odberateľ požaduje určitú úroveň služby a vydavateľ ponúka svoje možnosti. Odberateľ vyžadujúci reliable sa nespojí s vydavateľom best effort; opačná kombinácia je z hľadiska spoľahlivosti kompatibilná. Musia však vyhovovať aj ostatné relevantné pravidlá. Pri nulovom toku dát preto nepredpokladajte hneď poruchu siete. Skontrolujte ponúkaný a požadovaný profil a sledujte udalosti nekompatibility, ktoré ROS 2 poskytuje na presnejšiu diagnostiku prenosu.",
+          "sk": "Odberateľ požaduje určitú úroveň služby a vydavateľ ponúka svoje možnosti. Odberateľ vyžadujúci reliable sa nespojí s vydavateľom best effort; opačná kombinácia je z hľadiska spoľahlivosti kompatibilná. Musia však vyhovovať aj ostatné relevantné pravidlá. Pri nulovom toku dát preto nepredpokladaj hneď poruchu siete. Skontroluj ponúkaný a požadovaný profil a sleduj udalosti nekompatibility, ktoré ROS 2 poskytuje na presnejšiu diagnostiku prenosu.",
           "en": "A subscriber requests a service level and a publisher offers its capabilities. A subscriber requiring reliable delivery cannot match a best-effort publisher; the opposite combination is compatible for reliability. Other relevant policies must also match. When no data flows, do not immediately assume network failure. Inspect the offered and requested profiles and monitor incompatibility events provided by ROS 2 for more precise diagnosis."
         }
       },
@@ -1985,7 +1985,7 @@
     "formula": {
       "expression": "data_age = t_use − t_measurement",
       "explanation": {
-        "sk": "Vek dát počítajte zo synchronizovaných hodín a času získania merania, nie iba prijatia správy.",
+        "sk": "Vek dát počítaj zo synchronizovaných hodín a času získania merania, nie iba prijatia správy.",
         "en": "Calculate data age from synchronised clocks and acquisition time, not merely message reception time."
       }
     },
@@ -2040,7 +2040,7 @@
       "en": "From requirements to a first prototype"
     },
     "summary": {
-      "sk": "Premeňte nápad na merateľné požiadavky a overujte mechaniku aj elektroniku po malých krokoch.",
+      "sk": "Premeň nápad na merateľné požiadavky a overuj mechaniku aj elektroniku po malých krokoch.",
       "en": "Turn an idea into measurable requirements and verify mechanics and electronics in small steps."
     },
     "sections": [
@@ -2050,7 +2050,7 @@
           "en": "A requirement must be measurable"
         },
         "body": {
-          "sk": "Namiesto zadania „robot má byť rýchly“ určte náklad, povrch, cieľovú rýchlosť a dráhu zastavenia. Pri ramene pridajte pracovný priestor, opakovateľnosť a prípustný kontakt s predmetom. Každá požiadavka má mať spôsob skúšky. Tak skôr odhalíte konflikt medzi hmotnosťou, výdržou a výkonom. Prvý prototyp má overiť najväčšiu neistotu návrhu, napríklad či pohon zvládne záťaž, nie súčasne dokonale vyriešiť všetky funkcie robota.",
+          "sk": "Namiesto zadania „robot má byť rýchly“ urči náklad, povrch, cieľovú rýchlosť a dráhu zastavenia. Pri ramene pridaj pracovný priestor, opakovateľnosť a prípustný kontakt s predmetom. Každá požiadavka má mať spôsob skúšky. Tak skôr odhalíš konflikt medzi hmotnosťou, výdržou a výkonom. Prvý prototyp má overiť najväčšiu neistotu návrhu, napríklad či pohon zvládne záťaž, nie súčasne dokonale vyriešiť všetky funkcie robota.",
           "en": "Replace a requirement such as “the robot must be fast” with payload, surface, target speed, and stopping distance. For an arm, add workspace, repeatability, and acceptable contact with objects. Every requirement needs a verification method. This reveals conflicts between weight, runtime, and performance earlier. The first prototype should test the largest uncertainty, such as whether propulsion handles the load, rather than perfecting every feature simultaneously."
         }
       },
@@ -2060,17 +2060,17 @@
           "en": "Mechanics determines measurement quality"
         },
         "body": {
-          "sk": "Uvoľnený držiak senzora mení kalibráciu a vôľa v spoji znižuje opakovateľnosť pohybu. Kabeláž potrebuje odľahčenie ťahu a dostatočný polomer ohybu pri celom rozsahu mechanizmu. Ťažké komponenty umiestnite tak, aby nevytvárali zbytočný moment alebo riziko prevrátenia. Pri skúške sledujte prehýbanie, vibrácie a kontakt káblov s pohyblivými časťami. Softvér môže kompenzovať niektoré odchýlky, ale nenahradí pevné a predvídateľné mechanické spojenie.",
+          "sk": "Uvoľnený držiak senzora mení kalibráciu a vôľa v spoji znižuje opakovateľnosť pohybu. Kabeláž potrebuje odľahčenie ťahu a dostatočný polomer ohybu pri celom rozsahu mechanizmu. Ťažké komponenty umiestni tak, aby nevytvárali zbytočný moment alebo riziko prevrátenia. Pri skúške sleduj prehýbanie, vibrácie a kontakt káblov s pohyblivými časťami. Softvér môže kompenzovať niektoré odchýlky, ale nenahradí pevné a predvídateľné mechanické spojenie.",
           "en": "A loose sensor mount changes calibration, while joint backlash reduces motion repeatability. Wiring needs strain relief and sufficient bend radius throughout the mechanism's range. Position heavy components to avoid unnecessary torque or tipping risk. During testing, watch for flex, vibration, and cables touching moving parts. Software can compensate for some deviations, but it cannot replace a rigid and predictable mechanical connection."
         }
       },
       {
         "title": {
-          "sk": "Oživujte po samostatných častiach",
+          "sk": "Oživuj po samostatných častiach",
           "en": "Bring up one subsystem at a time"
         },
         "body": {
-          "sk": "Pred prvým pohybom skontrolujte napájaciu polaritu, povolené napätia a istenie. Potom overte jeden senzor, jeden pohon a správny smer merania. Použite primerané obmedzenie prúdu a mechanizmus v polohe, kde malý nečakaný pohyb nespôsobí škodu. Až po overení jednotlivých častí ich spojte do slučky. Zaznamenajte zapojenie a verzie nastavení, aby sa úspešná skúška dala zopakovať po oprave alebo výmene súčiastky.",
+          "sk": "Pred prvým pohybom skontroluj napájaciu polaritu, povolené napätia a istenie. Potom over jeden senzor, jeden pohon a správny smer merania. Použi primerané obmedzenie prúdu a mechanizmus v polohe, kde malý nečakaný pohyb nespôsobí škodu. Až po overení jednotlivých častí ich spoj do slučky. Zaznamenaj zapojenie a verzie nastavení, aby sa úspešná skúška dala zopakovať po oprave alebo výmene súčiastky.",
           "en": "Before the first movement, check supply polarity, allowable voltages, and protection. Then verify one sensor, one actuator, and the correct measurement direction. Use appropriate current limiting and position the mechanism so that a small unexpected movement causes no damage. Combine components into a loop only after individual checks. Record wiring and configuration versions so a successful test can be repeated after repair or replacement."
         }
       }
@@ -2131,7 +2131,7 @@
       "en": "Differential drive and odometry"
     },
     "summary": {
-      "sk": "Vypočítajte pohyb z otáčok kolies a odhaľte drift spôsobený geometriou či sklzom.",
+      "sk": "Vypočítaj pohyb z otáčok kolies a odhaľ drift spôsobený geometriou či sklzom.",
       "en": "Calculate motion from wheel rotation and expose drift caused by geometry or slip."
     },
     "sections": [
@@ -2151,7 +2151,7 @@
           "en": "An encoder measures rotation, not the floor"
         },
         "body": {
-          "sk": "Enkodér udáva zmenu uhlovej polohy hriadeľa. Na dráhu kolesa ju prevediete cez prevodový pomer a polomer. Overte, čo výrobca myslí počtom impulzov: výsledok závisí aj od spôsobu dekódovania hrán. Ak koleso prešmykuje, enkodér stále hlási pohyb, hoci robot prejde menej. Rozdiel priemerov kolies zas vytvára systematické zatáčanie. Odometria preto integruje aj malé chyby a potrebuje pravidelnú kontrolu nezávislou referenciou.",
+          "sk": "Enkodér udáva zmenu uhlovej polohy hriadeľa. Na dráhu kolesa ju prevedieš cez prevodový pomer a polomer. Over, čo výrobca myslí počtom impulzov: výsledok závisí aj od spôsobu dekódovania hrán. Ak koleso prešmykuje, enkodér stále hlási pohyb, hoci robot prejde menej. Rozdiel priemerov kolies zas vytvára systematické zatáčanie. Odometria preto integruje aj malé chyby a potrebuje pravidelnú kontrolu nezávislou referenciou.",
           "en": "An encoder reports shaft angle change. Convert it to wheel travel using gearing and wheel radius. Check what the manufacturer means by pulse count, since the result also depends on edge decoding. A slipping wheel still reports rotation even if the robot moves less. Unequal wheel diameters cause systematic turning. Odometry therefore integrates small errors and needs periodic checking against an independent reference."
         }
       },
@@ -2161,7 +2161,7 @@
           "en": "Calibrate straight travel and rotation"
         },
         "body": {
-          "sk": "Najprv porovnajte nameranú vzdialenosť pri pomalej jazde rovno s nezávislým meraním. Potom vykonajte kontrolované otočenie a overte efektívny rozchod. Skúšku zopakujte oboma smermi, aby sa ukázala asymetria alebo vôľa. Kalibráciu nerobte iba na jedinom povrchu, ak robot neskôr jazdí aj inde. Lokalizácia pomocou kamery či LiDARu môže opravovať drift, ale nenahrádza správnu geometriu, časovanie a rozumný model neistoty odometrie.",
+          "sk": "Najprv porovnaj nameranú vzdialenosť pri pomalej jazde rovno s nezávislým meraním. Potom vykonaj kontrolované otočenie a over efektívny rozchod. Skúšku zopakuj oboma smermi, aby sa ukázala asymetria alebo vôľa. Kalibráciu nerob iba na jedinom povrchu, ak robot neskôr jazdí aj inde. Lokalizácia pomocou kamery či LiDARu môže opravovať drift, ale nenahrádza správnu geometriu, časovanie a rozumný model neistoty odometrie.",
           "en": "First compare slow straight-line travel with an independent distance measurement. Then perform a controlled rotation to check effective track width. Repeat tests in both directions to reveal asymmetry or backlash. Do not calibrate only on one surface if the robot will operate elsewhere. Camera or LiDAR localisation can correct drift, but cannot replace correct geometry, timing, and a reasonable odometry uncertainty model."
         }
       }
@@ -2228,7 +2228,7 @@
       "en": "Trajectories and whole-robot validation"
     },
     "summary": {
-      "sk": "Prepojte plánovanie, reguláciu a meranie do opakovateľných skúšok s fyzikálnymi limitmi.",
+      "sk": "Prepoj plánovanie, reguláciu a meranie do opakovateľných skúšok s fyzikálnymi limitmi.",
       "en": "Connect planning, control, and measurement in repeatable tests with physical limits."
     },
     "sections": [
@@ -2238,7 +2238,7 @@
           "en": "A path and a trajectory differ"
         },
         "body": {
-          "sk": "Cesta opisuje geometrický priebeh pohybu, zatiaľ čo trajektória pridáva čas. Rovnakú cestu možno prejsť pomaly alebo rýchlo, ale požadované zrýchlenia a momenty budú rozdielne. Náhly skok cieľovej polohy môže vyvolať saturáciu a vibrácie. Použite časový profil rešpektujúci rýchlosť a zrýchlenie, prípadne aj ráz. Pri ramene overte limity každého kĺbu, pretože hladká dráha koncového člena sama nezaručuje prijateľný pohyb všetkých kĺbov.",
+          "sk": "Cesta opisuje geometrický priebeh pohybu, zatiaľ čo trajektória pridáva čas. Rovnakú cestu možno prejsť pomaly alebo rýchlo, ale požadované zrýchlenia a momenty budú rozdielne. Náhly skok cieľovej polohy môže vyvolať saturáciu a vibrácie. Použi časový profil rešpektujúci rýchlosť a zrýchlenie, prípadne aj ráz. Pri ramene over limity každého kĺbu, pretože hladká dráha koncového člena sama nezaručuje prijateľný pohyb všetkých kĺbov.",
           "en": "A path describes motion geometry, while a trajectory adds timing. The same path can be followed slowly or quickly, producing different acceleration and torque demands. A sudden target-position jump may cause saturation and vibration. Use a timing profile that respects velocity, acceleration, and potentially jerk limits. For an arm, check every joint, because a smooth endpoint path alone does not guarantee acceptable joint motion."
         }
       },
@@ -2248,7 +2248,7 @@
           "en": "From simulation to measurement"
         },
         "body": {
-          "sk": "Simulácia umožňuje opakovateľne meniť hmotnosť, trenie, oneskorenie a šum. Pomáha nájsť slabé miesta ešte pred fyzickou skúškou, ale výsledok závisí od vernosti modelu. Skutočné káble, vôľa, prehrievanie či odlesky sa nemusia prejaviť. Po prenose na hardvér porovnajte predikované a merané priebehy pri nízkom zaťažení. Rozdiely používajte na opravu modelu a postupne rozširujte overený rozsah, nie na okamžité zvýšenie výkonu.",
+          "sk": "Simulácia umožňuje opakovateľne meniť hmotnosť, trenie, oneskorenie a šum. Pomáha nájsť slabé miesta ešte pred fyzickou skúškou, ale výsledok závisí od vernosti modelu. Skutočné káble, vôľa, prehrievanie či odlesky sa nemusia prejaviť. Po prenose na hardvér porovnaj predikované a merané priebehy pri nízkom zaťažení. Rozdiely používaj na opravu modelu a postupne rozširuj overený rozsah, nie na okamžité zvýšenie výkonu.",
           "en": "Simulation allows repeatable changes to mass, friction, delay, and noise. It helps reveal weaknesses before physical testing, but results depend on model fidelity. Real cables, backlash, heating, or reflections may be absent. After transfer to hardware, compare predicted and measured behaviour under low load. Use discrepancies to improve the model and gradually expand the validated operating range rather than immediately increasing performance."
         }
       },
@@ -2258,7 +2258,7 @@
           "en": "Success has a defined operating range"
         },
         "body": {
-          "sk": "Záverečná skúška má sledovať celý reťazec od merania cez plán až po fyzický výsledok. Definujte požiadavky na presnosť, čas, spotrebu a reakciu na poruchu. Uchovajte verziu softvéru, konfiguráciu, podmienky aj surový záznam. Zopakujte skúšku pri hraničnom náklade a realistickom stave batérie. Výsledok formulujte ako overené podmienky, nie všeobecné tvrdenie, že robot vždy funguje. Po zmene mechaniky alebo riadenia zopakujte dotknuté skúšky.",
+          "sk": "Záverečná skúška má sledovať celý reťazec od merania cez plán až po fyzický výsledok. Definuj požiadavky na presnosť, čas, spotrebu a reakciu na poruchu. Uchovaj verziu softvéru, konfiguráciu, podmienky aj surový záznam. Zopakuj skúšku pri hraničnom náklade a realistickom stave batérie. Výsledok formuluj ako overené podmienky, nie všeobecné tvrdenie, že robot vždy funguje. Po zmene mechaniky alebo riadenia zopakuj dotknuté skúšky.",
           "en": "A final test should follow the complete chain from sensing through planning to physical outcome. Define requirements for accuracy, time, consumption, and fault response. Preserve software version, configuration, conditions, and raw recordings. Repeat tests at limiting payload and realistic battery state. Describe results as validated operating conditions rather than a general claim that the robot always works. Repeat affected tests after mechanical or control changes."
         }
       }

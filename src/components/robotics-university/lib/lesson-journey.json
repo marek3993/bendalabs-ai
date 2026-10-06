@@ -1,0 +1,490 @@
+{
+  "chapters": [
+    {
+      "id": "loop",
+      "problem": {
+        "sk": "Robot sa blíži k cieľu, ale prejde zaň. Ako zmeníš jeho reakciu pomocou spätnej väzby?",
+        "en": "The robot approaches its target but overshoots it. How can feedback change its response?"
+      },
+      "outcome": {
+        "sk": "Porovnáš odozvy pri rôznom zosilnení a rozlíšiš cieľ, nameranú polohu a zásah regulátora.",
+        "en": "Compare responses at different gains and distinguish the target, measured position and controller output."
+      }
+    },
+    {
+      "id": "frames",
+      "problem": {
+        "sk": "Kamera je posunutá a otočená voči robotovi. Kde sa nachádza bod, ktorý vidí pred sebou?",
+        "en": "The camera is shifted and rotated relative to the robot. Where is the point it sees in front of it?"
+      },
+      "outcome": {
+        "sk": "Prevedieš bod zo súradníc senzora do súradníc robota a uvidíš účinok posunu aj otočenia.",
+        "en": "Transform a point from sensor coordinates to robot coordinates and see the effects of translation and rotation."
+      }
+    },
+    {
+      "id": "timing",
+      "problem": {
+        "sk": "Robot dostane informáciu o prekážke neskoro. Koľko miesta ešte potrebuje na zastavenie?",
+        "en": "The robot receives obstacle information late. How much space does it still need to stop?"
+      },
+      "outcome": {
+        "sk": "Oddelíš dráhu počas oneskorenia od brzdenia a nastavíš limit platnosti merania.",
+        "en": "Separate travel during delay from braking distance and set a measurement age limit."
+      }
+    },
+    {
+      "id": "vision",
+      "problem": {
+        "sk": "Kamera hlási objekt, ktorý tam nie je, no iný prehliadne. Pomôže zvýšenie prahu detekcie?",
+        "en": "The camera reports an object that is absent and misses another. Will raising the detection threshold help?"
+      },
+      "outcome": {
+        "sk": "Zmeníš prah a porovnáš falošné poplachy, prehliadnuté objekty, precision a recall.",
+        "en": "Change the threshold and compare false alarms, missed objects, precision and recall."
+      }
+    },
+    {
+      "id": "imitation",
+      "problem": {
+        "sk": "Robot pozná iba malé odchýlky od správnej dráhy. Čo urobí, keď začne oveľa ďalej od nej?",
+        "en": "The robot has only seen small deviations from the correct path. What happens when it starts much farther away?"
+      },
+      "outcome": {
+        "sk": "Porovnáš správanie jednoduchej naučenej politiky s ukážkami zotavenia a bez nich.",
+        "en": "Compare a simple learned policy with and without recovery demonstrations."
+      }
+    },
+    {
+      "id": "vla",
+      "problem": {
+        "sk": "Robot zvláda známy predmet pri dobrom svetle. Stačí to na tvrdenie, že úlohu ovláda?",
+        "en": "The robot handles a familiar object in good light. Is that enough to say it has mastered the task?"
+      },
+      "outcome": {
+        "sk": "Vyhodnotíš úspešnosť v rôznych podmienkach a odlíšiš slabý výsledok od neotestovanej situácie.",
+        "en": "Evaluate success across conditions and distinguish a weak result from an untested situation."
+      }
+    },
+    {
+      "id": "range",
+      "problem": {
+        "sk": "Za blízkou prekážkou je ďalšia, ktorú LiDAR nevidí. Pomôže dlhší dosah alebo zmena polohy?",
+        "en": "Another obstacle sits behind a nearby one, hidden from LiDAR. Will more range or a different position help?"
+      },
+      "outcome": {
+        "sk": "Presunieš senzor, odhalíš zakryté povrchy a porovnáš vplyv dosahu, počtu lúčov a šumu.",
+        "en": "Move the sensor to reveal occluded surfaces and compare the effects of range, ray count and noise."
+      }
+    },
+    {
+      "id": "calibration",
+      "problem": {
+        "sk": "Bod v obraze nesedí s predpoveďou. Zmenilo sa nastavenie kamery alebo jej poloha?",
+        "en": "An image point does not match its predicted location. Did the camera settings or its position change?"
+      },
+      "outcome": {
+        "sk": "Porovnáš účinok ohniskovej vzdialenosti a posunu kamery na premietnutie bodu.",
+        "en": "Compare how focal length and camera translation affect a projected point."
+      }
+    },
+    {
+      "id": "fusion",
+      "problem": {
+        "sk": "Odhad pohybu a nové meranie ukazujú rozdielne polohy. Ktorej informácii má robot viac veriť?",
+        "en": "The motion prediction and a new measurement indicate different positions. Which should the robot trust more?"
+      },
+      "outcome": {
+        "sk": "Zmeníš neistotu predikcie a merania a uvidíš, ako sa mení korekcia polohy.",
+        "en": "Change prediction and measurement uncertainty and observe how the position correction changes."
+      }
+    },
+    {
+      "id": "motors",
+      "problem": {
+        "sk": "Rameno zdvihne náklad blízko osi, ale na dlhšom ramene už nestačí. Aký moment potrebuje?",
+        "en": "The arm lifts a load close to its joint but struggles when extended. How much torque does it need?"
+      },
+      "outcome": {
+        "sk": "Vypočítaš moment od nákladu a ramena a porovnáš výmenu otáčok za moment cez prevod.",
+        "en": "Calculate torque from the payload and arm, then compare the speed–torque trade-off through gearing."
+      }
+    },
+    {
+      "id": "pid",
+      "problem": {
+        "sk": "Robot reaguje rýchlo, ale po dosiahnutí cieľa kmitá. Ako ho utlmíš bez toho, aby sa iba prestal hýbať?",
+        "en": "The robot responds quickly but oscillates around its target. How can you damp it without simply stopping it?"
+      },
+      "outcome": {
+        "sk": "Naladíš odozvu podľa prekmitu aj chyby pri cieli a rozpoznáš obmedzenie výstupu regulátora.",
+        "en": "Tune the response using both overshoot and target error, and recognise controller output saturation."
+      }
+    },
+    {
+      "id": "ik",
+      "problem": {
+        "sk": "Poznáš miesto, kam má rameno dosiahnuť. Ktoré uhly kĺbov ho tam dostanú?",
+        "en": "You know where the arm should reach. Which joint angles will get it there?"
+      },
+      "outcome": {
+        "sk": "Porovnáš dve riešenia rovinného ramena a rozlíšiš dosiahnuteľný cieľ, singularitu a bod mimo dosahu.",
+        "en": "Compare two planar-arm solutions and distinguish a reachable target, a singularity and an unreachable point."
+      }
+    },
+    {
+      "id": "flight",
+      "problem": {
+        "sk": "Dron po pridaní nákladu a náklone stráca výšku. Koľko ťahu musí pridať?",
+        "en": "The drone loses height after adding a payload and tilting. How much extra thrust does it need?"
+      },
+      "outcome": {
+        "sk": "Vyrovnáš tiaž zvislou zložkou ťahu a zistíš, prečo dron pri náklone stále zrýchľuje vodorovne.",
+        "en": "Balance weight with vertical thrust and explain why a tilted drone still accelerates horizontally."
+      }
+    },
+    {
+      "id": "autopilot",
+      "problem": {
+        "sk": "Príkaz znie „posuň sa o meter“. Ako sa z neho stane požiadavka na náklon a otáčanie dronu?",
+        "en": "The command is “move one metre”. How does it become a request for drone tilt and rotation?"
+      },
+      "outcome": {
+        "sk": "Vysleduješ požiadavky cez zjednodušené regulačné vrstvy a porovnáš ich s odhadom stavu.",
+        "en": "Trace requests through simplified control layers and compare them with the estimated state."
+      }
+    },
+    {
+      "id": "failsafe",
+      "problem": {
+        "sk": "Dron stratí spojenie a zároveň má kritickú batériu. Ktorá požadovaná reakcia má prednosť?",
+        "en": "The drone loses its link while its battery is critical. Which requested response takes priority?"
+      },
+      "outcome": {
+        "sk": "Porovnáš súbeh porúch a overíš, či je pre zvolený návrat alebo držanie dostupná platná poloha.",
+        "en": "Compare concurrent faults and check whether valid position is available for the selected return or hold response."
+      }
+    },
+    {
+      "id": "energy",
+      "problem": {
+        "sk": "Batéria má dosť ampérhodín, ale robot nevydrží plánovanú hodinu. Čo v rozpočte chýba?",
+        "en": "The battery has plenty of amp-hours, yet the robot cannot run for the planned hour. What is missing from the budget?"
+      },
+      "outcome": {
+        "sk": "Zostavíš odhad výdrže z energie, príkonu, účinnosti a rezervy a skontroluješ priemerný prúd.",
+        "en": "Estimate runtime from energy, power, efficiency and reserve, and check average current."
+      }
+    },
+    {
+      "id": "bms",
+      "problem": {
+        "sk": "Celkové napätie batérie vyzerá normálne, ale jeden článok je príliš vybitý. Čo má ochrana sledovať?",
+        "en": "The total battery voltage looks normal, but one cell is too low. What should the protection monitor?"
+      },
+      "outcome": {
+        "sk": "Porovnáš stavy jednotlivých článkov a odlíšiš blokovanie nabíjania, vybíjania a chýbajúce meranie.",
+        "en": "Compare individual cell states and distinguish charge blocking, discharge blocking and missing measurements."
+      }
+    },
+    {
+      "id": "distribution",
+      "problem": {
+        "sk": "Pri väčšom odbere klesne napätie pri spotrebiči a vedenie sa zahrieva. Kam mizne energia?",
+        "en": "At higher current, the load voltage drops and the wiring heats up. Where does the energy go?"
+      },
+      "outcome": {
+        "sk": "Vypočítaš úbytok napätia a straty meniča aj vedenia a porovnáš ich pri zmene prúdu.",
+        "en": "Calculate voltage drop and converter and cable losses, then compare them as current changes."
+      }
+    },
+    {
+      "id": "states",
+      "problem": {
+        "sk": "Program čaká na ďalší krok, no medzitým vypadne senzor. Dokáže na poruchu zareagovať?",
+        "en": "The program is waiting for its next step when a sensor fails. Can it still react to the fault?"
+      },
+      "outcome": {
+        "sk": "Prejdeš medzi pohybom, čakaním a poruchou a overíš správanie pri vypršaní príkazu.",
+        "en": "Move between motion, waiting and fault states, and check behaviour when a command expires."
+      }
+    },
+    {
+      "id": "ros",
+      "problem": {
+        "sk": "Senzor posiela údaje, iný uzol žiada krátku odpoveď a pohyb trvá niekoľko sekúnd. Potrebujú rovnaké rozhranie?",
+        "en": "A sensor streams data, another node requests a short reply, and a motion task takes seconds. Do they need the same interface?"
+      },
+      "outcome": {
+        "sk": "Vyberieš Topic, Service alebo Action podľa úlohy a vyskúšaš priebeh aj zrušenie akcie.",
+        "en": "Choose Topic, Service or Action to suit a task, and try action progress and cancellation."
+      }
+    },
+    {
+      "id": "qos",
+      "problem": {
+        "sk": "Správy prichádzajú spoľahlivo, ale robot používa staré merania. Prečo samotné doručenie nestačí?",
+        "en": "Messages arrive reliably, yet the robot uses old measurements. Why is delivery alone not enough?"
+      },
+      "outcome": {
+        "sk": "Overíš kompatibilitu spoľahlivosti a porovnáš vek správ pri rôznej hĺbke fronty.",
+        "en": "Check reliability compatibility and compare message age at different queue depths."
+      }
+    },
+    {
+      "id": "prototype",
+      "problem": {
+        "sk": "Zadanie hovorí, že robot má byť spoľahlivý. Akou skúškou zistíš, či požiadavku splnil?",
+        "en": "The brief says the robot must be reliable. What test will show whether it meets the requirement?"
+      },
+      "outcome": {
+        "sk": "Zvolíš merateľnú požiadavku, zapíšeš podmienky a vyhodnotíš tri opakované merania.",
+        "en": "Choose a measurable requirement, record the conditions and evaluate three repeated measurements."
+      }
+    },
+    {
+      "id": "odometry",
+      "problem": {
+        "sk": "Jedno koleso sa otáča rýchlejšie než druhé. Kam sa podvozok dostane a ako sa otočí?",
+        "en": "One wheel turns faster than the other. Where will the chassis end up, and how will it turn?"
+      },
+      "outcome": {
+        "sk": "Z otáčok kolies vypočítaš priamku, oblúk aj otočenie na mieste v modeli bez šmyku.",
+        "en": "Calculate straight travel, an arc and an in-place turn from wheel rates in a no-slip model."
+      }
+    },
+    {
+      "id": "validation",
+      "problem": {
+        "sk": "Tá istá dráha funguje pomaly, ale pri rýchlom prejazde prekročí limity pohonu. Aký čas potrebuje?",
+        "en": "The same path works slowly but exceeds actuator limits when followed quickly. How much time does it need?"
+      },
+      "outcome": {
+        "sk": "Nastavíš trvanie kubického profilu tak, aby splnil zadané limity rýchlosti aj zrýchlenia.",
+        "en": "Set a cubic profile’s duration to meet the specified velocity and acceleration limits."
+      }
+    }
+  ],
+  "glossary": [
+    {
+      "id": "pwm",
+      "term": {
+        "sk": "PWM · pulzne šírková modulácia",
+        "en": "PWM · pulse-width modulation"
+      },
+      "definition": {
+        "sk": "Rýchle prepínanie výstupu medzi zapnutým a vypnutým stavom. Strieda udáva podiel času zapnutia; sama neurčuje skutočné otáčky motora.",
+        "en": "Rapidly switching an output on and off. Duty cycle is the fraction of time spent on; it does not by itself determine actual motor speed."
+      }
+    },
+    {
+      "id": "torque",
+      "term": {
+        "sk": "Moment sily",
+        "en": "Torque"
+      },
+      "definition": {
+        "sk": "Otáčavý účinok sily okolo osi. Pri kolmej sile platí moment = sila × rameno; jednotka je N·m.",
+        "en": "The turning effect of a force around an axis. For a perpendicular force, torque = force × lever arm; the unit is N·m."
+      }
+    },
+    {
+      "id": "feedback",
+      "term": {
+        "sk": "Spätná väzba",
+        "en": "Feedback"
+      },
+      "definition": {
+        "sk": "Informácia o výsledku pohybu alebo procesu, ktorú regulátor používa na opravu rozdielu od cieľa.",
+        "en": "Information about the result of a motion or process, used by a controller to correct deviation from its target."
+      }
+    },
+    {
+      "id": "pid",
+      "term": {
+        "sk": "PID regulátor",
+        "en": "PID controller"
+      },
+      "definition": {
+        "sk": "Regulátor s proporcionálnou, integrálnou a derivačnou zložkou. Reaguje na chybu, jej hromadenie a zmeny v čase.",
+        "en": "A controller with proportional, integral and derivative terms. It responds to error, accumulated error and changes over time."
+      }
+    },
+    {
+      "id": "integral",
+      "term": {
+        "sk": "Integrál chyby",
+        "en": "Error integral"
+      },
+      "definition": {
+        "sk": "Chyba nahromadená v čase. V digitálnom regulátore sa sčíta chyba × dĺžka kroku; počas saturácie môže narásť príliš veľa.",
+        "en": "Error accumulated over time. A digital controller sums error × time step; the sum can grow excessively during saturation."
+      }
+    },
+    {
+      "id": "overshoot",
+      "term": {
+        "sk": "Prekmit",
+        "en": "Overshoot"
+      },
+      "definition": {
+        "sk": "O koľko výstup po zmene cieľa prekročí požadovanú hodnotu. Malý prekmit ešte neznamená, že sa výstup pri cieli ustálil.",
+        "en": "How far the response exceeds its target after a setpoint change. Low overshoot alone does not mean the response has settled near the target."
+      }
+    },
+    {
+      "id": "saturation",
+      "term": {
+        "sk": "Saturácia",
+        "en": "Saturation"
+      },
+      "definition": {
+        "sk": "Stav, keď príkaz dosiahne povolený limit. Regulátor môže požadovať viac, ale pohon alebo obmedzovač už väčší zásah neposkytne.",
+        "en": "A condition where a command reaches its allowed limit. The controller may request more, but the actuator or limiter cannot provide it."
+      }
+    },
+    {
+      "id": "watchdog",
+      "term": {
+        "sk": "Watchdog · strážny časovač",
+        "en": "Watchdog"
+      },
+      "definition": {
+        "sk": "Kontrola, či prišla očakávaná správa alebo udalosť včas. Po vypršaní limitu vyvolá vopred určenú reakciu.",
+        "en": "A check that an expected message or event arrived in time. When its limit expires, it triggers a predefined response."
+      }
+    },
+    {
+      "id": "encoder",
+      "term": {
+        "sk": "Enkodér",
+        "en": "Encoder"
+      },
+      "definition": {
+        "sk": "Snímač polohy alebo otočenia hriadeľa. Pomáha odhadnúť pohyb kolesa, ale samotný nedokáže odhaliť jeho šmyk po podlahe.",
+        "en": "A sensor of position or shaft rotation. It helps estimate wheel motion but cannot by itself detect wheel slip against the floor."
+      }
+    },
+    {
+      "id": "odometry",
+      "term": {
+        "sk": "Odometria",
+        "en": "Odometry"
+      },
+      "definition": {
+        "sk": "Odhad zmeny polohy robota z jeho pohybu, napríklad z otáčania kolies. Malé chyby sa pri postupnom sčítaní môžu hromadiť.",
+        "en": "Estimating changes in robot pose from motion, such as wheel rotation. Small errors can accumulate as these changes are integrated."
+      }
+    },
+    {
+      "id": "coordinate-frame",
+      "term": {
+        "sk": "Súradnicový rámec",
+        "en": "Coordinate frame"
+      },
+      "definition": {
+        "sk": "Počiatok a orientované osi, voči ktorým zapisuješ polohu. Rovnaký bod má v rôznych rámcoch spravidla iné súradnice.",
+        "en": "An origin and oriented axes used to express position. The same point generally has different coordinates in different frames."
+      }
+    },
+    {
+      "id": "lidar",
+      "term": {
+        "sk": "LiDAR",
+        "en": "LiDAR"
+      },
+      "definition": {
+        "sk": "Senzor merajúci vzdialenosť pomocou svetla. Pri meraní času letu sa vzdialenosť určí z cesty lúča k objektu a späť.",
+        "en": "A sensor that measures distance using light. Time-of-flight ranging uses the light’s journey to an object and back."
+      }
+    },
+    {
+      "id": "calibration",
+      "term": {
+        "sk": "Kalibrácia",
+        "en": "Calibration"
+      },
+      "definition": {
+        "sk": "Určenie parametrov, ktoré prepájajú meranie so skutočnou veličinou alebo geometriou. Výsledok treba overiť aj na iných meraniach než pri nastavovaní.",
+        "en": "Determining parameters that relate a measurement to a physical quantity or geometry. Validate the result on measurements not used for fitting."
+      }
+    },
+    {
+      "id": "variance",
+      "term": {
+        "sk": "Rozptyl",
+        "en": "Variance"
+      },
+      "definition": {
+        "sk": "Miera rozptýlenia hodnôt okolo priemeru. Má druhú mocninu jednotky, napríklad m² pri polohe; pri odhade stavu vyjadruje modelovanú neistotu.",
+        "en": "A measure of spread around the mean. Its unit is squared, such as m² for position; in state estimation it represents modelled uncertainty."
+      }
+    },
+    {
+      "id": "amp-hour",
+      "term": {
+        "sk": "Ampérhodina · Ah",
+        "en": "Amp-hour · Ah"
+      },
+      "definition": {
+        "sk": "Jednotka elektrického náboja. Kapacita 2 Ah sama nehovorí, koľko energie batéria obsahuje; potrebuješ aj jej napätie.",
+        "en": "A unit of electric charge. A capacity of 2 Ah alone does not tell you the battery’s energy; you also need its voltage."
+      }
+    },
+    {
+      "id": "watt-hour",
+      "term": {
+        "sk": "Watthodina · Wh",
+        "en": "Watt-hour · Wh"
+      },
+      "definition": {
+        "sk": "Jednotka energie. Nominálny odhad energie batérie je napätie vo voltoch × kapacita v ampérhodinách.",
+        "en": "A unit of energy. Nominal battery energy can be estimated as voltage in volts × capacity in amp-hours."
+      }
+    },
+    {
+      "id": "bms",
+      "term": {
+        "sk": "BMS · systém správy batérie",
+        "en": "BMS · battery management system"
+      },
+      "definition": {
+        "sk": "Systém monitorujúci a chrániaci batériu podľa svojich funkcií, napríklad napätia článkov, prúdu a teploty. Nenahrádza vhodnú nabíjačku.",
+        "en": "A system that monitors and protects a battery according to its capabilities, such as cell voltage, current and temperature. It does not replace a suitable charger."
+      }
+    },
+    {
+      "id": "qos",
+      "term": {
+        "sk": "QoS · pravidlá doručovania",
+        "en": "QoS · quality of service"
+      },
+      "definition": {
+        "sk": "Nastavenia komunikácie určujúce napríklad spoľahlivosť a uchovávanie správ. Spoľahlivé doručenie samo nezaručuje čerstvé údaje.",
+        "en": "Communication settings governing properties such as reliability and message retention. Reliable delivery alone does not guarantee fresh data."
+      }
+    },
+    {
+      "id": "vla",
+      "term": {
+        "sk": "VLA · videnie, jazyk a akcia",
+        "en": "VLA · vision, language and action"
+      },
+      "definition": {
+        "sk": "Typ modelu, ktorý prepája obrazové a jazykové vstupy s robotickými akciami. Jeho schopnosti treba overovať v konkrétnych podmienkach a na danom robotovi.",
+        "en": "A type of model connecting visual and language inputs with robot actions. Its capabilities must be evaluated under specific conditions and on the intended robot."
+      }
+    },
+    {
+      "id": "behavioural-cloning",
+      "term": {
+        "sk": "Behaviorálne klonovanie",
+        "en": "Behavioural cloning"
+      },
+      "definition": {
+        "sk": "Učenie politiky z príkladov pozorovania a správnej akcie. Mimo situácií zastúpených v ukážkach môže politika zlyhať.",
+        "en": "Learning a policy from examples of observations and desired actions. The policy can fail in situations not represented in its demonstrations."
+      }
+    }
+  ]
+}

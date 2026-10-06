@@ -1,0 +1,792 @@
+{
+  "checkedOn": "2026-10-06",
+  "rover": {
+    "title": {
+      "sk": "Tvoj prvý autonómny rover",
+      "en": "Your first autonomous rover"
+    },
+    "exactBOM": [
+      {
+        "id": "uno",
+        "name": {
+          "sk": "Arduino Uno R3 A000066",
+          "en": "Arduino Uno R3 A000066"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "kus",
+          "en": "unit"
+        },
+        "price": 29.3,
+        "currency": "EUR",
+        "priceBasis": "regular unit price",
+        "observedSalePrice": 23.44,
+        "url": "https://store.arduino.cc/products/arduino-uno-rev3",
+        "notes": {
+          "sk": "Originálna 5 V doska s konektorom USB-B. Rozpočet používa bežnú cenu, nie dočasnú zľavu.",
+          "en": "Original 5 V board with USB-B connector. The budget uses the regular price, not the temporary promotion."
+        }
+      },
+      {
+        "id": "driver",
+        "name": {
+          "sk": "SparkFun TB6612FNG ROB-14451",
+          "en": "SparkFun TB6612FNG ROB-14451"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "modul",
+          "en": "module"
+        },
+        "price": 14.77,
+        "currency": "USD",
+        "priceBasis": "unit price",
+        "url": "https://www.sparkfun.com/sparkfun-motor-driver-dual-tb6612fng-1a.html",
+        "notes": {
+          "sk": "Dva motorové kanály; menovitý trvalý prúd 1,2 A na kanál. VCC napája logiku, VM motory. Zohľadni chladenie a podmienky výrobcu.",
+          "en": "Two motor channels; rated continuous current 1.2 A per channel. VCC powers logic; VM powers motors. Observe the manufacturer's thermal and operating conditions."
+        }
+      },
+      {
+        "id": "motors",
+        "name": {
+          "sk": "Pololu 100:1 Micro Metal Gearmotor LP 6 V, #992",
+          "en": "Pololu 100:1 Micro Metal Gearmotor LP 6 V, #992"
+        },
+        "qty": 2,
+        "unit": {
+          "sk": "kus",
+          "en": "unit"
+        },
+        "price": 23.95,
+        "currency": "USD",
+        "priceBasis": "unit price",
+        "url": "https://www.pololu.com/product/992",
+        "notes": {
+          "sk": "Práve verzia LP 6 V, hriadeľ 3 mm s plôškou. Výrobca uvádza extrapolovaný blokovací prúd 0,36 A pri 6 V. Blokovanie motora nie je normálny prevádzkový stav.",
+          "en": "Select the LP 6 V version with a 3 mm D shaft. The manufacturer lists 0.36 A extrapolated stall current at 6 V. A stalled motor is not a normal operating condition."
+        }
+      },
+      {
+        "id": "wheels",
+        "name": {
+          "sk": "Pololu kolesá 32 × 7 mm, biely pár #1088",
+          "en": "Pololu 32 × 7 mm wheels, white pair #1088"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "pár",
+          "en": "pair"
+        },
+        "price": 4.45,
+        "currency": "USD",
+        "priceBasis": "price per pair",
+        "url": "https://www.pololu.com/product/1088",
+        "notes": {
+          "sk": "Dve kolesá pre 3 mm D hriadele uvedených motorov.",
+          "en": "Two wheels for the selected motors' 3 mm D shafts."
+        }
+      },
+      {
+        "id": "brackets",
+        "name": {
+          "sk": "Pololu držiaky Micro Metal Gearmotor, čierny pár #989",
+          "en": "Pololu Micro Metal Gearmotor Brackets, black pair #989"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "pár",
+          "en": "pair"
+        },
+        "price": 2.95,
+        "currency": "USD",
+        "priceBasis": "price per pair",
+        "url": "https://www.pololu.com/product/989",
+        "notes": {
+          "sk": "Držiaky pasujú na uvedené motory; balenie obsahuje štyri skrutky a matice. Otvory v základni vyznač podľa skutočných držiakov.",
+          "en": "Brackets fit the selected motors; four screws and nuts are included. Mark the base holes from the actual brackets."
+        }
+      },
+      {
+        "id": "caster",
+        "name": {
+          "sk": "Pololu guľová podpera s kovovou guľou 3/8 palca, #951",
+          "en": "Pololu ball caster with 3/8-inch metal ball, #951"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "kus",
+          "en": "unit"
+        },
+        "price": 2.95,
+        "currency": "USD",
+        "priceBasis": "unit price",
+        "url": "https://www.pololu.com/product/951",
+        "notes": {
+          "sk": "Balenie obsahuje dištančné podložky a montážne diely. Výšku dolaď tak, aby základňa bola vodorovná a kolesá sa voľne otáčali.",
+          "en": "Spacers and mounting hardware are included. Adjust the height so the base sits level and the wheels rotate freely."
+        }
+      },
+      {
+        "id": "sonar",
+        "name": {
+          "sk": "Adafruit HC-SR04, #3942",
+          "en": "Adafruit HC-SR04, #3942"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "modul",
+          "en": "module"
+        },
+        "price": 3.95,
+        "currency": "USD",
+        "priceBasis": "unit price",
+        "url": "https://www.adafruit.com/product/3942",
+        "notes": {
+          "sk": "5 V napájanie aj signál Echo sú vhodné pre Uno R3. Pri neskoršom prechode na 3,3 V dosku musíš upraviť úroveň Echo.",
+          "en": "Its 5 V supply and Echo signal match Uno R3. If you later use a 3.3 V board, adapt the Echo voltage level."
+        }
+      },
+      {
+        "id": "holder",
+        "name": {
+          "sk": "Adafruit držiak 4 × AA s vypínačom, #830",
+          "en": "Adafruit switched 4 × AA holder, #830"
+        },
+        "qty": 1,
+        "unit": {
+          "sk": "kus",
+          "en": "unit"
+        },
+        "price": 2.95,
+        "currency": "USD",
+        "priceBasis": "unit price",
+        "url": "https://www.adafruit.com/product/830",
+        "notes": {
+          "sk": "Štyri zhodné NiMH články napájajú iba motorovú vetvu VM. Tento zdroj nepripájaj na barrel konektor ani VIN Uno; logiku napájaj cez USB.",
+          "en": "Four matched NiMH cells supply only the motor VM branch. Do not connect this pack to the Uno barrel connector or VIN; power logic through USB."
+        }
+      }
+    ],
+    "allowances": [
+      {
+        "id": "cells-charger",
+        "name": {
+          "sk": "NiMH články a nabíjačka",
+          "en": "NiMH cells and charger"
+        },
+        "min": 25,
+        "max": 40,
+        "currency": "EUR",
+        "basis": {
+          "sk": "Plánovací odhad, nie overená ponuka konkrétneho obchodu.",
+          "en": "Planning estimate, not a verified offer from a specific shop."
+        },
+        "items": [
+          {
+            "sk": "4 × zhodné AA NiMH články približne 1900–2100 mAh",
+            "en": "4 × matched AA NiMH cells, approximately 1900–2100 mAh"
+          },
+          {
+            "sk": "1 × nabíjačka AA NiMH so samostatným riadením článkov",
+            "en": "1 × AA NiMH charger with individual cell management"
+          }
+        ]
+      },
+      {
+        "id": "usb",
+        "name": {
+          "sk": "Napájanie logiky a USB kábel",
+          "en": "Logic power and USB cable"
+        },
+        "min": 10,
+        "max": 20,
+        "currency": "EUR",
+        "basis": {
+          "sk": "Plánovací odhad; existujúce vhodné vybavenie môžeš použiť znova.",
+          "en": "Planning estimate; suitable existing equipment can be reused."
+        },
+        "items": [
+          {
+            "sk": "1 × USB-A–USB-B dátový kábel pre Uno R3",
+            "en": "1 × USB-A–USB-B data cable for Uno R3"
+          },
+          {
+            "sk": "1 × regulovaný 5 V USB zdroj; na voľnú jazdu powerbanka vhodná aj pre malý odber",
+            "en": "1 × regulated 5 V USB source; for untethered driving, a power bank suitable for low-current loads"
+          }
+        ]
+      },
+      {
+        "id": "assembly",
+        "name": {
+          "sk": "Základňa, kabeláž a drobné diely",
+          "en": "Base, wiring and small parts"
+        },
+        "min": 15,
+        "max": 30,
+        "currency": "EUR",
+        "basis": {
+          "sk": "Plánovací odhad pre vlastnú jednoduchú základňu.",
+          "en": "Planning estimate for a simple custom base."
+        },
+        "items": [
+          {
+            "sk": "1 × základňa, napríklad preglejka 150 × 120 × 3 mm; otvory podľa držiakov, kolesá mimo hrán dosky",
+            "en": "1 × base, for example 150 × 120 × 3 mm plywood; holes matched to brackets, wheels outside the plate edges"
+          },
+          {
+            "sk": "1 × držiak poistky + 1 A poistka motorovej vetvy; charakteristiku over pre rozbeh a použité vodiče",
+            "en": "1 × fuse holder and 1 A motor-branch fuse; check its characteristic against startup current and wire ratings"
+          },
+          {
+            "sk": "Približne 1 m lankového vodiča 24 AWG, konektory a signálové vodiče",
+            "en": "Approximately 1 m of 24 AWG stranded wire, connectors and signal leads"
+          },
+          {
+            "sk": "1 × elektrolytický kondenzátor 470 µF / aspoň 10 V pri VM/GND; dodrž polaritu",
+            "en": "1 × 470 µF electrolytic capacitor rated at least 10 V near VM/GND; observe polarity"
+          },
+          {
+            "sk": "2 × keramický kondenzátor 100 nF na odrušenie motorov",
+            "en": "2 × 100 nF ceramic capacitors for motor suppression"
+          },
+          {
+            "sk": "1 × rezistor 10 kΩ pre STBY pull-down podľa schémy konkrétneho modulu",
+            "en": "1 × 10 kΩ resistor for an STBY pull-down, subject to the selected module's schematic"
+          },
+          {
+            "sk": "Kolíkové lišty, izolačné stĺpiky, skrutky, pásky a zmršťovacia bužírka",
+            "en": "Pin headers, insulated spacers, screws, ties and heat-shrink tubing"
+          }
+        ]
+      }
+    ],
+    "budget": {
+      "verifiedSubtotals": [
+        {
+          "currency": "USD",
+          "amount": 79.92
+        },
+        {
+          "currency": "EUR",
+          "amount": 29.3
+        }
+      ],
+      "allowanceTotals": {
+        "currency": "EUR",
+        "min": 50,
+        "max": 90
+      },
+      "formula": "EUR total = 29.30 + 79.92 * (EUR per USD) + EUR 50..90",
+      "notes": {
+        "sk": "Orientačný rozpočet. Ceny súčiastok boli overené 6. 10. 2026. Dolárové ceny prepočítaj kurzom svojho nákupu; odhady doplnkov nie sú cenové ponuky.",
+        "en": "Planning budget. Component prices were checked on 6 October 2026. Convert dollar prices using the rate for your purchase; accessory allowances are not quotations."
+      },
+      "exclusions": {
+        "sk": "Doprava, dane a dovozné poplatky pri objednávke, náradie, počítač a voliteľné náhradné diely.",
+        "en": "Shipping, checkout taxes and import charges, tools, computer and optional spare parts."
+      },
+      "tools": {
+        "sk": "Multimeter, spájkovačka, odizolovacie kliešte, skrutkovač a vŕtačka.",
+        "en": "Multimeter, soldering iron, wire stripper, screwdriver and drill."
+      },
+      "assemblyNote": {
+        "sk": "Motory, kolesá a držiaky majú zodpovedajúce rozhrania. Základňu vyrobíš a prevŕtaš podľa dielov; univerzálny podvozok pre žlté TT motory na tieto motory automaticky nepasuje.",
+        "en": "The motors, wheels and brackets have matching interfaces. Make and drill the base to fit the parts; a generic yellow-TT-motor chassis does not automatically fit these motors."
+      }
+    },
+    "pinout": [
+      [
+        "STBY",
+        "D4"
+      ],
+      [
+        "PWMA",
+        "D5"
+      ],
+      [
+        "PWMB",
+        "D6"
+      ],
+      [
+        "AIN1",
+        "D7"
+      ],
+      [
+        "AIN2",
+        "D8"
+      ],
+      [
+        "BIN1",
+        "D9"
+      ],
+      [
+        "BIN2",
+        "D10"
+      ],
+      [
+        "HC-SR04 Echo",
+        "D11"
+      ],
+      [
+        "HC-SR04 Trig",
+        "D12"
+      ]
+    ],
+    "power": {
+      "sk": "USB napája Uno, VCC drivera a senzor. Štyri AA NiMH články cez poistku a vypínač napájajú VM. Všetky GND sú prepojené. Motory sa pripájajú na AO1/AO2 a BO1/BO2.",
+      "en": "USB powers Uno, the driver's VCC and the sensor. Four AA NiMH cells supply VM through a fuse and switch. Connect all grounds. Motors connect to AO1/AO2 and BO1/BO2."
+    },
+    "firmware": {
+      "path": "C:/Projects/BendaLabs_AI/robotics-encyclopedia/public/university-assets/rover-uno.ino",
+      "serialBaud": 115200,
+      "behavior": {
+        "sk": "Pri vzdialenosti pod 25 cm rover vypne pohon a začne 450 ms otočenie. Neplatné alebo staršie meranie pohon vypne. Pred prvou jazdou skontroluj smer motorov so zdvihnutými kolesami.",
+        "en": "Below 25 cm, the rover disables its drive and starts a 450 ms turn. Invalid or stale measurements disable the drive. Before the first drive, check motor direction with the wheels raised."
+      },
+      "stoppingNote": {
+        "sk": "STBY vypne výstupy; motor môže dobiehať. Hranicu zastavenia nastav podľa nameranej dráhy na svojom povrchu.",
+        "en": "STBY disables the outputs; the motor can coast. Set the stopping threshold using the measured distance on your surface."
+      }
+    },
+    "troubleshooting": [
+      {
+        "symptom": {
+          "sk": "Sériový monitor ukazuje −1",
+          "en": "Serial Monitor shows −1"
+        },
+        "action": {
+          "sk": "Skontroluj 5 V, spoločnú zem a piny D12/D11. Skús rovnú pevnú prekážku vo vzdialenosti 20–50 cm.",
+          "en": "Check 5 V, common ground and pins D12/D11. Try a flat solid target 20–50 cm away."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Motory stoja",
+          "en": "Motors do not move"
+        },
+        "action": {
+          "sk": "Najprv zdvihni kolesá. Zmeraj VM, over STBY a signály PWM; skontroluj poistku a držiak batérií.",
+          "en": "Raise the wheels first. Measure VM, check STBY and PWM, then inspect the fuse and battery holder."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Jedno koleso ide opačne",
+          "en": "One wheel runs backwards"
+        },
+        "action": {
+          "sk": "Odpoj napájanie a prehoď dva vodiče príslušného motora. Zopakuj skúšku so zdvihnutými kolesami.",
+          "en": "Disconnect power and swap that motor's two wires. Repeat the test with the wheels raised."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Uno sa pri rozjazde reštartuje",
+          "en": "Uno resets when moving"
+        },
+        "action": {
+          "sk": "Skontroluj oddelené napájacie vetvy, kontakty, spoločnú zem a kondenzátory. Motor nenapájaj z pinu 5 V.",
+          "en": "Check the separate power branches, contacts, common ground and capacitors. Do not power a motor from the 5 V pin."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Rover naráža do prekážky",
+          "en": "The rover hits an obstacle"
+        },
+        "action": {
+          "sk": "Zníž SPEED a zväčši hranicu 25 cm podľa skutočne zmeranej dráhy zastavenia. Over pevné uchytenie senzora a jeho záber.",
+          "en": "Reduce SPEED and increase the 25 cm threshold using the measured stopping distance. Check the sensor mounting and field of view."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Powerbanka po chvíli zhasne",
+          "en": "The power bank switches off"
+        },
+        "action": {
+          "sk": "Môže vypínať výstup pri malom odbere. Použi režim pre malý odber alebo vhodný 5 V zdroj.",
+          "en": "Its output may shut down at low load. Use its low-current mode or a suitable 5 V source."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Program sa nedá nahrať",
+          "en": "The sketch will not upload"
+        },
+        "action": {
+          "sk": "V Arduino IDE vyber Arduino Uno a správny port. Over dátový USB kábel a zatvor iné aplikácie používajúce tento port.",
+          "en": "In Arduino IDE select Arduino Uno and the correct port. Check the USB data cable and close other applications using that port."
+        }
+      }
+    ]
+  },
+  "ros": {
+    "title": {
+      "sk": "Prvá mapa s ROS 2 Jazzy",
+      "en": "Your first map with ROS 2 Jazzy"
+    },
+    "stack": [
+      "Ubuntu 24.04 Noble",
+      "ROS 2 Jazzy",
+      "Gazebo Harmonic",
+      "Nav2",
+      "SLAM Toolbox"
+    ],
+    "prerequisites": [
+      {
+        "sk": "Ubuntu 24.04 s grafickým prostredím a prístupom na internet; tento postup je určený pre terminál Ubuntu.",
+        "en": "Ubuntu 24.04 with a graphical desktop and internet access; these commands run in an Ubuntu terminal."
+      },
+      {
+        "sk": "Nainštalované ROS 2 Jazzy Desktop podľa oficiálneho návodu vrátane repozitára ros2-apt-source a prostredia s UTF-8.",
+        "en": "ROS 2 Jazzy Desktop installed using the official guide, including the ros2-apt-source repository configuration and a UTF-8 locale."
+      }
+    ],
+    "installationSources": [
+      {
+        "title": "ROS 2 Jazzy — Ubuntu deb packages",
+        "url": "https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html"
+      },
+      {
+        "title": "ROS 2 Jazzy installation source",
+        "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/jazzy/source/Installation/Ubuntu-Install-Debs.rst"
+      },
+      {
+        "title": "ROS 2 apt repository setup source",
+        "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/jazzy/source/Installation/_Apt-Repositories.rst"
+      },
+      {
+        "title": "Gazebo Harmonic — ROS pairing",
+        "url": "https://gazebosim.org/docs/harmonic/ros_installation/"
+      }
+    ],
+    "commands": [
+      {
+        "id": "install",
+        "title": {
+          "sk": "Nainštaluj navigáciu a simulovaný robot",
+          "en": "Install navigation and the simulated robot"
+        },
+        "shell": "bash",
+        "code": "sudo apt update\nsudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-slam-toolbox 'ros-jazzy-nav2-minimal-tb*'",
+        "sourceUrl": "https://docs.nav2.org/jazzy/getting_started/quickstart/quickstart/"
+      },
+      {
+        "id": "launch",
+        "title": {
+          "sk": "Spusti mapovanie v Gazebo",
+          "en": "Start mapping in Gazebo"
+        },
+        "shell": "bash",
+        "code": "source /opt/ros/jazzy/setup.bash\nros2 launch nav2_bringup tb3_simulation_launch.py slam:=True headless:=False use_sim_time:=True",
+        "sourceUrl": "https://docs.nav2.org/jazzy/tutorials/general_tutorials/navigation2_with_slam/navigation2_with_slam/",
+        "notes": {
+          "sk": "V RViz postupne zadávaj krátke navigačné ciele do známeho voľného priestoru. Ide o simulovaný TurtleBot3. Pri tomto SLAM postupe nespúšťaj ďalšiu AMCL lokalizáciu.",
+          "en": "In RViz, send short navigation goals into known free space. This uses a simulated TurtleBot3. Do not start an additional AMCL localization process for this SLAM exercise."
+        }
+      },
+      {
+        "id": "inspect",
+        "title": {
+          "sk": "V druhom termináli skontroluj dáta",
+          "en": "Inspect data in a second terminal"
+        },
+        "shell": "bash",
+        "code": "source /opt/ros/jazzy/setup.bash\nros2 topic list\nros2 topic echo /clock --once\nros2 topic hz /scan\nros2 run tf2_ros tf2_echo map base_link",
+        "notes": {
+          "sk": "Príkazy spúšťaj jednotlivo. Výpis frekvencie a transformácie ukončíš Ctrl+C, potom pokračuj ďalším príkazom.",
+          "en": "Run the commands individually. Stop the frequency and transform displays with Ctrl+C before continuing to the next command."
+        }
+      },
+      {
+        "id": "save",
+        "title": {
+          "sk": "Ulož vytvorenú mapu",
+          "en": "Save the map"
+        },
+        "shell": "bash",
+        "code": "source /opt/ros/jazzy/setup.bash\nros2 run nav2_map_server map_saver_cli -f ~/my_first_map",
+        "sourceUrl": "https://docs.nav2.org/jazzy/tutorials/general_tutorials/navigation2_with_slam/navigation2_with_slam/"
+      }
+    ],
+    "outcomes": [
+      {
+        "sk": "Gazebo zobrazuje simulovaný robot a RViz mapu jeho okolia.",
+        "en": "Gazebo shows the simulated robot and RViz shows a map of its surroundings."
+      },
+      {
+        "sk": "Čas na /clock napreduje, /scan prijíma merania a po spustení mapovania je dostupná transformácia map → base_link.",
+        "en": "The /clock time advances, /scan receives measurements, and the map → base_link transform becomes available after mapping starts."
+      },
+      {
+        "sk": "Robot dosiahne blízky cieľ vo voľnom priestore. Uloženie mapy oznámi úspech a vytvorí súbory mapy pri ~/my_first_map.",
+        "en": "The robot reaches a nearby goal in free space. Map saving reports success and creates map files at ~/my_first_map."
+      }
+    ],
+    "scope": {
+      "sk": "Výsledkom je mapa a navigácia simulovaného TurtleBot3. Fyzický rover potrebuje vlastné ovládače, odometriu, senzor a konfiguráciu robotických rámcov.",
+      "en": "The result is mapping and navigation for a simulated TurtleBot3. A physical rover needs its own drivers, odometry, sensor and frame configuration."
+    },
+    "troubleshooting": [
+      {
+        "symptom": {
+          "sk": "Príkaz ros2 neexistuje",
+          "en": "The ros2 command is missing"
+        },
+        "action": {
+          "sk": "V danom termináli spusti source /opt/ros/jazzy/setup.bash. Ak súbor neexistuje, dokonči oficiálnu inštaláciu Jazzy.",
+          "en": "Run source /opt/ros/jazzy/setup.bash in that terminal. If the file is missing, complete the official Jazzy installation."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "APT nenájde balík",
+          "en": "APT cannot find a package"
+        },
+        "action": {
+          "sk": "Over Ubuntu 24.04, repozitár ros2-apt-source a úspešné sudo apt update. Nemiešaj názvy balíkov z inej distribúcie ROS.",
+          "en": "Check Ubuntu 24.04, the ros2-apt-source repository and a successful sudo apt update. Do not mix package names from another ROS distribution."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Čas a robot stoja",
+          "en": "Time and robot are frozen"
+        },
+        "action": {
+          "sk": "Skontroluj, či Gazebo nie je pozastavené. Všetky uzly tohto cvičenia musia používať čas simulácie.",
+          "en": "Check whether Gazebo is paused. All nodes in this exercise must use simulation time."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Chýba mapa alebo transformácia",
+          "en": "The map or transform is missing"
+        },
+        "action": {
+          "sk": "Pozri chyby v termináli spúšťania, over /scan a use_sim_time. Počkaj na prvé merania SLAM; nespúšťaj duplicitné mapovacie uzly.",
+          "en": "Read launch-terminal errors, then check /scan and use_sim_time. Wait for initial SLAM measurements; avoid duplicate mapping nodes."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Robot nedosiahne cieľ",
+          "en": "The robot does not reach its goal"
+        },
+        "action": {
+          "sk": "Začni krátkym cieľom vo viditeľnom voľnom priestore. Skontroluj, či nie je v stene alebo v neznámej časti mapy.",
+          "en": "Start with a short goal in visible free space. Check that the goal is not inside a wall or an unknown area."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Mapa sa neuloží",
+          "en": "The map does not save"
+        },
+        "action": {
+          "sk": "Nechaj simuláciu a SLAM bežať, over existenciu /map a právo zapisovať do domovského priečinka.",
+          "en": "Keep simulation and SLAM running, verify /map exists and check write permission in your home directory."
+        }
+      }
+    ]
+  },
+  "px4": {
+    "title": {
+      "sk": "Prvý vzlet s PX4 v simulácii",
+      "en": "Your first simulated flight with PX4"
+    },
+    "stack": [
+      "Ubuntu 24.04 Noble",
+      "PX4-Autopilot v1.17.0",
+      "Gazebo Harmonic",
+      "X500 SITL"
+    ],
+    "prerequisites": [
+      {
+        "sk": "Čisté vývojové prostredie Ubuntu 24.04 s grafickým rozhraním, internetom a oprávnením sudo. Inštalačný skript pridáva vývojové závislosti.",
+        "en": "A clean Ubuntu 24.04 development environment with a graphical desktop, internet and sudo access. The setup script installs development dependencies."
+      },
+      {
+        "sk": "Použi samostatný priečinok PX4-Autopilot-1.17.0. Tento postup simuluje autopilot a nevyžaduje fyzický dron.",
+        "en": "Use a separate PX4-Autopilot-1.17.0 directory. This exercise simulates an autopilot and requires no physical drone."
+      }
+    ],
+    "installationSources": [
+      {
+        "title": "PX4 v1.17.0 release",
+        "url": "https://github.com/PX4/PX4-Autopilot/releases/tag/v1.17.0"
+      },
+      {
+        "title": "PX4 v1.17 — Ubuntu development environment",
+        "url": "https://docs.px4.io/v1.17/en/dev_setup/dev_env_linux_ubuntu"
+      },
+      {
+        "title": "PX4 v1.17 — Gazebo simulation",
+        "url": "https://docs.px4.io/v1.17/en/sim_gazebo_gz/"
+      },
+      {
+        "title": "PX4 v1.17 — Commander commands",
+        "url": "https://docs.px4.io/v1.17/en/modules/modules_system"
+      }
+    ],
+    "commands": [
+      {
+        "id": "setup",
+        "title": {
+          "sk": "Priprav presnú verziu autopilota",
+          "en": "Prepare the exact autopilot version"
+        },
+        "shell": "bash",
+        "code": "sudo apt update\nsudo apt install git\ncd ~\ngit clone --branch v1.17.0 --recursive https://github.com/PX4/PX4-Autopilot.git PX4-Autopilot-1.17.0\ncd ~/PX4-Autopilot-1.17.0\nbash Tools/setup/ubuntu.sh --no-nuttx",
+        "sourceUrl": "https://docs.px4.io/v1.17/en/dev_setup/dev_env_linux_ubuntu",
+        "notes": {
+          "sk": "Po dokončení inštalácie reštartuj Ubuntu. Voľba --no-nuttx vynechá nástroje pre fyzické letové riadiace jednotky a ponechá simuláciu.",
+          "en": "Restart Ubuntu after setup completes. --no-nuttx omits physical flight-controller tooling while retaining simulation dependencies."
+        }
+      },
+      {
+        "id": "launch",
+        "title": {
+          "sk": "Over verziu a spusti X500",
+          "en": "Check the version and launch X500"
+        },
+        "shell": "bash",
+        "code": "cd ~/PX4-Autopilot-1.17.0\ngit describe --tags --exact-match\nmake px4_sitl gz_x500",
+        "sourceUrl": "https://docs.px4.io/v1.17/en/sim_gazebo_gz/",
+        "notes": {
+          "sk": "Prvý príkaz s git má vypísať v1.17.0. Zostavenie prvýkrát trvá dlhšie; po spustení sa objaví Gazebo a výzva pxh>.",
+          "en": "The git command should print v1.17.0. The first build takes longer; after startup, Gazebo and the pxh> prompt appear."
+        }
+      },
+      {
+        "id": "fly",
+        "title": {
+          "sk": "Skontroluj pripravenosť, vzlietni a pristáň",
+          "en": "Check readiness, take off and land"
+        },
+        "shell": "pxh",
+        "code": "commander check\ncommander takeoff\ncommander land",
+        "sourceUrl": "https://docs.px4.io/v1.17/en/modules/modules_system",
+        "notes": {
+          "sk": "Tieto príkazy zadávaj jednotlivo do pxh>, nie do Bash. Najprv skontroluj výsledok predletovej kontroly, potom vzlietni. Pred príkazom land počkaj na vzlet a ustálenie. Pri odmietnutí vzletu vyrieš vypísanú príčinu.",
+          "en": "Enter these commands individually at pxh>, not Bash. Inspect the preflight-check result, then take off. Wait for takeoff and hover before issuing land. If takeoff is rejected, resolve the reported cause."
+        }
+      },
+      {
+        "id": "headless",
+        "title": {
+          "sk": "Voliteľne spusti simuláciu bez okna Gazebo",
+          "en": "Optionally run without the Gazebo window"
+        },
+        "shell": "bash",
+        "code": "cd ~/PX4-Autopilot-1.17.0\nHEADLESS=1 make px4_sitl gz_x500",
+        "sourceUrl": "https://docs.px4.io/v1.17/en/sim_gazebo_gz/",
+        "notes": {
+          "sk": "Najprv ukonči predchádzajúcu simuláciu. Táto voľba ponechá simulátor v behu bez grafického okna.",
+          "en": "Stop the previous simulation first. This option keeps the simulator running without its graphical window."
+        }
+      }
+    ],
+    "outcomes": [
+      {
+        "sk": "Git identifikuje presnú verziu v1.17.0 a zostavenie skončí bez chyby.",
+        "en": "Git identifies the exact v1.17.0 release and the build completes without an error."
+      },
+      {
+        "sk": "Gazebo spustí virtuálny X500 a konzola PX4 sprístupní pxh>.",
+        "en": "Gazebo launches a virtual X500 and the PX4 console provides the pxh> prompt."
+      },
+      {
+        "sk": "Po úspešných predletových kontrolách model vzlietne, ustáli sa a na samostatný príkaz pristane.",
+        "en": "After successful preflight checks, the model takes off, settles into hover and lands on a separate command."
+      }
+    ],
+    "scope": {
+      "sk": "Cvičenie pracuje so simulovaným autopilotom. Nepotvrdzuje letovú spôsobilosť fyzického dronu. Prepojenie ROS 2 s PX4 je samostatný pokročilý krok.",
+      "en": "This exercise runs a simulated autopilot. It does not validate a physical drone for flight. Connecting ROS 2 to PX4 is a separate advanced step."
+    },
+    "troubleshooting": [
+      {
+        "symptom": {
+          "sk": "Nesedí verzia alebo chýbajú súbory",
+          "en": "The version differs or files are missing"
+        },
+        "action": {
+          "sk": "Over, že si v ~/PX4-Autopilot-1.17.0 a klonovanie obsahovalo --recursive. Nezamieňaj tento adresár s inou verziou PX4.",
+          "en": "Check that you are in ~/PX4-Autopilot-1.17.0 and cloned with --recursive. Do not mix this directory with another PX4 version."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Chýbajú nástroje pri zostavení",
+          "en": "Build tools are missing"
+        },
+        "action": {
+          "sk": "Skontroluj chyby skriptu Tools/setup/ubuntu.sh a dokončenie inštalácie. Po inštalácii reštartuj Ubuntu.",
+          "en": "Inspect errors from Tools/setup/ubuntu.sh and verify installation completed. Restart Ubuntu after setup."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Grafické okno Gazebo padá",
+          "en": "The Gazebo window crashes"
+        },
+        "action": {
+          "sk": "Skontroluj grafický ovládač; vo virtuálnom stroji aj akceleráciu. Pre kontrolu samotného simulátora použi uvedený režim HEADLESS.",
+          "en": "Check the graphics driver and, in a virtual machine, graphics acceleration. Use the listed HEADLESS mode to check the simulator itself."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "commander: command not found",
+          "en": "commander: command not found"
+        },
+        "action": {
+          "sk": "Príkaz patrí do konzoly PX4 s výzvou pxh>. Nie je to príkaz terminálu Bash.",
+          "en": "The command belongs in the PX4 console at the pxh> prompt. It is not a Bash command."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Vzlet je odmietnutý",
+          "en": "Takeoff is rejected"
+        },
+        "action": {
+          "sk": "Spusti commander check a vyrieš konkrétnu hlásenú chybu. Počkaj na pripravenosť simulovaných senzorov; nepoužívaj vynútené armovanie ako opravu.",
+          "en": "Run commander check and resolve the reported issue. Wait for simulated sensors to become ready; do not use forced arming as a fix."
+        }
+      },
+      {
+        "symptom": {
+          "sk": "Voliteľný QGroundControl sa nepripojí",
+          "en": "Optional QGroundControl does not connect"
+        },
+        "action": {
+          "sk": "Pri GCS spojení skontroluj UDP 14550 a lokálny firewall. Port 14540 je určený pre offboard API. Pre základné cvičenie môžeš použiť priamo pxh>.",
+          "en": "For the GCS connection check UDP 14550 and the local firewall. Port 14540 is for offboard APIs. The basic exercise can use pxh> directly."
+        },
+        "sourceUrl": "https://docs.px4.io/v1.17/en/simulation/"
+      }
+    ]
+  },
+  "authenticMedia": [
+    {
+      "caption": {
+        "sk": "Zo skutočnej dielne BendaLabs: Mecanum prototyp s vlastnou doskou a štyrmi pohonmi.",
+        "en": "From the BendaLabs workshop: a Mecanum prototype with a custom board and four drive motors."
+      },
+      "alt": {
+        "sk": "Mecanum podvozok BendaLabs so štyrmi kolesami, elektronikou a ručne vyrobenou doskou.",
+        "en": "BendaLabs Mecanum chassis with four wheels, electronics and a handmade circuit board."
+      },
+      "context": {
+        "sk": "Inšpirácia z projektu BendaLabs. Návod na prvý rover vyššie používa vlastnú dvojkolesovú zostavu s Uno.",
+        "en": "Inspiration from a BendaLabs project. The first-rover tutorial above uses its own two-wheel Uno assembly."
+      },
+      "src": "/university-assets/workshop-mecanum.jpeg"
+    }
+  ]
+}

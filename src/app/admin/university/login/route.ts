@@ -8,8 +8,9 @@ export async function POST(request: Request) {
   if (!isSameOriginRequest(request) || request.headers.get("content-type")?.split(";")[0] !== "application/x-www-form-urlencoded") return new Response(null, { status: 403 });
   const body = await readBoundedBody(request, 2048);
   if (body === null) return new Response(null, { status: 400 });
-  const password = new URLSearchParams(body).get("password") ?? "";
-  const destination = new URL("/admin/university", request.url);
+  const fields = new URLSearchParams(body);
+  const password = fields.get("password") ?? "";
+  const destination = new URL(fields.get("returnTo") === "/admin/university/questions" ? "/admin/university/questions" : "/admin/university", request.url);
   if (!verifyAdminPassword(password)) {
     destination.searchParams.set("auth", "failed");
     return NextResponse.redirect(destination, 303);

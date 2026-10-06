@@ -38,7 +38,7 @@ export default async function UniversityFeedbackAdmin({ searchParams }: { search
   const pageHref = (number: number) => `/admin/university?${new URLSearchParams({ chapter, status, page: String(number) })}`;
   return <main className={styles.page}><div className={styles.container}>
     <header className={styles.header}><div><Link href="/" className={styles.brand}>BendaLabs<span>.</span></Link><p className={styles.eyebrow}>Robotická univerzita</p><h1>Hodnotenia a návrhy</h1><p>Podnety od študentov pomáhajú zlepšovať jednotlivé lekcie.</p></div>
-      <div className={styles.headerActions}><Link href="/roboticka-univerzita">Otvoriť univerzitu ↗</Link><form action="/admin/university/logout" method="post"><button className={styles.secondary} type="submit">Odhlásiť sa</button></form></div>
+      <div className={styles.headerActions}><Link href="/admin/university/questions">Otázky a projekty</Link><Link href="/roboticka-univerzita">Otvoriť univerzitu ↗</Link><form action="/admin/university/logout" method="post"><button className={styles.secondary} type="submit">Odhlásiť sa</button></form></div>
     </header>
     {!dashboard ? <section className={styles.card}><h2>Hodnotenia sa nepodarilo načítať</h2><p>Skús stránku o chvíľu obnoviť. Uložené návrhy tým nie sú ovplyvnené.</p><Link href={pageHref(page)}>Skúsiť znova →</Link></section> : <>
       <section className={styles.metrics} aria-label="Prehľad spätnej väzby"><div><strong>{totals?.feedback}</strong><span>všetkých hodnotení a návrhov</span></div><div><strong>{totals?.fresh}</strong><span>čaká na prečítanie</span></div><div><strong>{totals?.suggestions}</strong><span>textových návrhov</span></div></section>
