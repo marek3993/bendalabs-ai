@@ -397,3 +397,38 @@
   .auto-email-example dl > div { grid-template-columns: 1fr; gap: 4px; }
   .auto-founder-id { gap: 17px; }
 }
+
+/* A short, non-binding intake is the first step. */
+.auto-hero { align-items: start; }
+.auto-custom-note { color: #56644e; font-size: 16px; line-height: 1.8; margin-top: 18px; max-width: 550px; }
+.auto-intake { scroll-margin-top: 100px; min-width: 0; padding: 28px; background: #fff; border: 1px solid #d4ddd0; border-radius: 8px; box-shadow: 0 8px 30px #202a2306; }
+.auto-intake h2 { font-size: 28px; line-height: 1.2; margin-top: 14px; letter-spacing: -.025em; }
+.auto-intake-lead { color: #596650; font-size: 14px; line-height: 1.7; margin-top: 13px; }
+.auto-intake-form { display: grid; gap: 18px; margin-top: 24px; }
+.auto-intake .auto-form-fields { display: grid; gap: 17px; margin: 0; padding: 0; border: 0; }
+.auto-intake .auto-form-fields input, .auto-intake .auto-form-fields textarea { font-size: 16px; width: 100%; }
+.auto-intake .auto-form-fields textarea { resize: vertical; min-height: 100px; }
+.auto-intake .bl-button { width: 100%; justify-content: center; }
+.auto-intake-note { color: #65705e; font-size: 12px; line-height: 1.65; }
+.auto-intake .auto-success { padding: 25px 0; border: 0; background: transparent; }
+.auto-start { padding-bottom: 55px; }
+.auto-start ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding: 28px 0; border-block: 1px solid #dce2d6; list-style: none; }
+.auto-start li > span { color: #7a886e; font-size: 12px; }
+.auto-start h2 { font-size: 19px; margin-top: 12px; }
+.auto-start p { font-size: 14px; line-height: 1.7; color: #65705e; margin-top: 10px; }
+.auto-demo-section { display: grid; grid-template-columns: .85fr 1.15fr; align-items: center; gap: 65px; padding-bottom: 65px; scroll-margin-top: 100px; }
+.auto-demo-section h2 { font-size: clamp(29px, 3.2vw, 40px); line-height: 1.2; margin-top: 16px; }
+.auto-demo-section > div > p:not(.bl-eyebrow) { font-size: 15px; color: #56644e; line-height: 1.8; margin-block: 20px; }
+.auto-final-cta { padding-block: 30px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.auto-final-cta h2 { font-size: 27px; }
+@media (max-width: 800px) {
+  .auto-demo-section, .auto-start ol { grid-template-columns: 1fr; gap: 25px; }
+  .auto-final-cta { align-items: flex-start; flex-direction: column; }
+  .auto-intake { padding: 23px; }
+  .auto-demo-section { padding-bottom: 48px; }
+}
+@media (prefers-reduced-motion: reduce) { .auto-site { scroll-behavior: auto; } }
+
+.auto-measurement-consent { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: #65705e; line-height: 1.6; margin-top: 18px; }
+.auto-measurement-consent input { margin-top: 4px; flex-shrink: 0; }
+.auto-measurement-consent a { text-decoration: underline; }
