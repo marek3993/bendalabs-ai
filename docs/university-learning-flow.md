@@ -66,7 +66,7 @@ missions, all six challenges, an infinite-loop timeout, SK/EN, inline chapter
 navigation, mobile layouts and transfer into a clean browser origin.
 
 The source Site is maintained separately. Its verified source revision is
-`aaf05b7`. Its exporter scopes CSS and copies
+`b841a4d`. Its exporter scopes CSS and copies
 the application into `src/components/robotics-university`; preserve the native
 wrapper, feedback/support components and integration stylesheet on export.
 
@@ -102,3 +102,27 @@ thrust/tilt experiment remains available separately.
 Verified with 67 independent checks and browser interaction: hard impact, pause,
 keyboard throttle, a 0.65 m/s landing, continuation to the 1.4 kg task, and mobile
 visibility of the drone/pad and brake controls.
+
+
+## Arm transfer exercise
+
+The kinematics challenge now reuses the detailed three-dimensional RobotScene arm.
+The user grips a part at A, raises it by at least 15 cm, and places it at B within
+2 cm. No prediction question or quiz gates the controls. Each stage has a concrete
+handling action and a live distance/height readout; success leads to the IK chapter.
+
+The measurement point is the centre between the jaws, 0.92 scene units from the
+wrist. Wrist compensation keeps the gripper pointing down, and base yaw rotates
+both the tool calculation and model. Scale: 20 cm per scene unit. This is a
+position/sequence task, not a full collision or dynamics simulation.
+
+Independent tests compare the analytical tool position to nested Three.js world
+transforms and cover invalid inputs, remote gripping/placing, lift height and yaw.
+Browser checks cover sequential negative-angle typing, each stage, failed actions,
+completion/navigation, SK/EN, mobile controls and the optional 2D fallback.
+
+A deterministic bundled revision is compared with a no-store public manifest on
+mount/focus and while visible. A mismatch offers an explicit reload; it never
+interrupts an experiment automatically. Saved progress and rover drafts remain in
+storage. Existing tabs loaded before this mechanism need one manual refresh.
+The source prebuild regenerates both revision files; export copies them together.

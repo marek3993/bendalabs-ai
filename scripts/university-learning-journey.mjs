@@ -139,9 +139,9 @@ test('command validator rejects invalid, nonfinite and excessive streams', () =>
 
 const solutions = {
   pid:{p:4,i:0,d:3}, lidar:{x:120,y:325}, power:{ah:3.4,computer:6},
-  kinematics:{a:60,b:-60}, motors:{ratio:15},
+  motors:{ratio:15},
 };
-test('five parameter challenges have independent fixtures', () => assert.deepEqual(Object.keys(challenges).sort(), Object.keys(solutions).sort()));
+test('four parameter challenges have independent fixtures', () => assert.deepEqual(Object.keys(challenges).sort(), Object.keys(solutions).sort()));
 for (const [id, def] of Object.entries(challenges)) {
   test(`${id}: initial values do not pass`, () => assert.equal(evaluateChallenge(id,Object.fromEntries(def.controls.map(c=>[c.id,c.initial]))).passed,false));
   test(`${id}: independently calculated valid solution passes`, () => assert.equal(evaluateChallenge(id,solutions[id]).passed,true));
@@ -178,11 +178,6 @@ test('power solution has 60.384 minutes, not nominal-energy runtime', () => {
   close(r.hours*60,60.384); close(r.current,27/(11.1*.9));
   assert.equal(evaluateChallenge('power',{ah:4,computer:6}).passed,false);
   assert.equal(evaluateChallenge('power',{ah:3.4,computer:0}).passed,false);
-});
-test('arm target matches analytical 60/-60 degrees and rejects joint-wrap bypass', () => {
-  const p=sim.armPosition(60,-60,1.54,1.28);
-  close(p.x,2.05); close(p.y,1.54*Math.sqrt(3)/2);
-  assert.equal(evaluateChallenge('kinematics',{a:420,b:-420}).passed,false);
 });
 test('tilted drone solution balances vertical thrust but retains lateral acceleration', () => {
   const throttle=Math.sqrt((1.4*9.81)/(20*Math.cos(Math.PI/6)))*100;
@@ -257,6 +252,30 @@ test('landing: ceiling and time limits produce failure, never success',()=>{
   const initial={...flight.createFlight(1),phase:'flying'};
   assert.equal(flight.advanceFlight({...initial,height:11.999,velocity:1},flight.balanceThrottle(1),1,.02).phase,'ceiling');
   assert.equal(flight.advanceFlight({...initial,elapsed:59.99},flight.balanceThrottle(1),1,.02).phase,'timeout');
+});
+
+const arm=loadSource(path.join(root,'lib/arm-transfer.ts'));
+const THREE=requireSite('three');
+test('arm transfer: tool calculation matches nested 3D transformations, including yaw and wrist',()=>{
+ for(const pose of [{yaw:-35,shoulder:65,elbow:-100},{yaw:35,shoulder:42,elbow:-60},{yaw:0,shoulder:90,elbow:-80},{yaw:65,shoulder:115,elbow:-35}]){
+  const base=new THREE.Group(),shoulder=new THREE.Group(),elbow=new THREE.Group(),wrist=new THREE.Group();base.rotation.y=pose.yaw*Math.PI/180;shoulder.position.y=.95;shoulder.rotation.z=(pose.shoulder-90)*Math.PI/180;elbow.position.y=1.54;elbow.rotation.z=pose.elbow*Math.PI/180;wrist.position.y=1.28;wrist.rotation.z=-Math.PI-shoulder.rotation.z-elbow.rotation.z;base.add(shoulder);shoulder.add(elbow);elbow.add(wrist);base.updateMatrixWorld(true);
+  const actual=wrist.localToWorld(new THREE.Vector3(0,.92,0)),calculated=arm.armTool(pose);for(const key of ['x','y','z'])close(actual[key],calculated[key]);
+  const down=new THREE.Vector3(0,1,0).transformDirection(wrist.matrixWorld);close(down.x,0);close(down.y,-1);close(down.z,0);
+ }
+});
+test('arm transfer: initial pose cannot grip or place remotely',()=>{assert.equal(arm.armStepReady(0,arm.initialArmPose),false);assert.equal(arm.armStepReady(2,arm.initialArmPose),false);});
+test('arm transfer: pickup and placement are different reachable poses',()=>{
+ const a={yaw:-35,shoulder:65,elbow:-100},b={yaw:35,shoulder:42,elbow:-60};
+ assert.ok(arm.validArmPose(a)&&arm.validArmPose(b));assert.equal(arm.armStepReady(0,a),true);assert.equal(arm.armStepReady(2,b),true);assert.equal(arm.armStepReady(2,a),false);assert.equal(arm.armStepReady(0,b),false);
+});
+test('arm transfer: lift requires actual 15 cm rise before transfer',()=>{
+ const pickup={yaw:-35,shoulder:65,elbow:-100};assert.equal(arm.armStepReady(1,pickup),false);assert.equal(arm.armStepReady(1,{yaw:-35,shoulder:90,elbow:-80}),true);close((arm.liftHeight-arm.pickupPoint.y)*arm.armScale,15);
+});
+test('arm transfer: out-of-range and invalid numeric inputs never pass',()=>{
+ for(const pose of [{yaw:Infinity,shoulder:65,elbow:-100},{yaw:NaN,shoulder:65,elbow:-100},{yaw:360,shoulder:65,elbow:-100},{yaw:0,shoulder:0,elbow:-100},{yaw:0,shoulder:65,elbow:0},{yaw:0,shoulder:20,elbow:-130}])for(const stage of [0,1,2])assert.equal(arm.armStepReady(stage,pose),false);
+});
+test('arm transfer: tolerance is 2 cm in 3D and includes yaw error',()=>{
+ close(arm.armTolerance*arm.armScale,2);assert.equal(arm.armStepReady(0,{yaw:-33,shoulder:65,elbow:-100}),true);assert.equal(arm.armStepReady(0,{yaw:-25,shoulder:65,elbow:-100}),false);assert.equal(arm.armStepReady(3,{yaw:35,shoulder:42,elbow:-60}),false);
 });
 console.log(`\n${passed} passed; ${failures.length} failed. Source was read from ${root}.`);
 if(failures.length){console.error(JSON.stringify(failures,null,2));process.exitCode=1;}
