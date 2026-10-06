@@ -88,7 +88,7 @@ export default function LessonFeedback({chapterId, lang}: {chapterId: string; la
     <div className="feedback-heading">
       <MessageSquare size={23} aria-hidden="true"/>
       <div><h2 id={`feedback-heading-${chapterId}`}>{t('Pomôž nám zlepšiť túto lekciu', 'Help us improve this lesson')}</h2>
-        <p>{t('Univerzitu rozvíjame aj podľa vašich postrehov. Čo ti pomohlo a čo môžeme vysvetliť lepšie?', 'Your feedback helps us improve the university. What helped you, and what could we explain better?')}</p></div>
+        <p>{t('Nahlás chybu, označ nejasný postup alebo navrhni príklad, ktorý v lekcii chýba.', 'Report an error, identify an unclear step or suggest an example missing from the lesson.')}</p></div>
     </div>
     {draft.sent ? <div className="feedback-success" role="status"><CheckCircle2 size={22} aria-hidden="true"/><div><strong>{t('Ďakujeme, tvoju spätnú väzbu sme prijali.', 'Thank you. We received your feedback.')}</strong><p>{t('Pomôže nám pri ďalších úpravách tejto lekcie.', 'It will help us improve this lesson.')}</p></div></div> :
       <form onSubmit={submit}>

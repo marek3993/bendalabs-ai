@@ -783,8 +783,8 @@
         "en": "BendaLabs Mecanum chassis with four wheels, electronics and a handmade circuit board."
       },
       "context": {
-        "sk": "Inšpirácia z projektu BendaLabs. Návod na prvý rover vyššie používa vlastnú dvojkolesovú zostavu s Uno.",
-        "en": "Inspiration from a BendaLabs project. The first-rover tutorial above uses its own two-wheel Uno assembly."
+        "sk": "Na fotografii je štvorkolesový Mecanum prototyp. Návod v tejto sekcii používa dvojkolesový rover s Arduino Uno.",
+        "en": "The photograph shows a four-wheel Mecanum prototype. The tutorial in this section uses a two-wheel rover with Arduino Uno."
       },
       "src": "/university-assets/workshop-mecanum.jpeg"
     }

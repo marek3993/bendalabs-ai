@@ -65,10 +65,22 @@ missions, all six challenges, an infinite-loop timeout, SK/EN, inline chapter
 navigation, mobile layouts and transfer into a clean browser origin.
 
 The source Site is maintained separately. Its verified source revision is
-`d47b84a`. Its exporter scopes CSS and copies
+`5da908d`. Its exporter scopes CSS and copies
 the application into `src/components/robotics-university`; preserve the native
 wrapper, feedback/support components and integration stylesheet on export.
 
 The rover runner iframe mounts after client hydration. A cold production load
 was verified through the demo, the first assessed task and the next-task action;
 it must not depend on an iframe load event emitted before React attaches.
+
+## Language review
+
+Reviewed both languages across all 24 chapters, five rover missions, six assessed
+labs, 18 chapter-specific experiments, three build guides and interface copy.
+Hints now state angles, units, clearance and command-counting rules. Removed
+vague motivational filler and patronizing feedback. PID controls name the
+actual gains; the drone description distinguishes acceleration from altitude.
+Numerical criteria, quiz answer keys, sources and safety guidance remain intact.
+
+The source TypeScript check and both production builds passed. The revised
+mission-four hint was checked in Slovak and English in the browser.

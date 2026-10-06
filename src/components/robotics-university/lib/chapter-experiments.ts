@@ -10,7 +10,7 @@ export const chapterExperimentNames = {
   prototype: {sk: 'Over merateľnú požiadavku', en: 'Test a measurable requirement'},
   flight: {sk: 'Rozlož ťah pri náklone', en: 'Resolve thrust while tilted'},
   vision: {sk: 'Nastav prah detekcie', en: 'Set a detection threshold'},
-  timing: {sk: 'Zmeraj cenu oneskorenia', en: 'Measure the cost of latency'},
+  timing: {sk: 'Vypočítaj vplyv oneskorenia na zastavenie', en: 'Calculate how latency affects stopping'},
   odometry: {sk: 'Vypočítaj dráhu podvozka', en: 'Calculate the drive trajectory'},
   pid: {sk: 'Vylaď PID a sleduj saturáciu', en: 'Tune PID and observe saturation'},
   bms: {sk: 'Preskúmaj ochrany článkov', en: 'Explore cell protection'},

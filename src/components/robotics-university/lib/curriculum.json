@@ -19,8 +19,8 @@
           "en": "What repeats inside the loop"
         },
         "body": {
-          "sk": "Robot pravidelne meria prostredie, odhaduje svoj stav a posiela príkazy pohonom. Senzor však neposkytuje celú pravdu: meranie obsahuje šum, oneskorenie a niekedy chýba. Preto odlišuj želanú hodnotu, nameranú hodnotu a príkaz motoru. Pri regulácii rýchlosti kolesa je cieľ v metroch za sekundu, meranie pochádza z enkodéra a výstup regulátora môže byť strieda PWM alebo požadovaný prúd.",
-          "en": "A robot repeatedly measures its surroundings, estimates its state, and sends commands to actuators. A sensor does not provide complete truth: measurements contain noise, delay, and occasional gaps. Distinguish the desired value, measured value, and motor command. For wheel speed control, the target is in metres per second, feedback comes from an encoder, and the controller output may be PWM duty cycle or requested current."
+          "sk": "Robot pravidelne meria prostredie, odhaduje svoj stav a posiela príkazy pohonom. Meranie senzora obsahuje šum a oneskorenie a pri výpadku nemusí byť dostupné. Preto odlišuj želanú hodnotu, nameranú hodnotu a príkaz motoru. Pri regulácii rýchlosti kolesa je cieľ v metroch za sekundu, meranie pochádza z enkodéra a výstup regulátora môže byť strieda PWM alebo požadovaný prúd.",
+          "en": "A robot repeatedly measures its surroundings, estimates its state, and sends commands to actuators. Sensor measurements contain noise and delay and may be unavailable during a dropout. Distinguish the desired value, measured value, and motor command. For wheel speed control, the target is in metres per second, feedback comes from an encoder, and the controller output may be PWM duty cycle or requested current."
         }
       },
       {
@@ -29,8 +29,8 @@
           "en": "Why feedback helps"
         },
         "body": {
-          "sk": "Pri riadení bez spätnej väzby rovnaký príkaz nemusí vyvolať rovnaký pohyb. Vybitá batéria, koberec či náklad zmenia výsledok. Regulátor so spätnou väzbou porovnáva cieľ so skutočnosťou a podľa chyby upravuje zásah. Ani tak však nedokáže prekonať fyzikálne limity motora. Ak pohon dosiahne maximálny výkon, väčší príkaz už zrýchlenie nezlepší a nahromadená integračná zložka môže neskôr vyvolať prekmit.",
-          "en": "With open-loop control, the same command does not necessarily produce the same movement. A depleted battery, carpet, or added payload changes the result. Feedback control compares the target with reality and adjusts its output from the error. It cannot overcome motor limits, however. Once the actuator saturates, a larger command cannot increase acceleration, and accumulated integral action can cause overshoot later."
+          "sk": "Pri riadení bez spätnej väzby rovnaký príkaz nemusí vyvolať rovnaký pohyb. Vybitá batéria, koberec či náklad zmenia výsledok. Regulátor so spätnou väzbou porovnáva cieľ s nameraným výstupom a podľa chyby upravuje zásah. Ani tak však nedokáže prekonať fyzikálne limity motora. Ak pohon dosiahne maximálny výkon, väčší príkaz už zrýchlenie nezlepší a nahromadená integračná zložka môže neskôr vyvolať prekmit.",
+          "en": "With open-loop control, the same command does not necessarily produce the same movement. A depleted battery, carpet, or added payload changes the result. Feedback control compares the target with the measured output and adjusts its command from the error. It cannot overcome motor limits, however. Once the actuator saturates, a larger command cannot increase acceleration, and accumulated integral action can cause overshoot later."
         }
       },
       {
@@ -102,14 +102,14 @@
       "en": "Units and coordinate frames"
     },
     "summary": {
-      "sk": "Zisti, prečo bod potrebuje rámec, čas a jednotky, aby dával robotu zmysel.",
-      "en": "Learn why a point needs a frame, timestamp, and units to make sense to a robot."
+      "sk": "Pri súradniciach urči referenčný rámec, čas a jednotky.",
+      "en": "Specify the reference frame, timestamp and units for coordinates."
     },
     "sections": [
       {
         "title": {
-          "sk": "Súradnice vždy niekam patria",
-          "en": "Coordinates always belong somewhere"
+          "sk": "Rámec, jednotky a orientácia osí",
+          "en": "Reference frame, units and axis orientation"
         },
         "body": {
           "sk": "Bod s hodnotami 1, 0, 0 je neúplná informácia. Potrebuješ vedieť jednotky, počiatok a orientáciu osí. Jeden meter pred kamerou nemusí byť jeden meter pred robotom, ak je kamera otočená. V bežných telesových rámcoch ROS smeruje x dopredu, y doľava a z nahor. Optické rámce kamier majú odlišnú konvenciu, preto vždy skontroluj označenie rámca konkrétneho ovládača.",
@@ -132,8 +132,8 @@
           "en": "Local and global position"
         },
         "body": {
-          "sk": "Rámec odom poskytuje plynulý lokálny pohyb, ale jeho poloha môže postupne driftovať. Rámec map slúži ako dlhodobá referencia a lokalizácia v ňom môže skokovo opraviť chybu. Riadenie plynulého pohybu preto nemá slepo predpokladať, že globálna poloha nikdy neskočí. Pri spájaní meraní používaj transformáciu platnú v čase merania, pretože aktuálna poloha už môže byť pri pohybujúcom sa robotovi odlišná.",
-          "en": "The odom frame provides continuous local motion, but its position can drift over time. The map frame provides a long-term reference, and localisation may correct its estimate abruptly. Smooth motion control must therefore not assume that global coordinates never jump. When combining measurements, use the transform valid at the measurement time, because the current pose can already differ on a moving robot."
+          "sk": "Rámec odom poskytuje plynulý lokálny pohyb, ale jeho poloha môže postupne driftovať. Rámec map slúži ako dlhodobá referencia a lokalizácia v ňom môže skokovo opraviť chybu. Riadenie plynulého pohybu preto musí počítať so skokovou korekciou globálnej polohy. Pri spájaní meraní používaj transformáciu platnú v čase merania, pretože aktuálna poloha už môže byť pri pohybujúcom sa robotovi odlišná.",
+          "en": "The odom frame provides continuous local motion, but its position can drift over time. The map frame provides a long-term reference, and localisation may correct its estimate abruptly. Smooth motion control must therefore account for abrupt corrections to the global pose estimate. When combining measurements, use the transform valid at the measurement time, because the current pose can already differ on a moving robot."
         }
       }
     ],
@@ -585,8 +585,8 @@
       "en": "LiDAR and range measurement"
     },
     "summary": {
-      "sk": "Premeň čas letu na vzdialenosť a nauč sa čítať aj chýbajúce či nespoľahlivé odrazy.",
-      "en": "Turn flight time into distance and learn to interpret missing or unreliable returns."
+      "sk": "Vypočítaj vzdialenosť z času letu a vyhodnoť chýbajúce alebo nespoľahlivé odrazy.",
+      "en": "Calculate distance from flight time and evaluate missing or unreliable returns."
     },
     "sections": [
       {
@@ -692,8 +692,8 @@
           "en": "Noise, offset, and scale"
         },
         "body": {
-          "sk": "Náhodný šum mení jednotlivé vzorky, zatiaľ čo systematický posun ovplyvňuje celé meranie podobným smerom. Priemerovanie môže zmenšiť náhodné kolísanie, ale samo neopraví nesprávnu mierku ani nulový bod. Over snímač pri viacerých známych hodnotách a sleduj teplotu. Ak sa chyba mení s meranou veličinou, jednoduchá konštantná korekcia nemusí stačiť. Kalibračný model má zodpovedať pozorovanému správaniu, nie iba jednej peknej vzorke.",
-          "en": "Random noise changes individual samples, while a systematic offset shifts measurements in a similar direction. Averaging may reduce random variation, but it cannot by itself fix an incorrect scale or zero point. Check the sensor against several known values and track temperature. If error changes with the measured quantity, a constant correction may be insufficient. The calibration model should fit observed behaviour, not one convenient sample."
+          "sk": "Náhodný šum mení jednotlivé vzorky, zatiaľ čo systematický posun ovplyvňuje celé meranie podobným smerom. Priemerovanie môže zmenšiť náhodné kolísanie, ale samo neopraví nesprávnu mierku ani nulový bod. Over snímač pri viacerých známych hodnotách a sleduj teplotu. Ak sa chyba mení s meranou veličinou, jednoduchá konštantná korekcia nemusí stačiť. Kalibračný model over pri viacerých meracích bodoch; zhoda v jednom bode nestačí.",
+          "en": "Random noise changes individual samples, while a systematic offset shifts measurements in a similar direction. Averaging may reduce random variation, but it cannot by itself fix an incorrect scale or zero point. Check the sensor against several known values and track temperature. If error changes with the measured quantity, a constant correction may be insufficient. Check the calibration model at several measurement points; agreement at one point is insufficient."
         }
       },
       {
@@ -803,8 +803,8 @@
           "en": "Uncertainty controls information weight"
         },
         "body": {
-          "sk": "Kovariancia merania R opisuje rozptyl a vzájomné súvislosti chýb merania, procesná kovariancia Q neistotu modelu. Príliš malé R prinúti filter veriť aj zlému meraniu; príliš malé Q môže vytvoriť prehnanú dôveru v predikciu. Dôležité sú tiež korelácie. Ak dvakrát použiješ tú istú informáciu ako nezávislé merania, odhad neistoty bude nereálne malý. Hodnoty preto dolaďuj podľa rezíduí a reálnych skúšok, nie podľa hladkosti grafu.",
-          "en": "Measurement covariance R describes expected sensor error, while process covariance Q describes model uncertainty. An excessively small R makes the filter trust poor measurements; an excessively small Q can create overconfidence in prediction. Correlations matter too. Using the same information twice as independent measurements produces unrealistically low uncertainty. Tune values using residuals and real experiments rather than choosing whichever settings produce the smoothest plot."
+          "sk": "Kovariancia merania R opisuje rozptyl a vzájomné súvislosti chýb merania, procesná kovariancia Q neistotu modelu. Príliš malé R môže priradiť chybnému meraniu priveľkú váhu; príliš malé Q môže viesť k podhodnoteniu neistoty predikcie. Dôležité sú tiež korelácie. Ak dvakrát použiješ tú istú informáciu ako nezávislé merania, odhad neistoty bude nereálne malý. Hodnoty preto dolaďuj podľa rezíduí a reálnych skúšok, nie podľa hladkosti grafu.",
+          "en": "Measurement covariance R describes expected sensor error, while process covariance Q describes model uncertainty. An excessively small R can give an erroneous measurement too much weight; an excessively small Q can underestimate prediction uncertainty. Correlations matter too. Using the same information twice as independent measurements produces unrealistically low uncertainty. Tune values using residuals and real experiments rather than choosing whichever settings produce the smoothest plot."
         }
       },
       {
@@ -826,12 +826,12 @@
       }
     },
     "practical": {
-      "sk": "Porovnaj predikciu s meraním pri rôznych rozptyloch. Zvýš R a sleduj, ako korekcia menej dôveruje meraniu. Potom zvýš procesný rozptyl Q a porovnaj Kalmanovo zosilnenie.",
-      "en": "Compare prediction and measurement at different variances. Increase R and observe the correction trusting the measurement less. Then increase process variance Q and compare the Kalman gain."
+      "sk": "Porovnaj predikciu s meraním pri rôznych rozptyloch. Zvýš R a sleduj, ako klesá váha merania pri korekcii. Potom zvýš procesný rozptyl Q a porovnaj Kalmanovo zosilnenie.",
+      "en": "Compare prediction and measurement at different variances. Increase R and observe the lower measurement weight in the correction. Then increase process variance Q and compare the Kalman gain."
     },
     "pitfall": {
-      "sk": "Hladký odhad môže byť nesprávny a prehnane sebavedomý; sleduj aj kovarianciu a nezávislú referenciu.",
-      "en": "A smooth estimate can be wrong and overconfident; inspect covariance and an independent reference too."
+      "sk": "Hladký priebeh odhadu môže skrývať chybu aj podhodnotenú neistotu; porovnaj ho s nezávislou referenciou a sleduj kovarianciu.",
+      "en": "A smooth estimate can hide error and underestimated uncertainty; compare it with an independent reference and inspect covariance."
     },
     "quiz": {
       "question": {
@@ -904,8 +904,8 @@
           "en": "Gearing changes torque and speed"
         },
         "body": {
-          "sk": "Redukčný prevod zvýši výstupný moment a zníži otáčky približne podľa prevodového pomeru, pričom časť výkonu stratí trením. Nezískaš bezplatnú energiu. Prevodovka pridáva vôľu, zotrvačnosť a obmedzenia zaťaženia. Pri presnom polohovaní môže vôľa zhoršiť zmenu smeru aj pri kvalitnom enkodéri na motore. Zisti preto, či snímač meria pred prevodom alebo za ním a aké maximálne zaťaženie povoľuje samotná prevodovka.",
-          "en": "A reduction gearbox increases output torque and reduces speed approximately according to its ratio, while losing some power to friction. It does not create free energy. Gearing adds backlash, inertia, and load limits. Backlash can degrade direction reversals even with a precise motor encoder. Check whether the encoder measures before or after the gearbox and what maximum load the gearbox itself permits."
+          "sk": "Redukčný prevod zvýši výstupný moment a zníži otáčky približne podľa prevodového pomeru, pričom časť výkonu stratí trením. Prevod mení pomer momentu a otáčok; mechanický výkon nezvyšuje. Prevodovka pridáva vôľu, zotrvačnosť a obmedzenia zaťaženia. Pri presnom polohovaní môže vôľa zhoršiť zmenu smeru aj pri kvalitnom enkodéri na motore. Zisti preto, či snímač meria pred prevodom alebo za ním a aké maximálne zaťaženie povoľuje samotná prevodovka.",
+          "en": "A reduction gearbox increases output torque and reduces speed approximately according to its ratio, while losing some power to friction. Gearing changes the torque–speed ratio without increasing mechanical power. Gearing adds backlash, inertia, and load limits. Backlash can degrade direction reversals even with a precise motor encoder. Check whether the encoder measures before or after the gearbox and what maximum load the gearbox itself permits."
         }
       },
       {
@@ -1011,12 +1011,12 @@
       },
       {
         "title": {
-          "sk": "Postup ladenia s dôkazmi",
-          "en": "Tune using observable evidence"
+          "sk": "Ladenie podľa meraných priebehov",
+          "en": "Tune using measured responses"
         },
         "body": {
-          "sk": "Začni overením znamienka merania, pravidelnosti času a limitov pohonu. Pri malom bezpečnom pohybe postupne nastav P, potom pridaj I iba na potrebnú korekciu ustálenej chyby. D pridávaj, keď meranie a dynamika umožňujú jeho užitočné použitie. Zapisuj cieľ, výstup, chybu a saturáciu. Skúšaj viac záťaží a zmenu cieľa oboma smermi. Pekná odozva bez záťaže nemusí platiť pri reálnej prevádzke robota.",
-          "en": "Begin by checking measurement sign, timing consistency, and actuator limits. During small controlled movements, tune P gradually, then add I only as needed to correct steady-state error. Add D when measurement quality and dynamics make it useful. Record the target, output, error, and saturation. Test several loads and setpoint changes in both directions. A pleasing unloaded response may not survive real robot operation."
+          "sk": "Začni overením znamienka merania, pravidelnosti času a limitov pohonu. Pri malom bezpečnom pohybe postupne nastav P, potom pridaj I iba na potrebnú korekciu ustálenej chyby. D pridávaj, keď meranie a dynamika umožňujú jeho užitočné použitie. Zapisuj cieľ, výstup, chybu a saturáciu. Skúšaj viac záťaží a zmenu cieľa oboma smermi. Odozva bez záťaže sa môže po zaťažení zmeniť; over ju aj v plánovaných prevádzkových podmienkach.",
+          "en": "Begin by checking measurement sign, timing consistency, and actuator limits. During small controlled movements, tune P gradually, then add I only as needed to correct steady-state error. Add D when measurement quality and dynamics make it useful. Record the target, output, error, and saturation. Test several loads and setpoint changes in both directions. The unloaded response can change under load; verify it under the intended operating conditions too."
         }
       }
     ],
@@ -1296,8 +1296,8 @@
           "en": "State estimation is the shared foundation"
         },
         "body": {
-          "sk": "Regulátory potrebujú odhad orientácie, rýchlosti a polohy v správnych rámcoch. Gyroskop poskytuje uhlovú rýchlosť, no jeho integrácia bez korekcie driftuje. Ďalšie snímače pomáhajú obmedziť chybu podľa dostupných podmienok. Vibrácie môžu poškodiť meranie aj pri kvalitnom softvéri, preto kontroluj mechanické upevnenie a vyváženie. Zvyšovanie filtrov bez rozmyslu pridáva oneskorenie; najprv odstráň mechanickú príčinu a až potom dolaďuj spracovanie signálu.",
-          "en": "Controllers need attitude, velocity, and position estimates in the correct frames. A gyroscope measures angular rate, but integrating it without correction causes drift. Other sensors constrain error when conditions allow. Vibration can corrupt measurements despite good software, so inspect mounting and balance. Increasing filtering indiscriminately adds delay; address the mechanical cause first, then tune signal processing for the remaining measurement noise."
+          "sk": "Regulátory potrebujú odhad orientácie, rýchlosti a polohy v správnych rámcoch. Gyroskop poskytuje uhlovú rýchlosť, no jeho integrácia bez korekcie driftuje. Ďalšie snímače pomáhajú obmedziť chybu podľa dostupných podmienok. Vibrácie môžu poškodiť meranie aj pri kvalitnom softvéri, preto kontroluj mechanické upevnenie a vyváženie. Silnejšia filtrácia pridáva oneskorenie; najprv odstráň mechanickú príčinu a až potom dolaďuj spracovanie signálu.",
+          "en": "Controllers need attitude, velocity, and position estimates in the correct frames. A gyroscope measures angular rate, but integrating it without correction causes drift. Other sensors constrain error when conditions allow. Vibration can corrupt measurements despite good software, so inspect mounting and balance. Stronger filtering adds delay; address the mechanical cause first, then tune signal processing for the remaining measurement noise."
         }
       },
       {
@@ -1387,8 +1387,8 @@
           "en": "Several failures can happen together"
         },
         "body": {
-          "sk": "Strata spojenia môže súčasne nastať s chybou polohy alebo nízkou batériou. PX4 rieši kombinácie podľa svojho stavového automatu a dostupných odhadov; konkrétne správanie závisí od verzie a konfigurácie. Over preto dokumentáciu zodpovedajúcu nasadenému firmvéru. Geofence tiež nevytvára nepreniknuteľnú stenu: stroj má zotrvačnosť a reakčné oneskorenie. Hranicu nastavuj s rezervou na zastavenie, neistotu polohy, vietor a rozmery chráneného priestoru.",
-          "en": "Link loss may coincide with position failure or low battery. PX4 handles combinations through its state machine and available estimates; exact behaviour depends on version and configuration. Check documentation matching the deployed firmware. A geofence is not an impenetrable wall either: the vehicle has inertia and response delay. Place boundaries with margin for stopping distance, position uncertainty, wind, and the dimensions of the protected area."
+          "sk": "Strata spojenia môže súčasne nastať s chybou polohy alebo nízkou batériou. PX4 rieši kombinácie podľa svojho stavového automatu a dostupných odhadov; konkrétne správanie závisí od verzie a konfigurácie. Over preto dokumentáciu zodpovedajúcu nasadenému firmvéru. Zotrvačnosť a reakčné oneskorenie môžu viesť k prekročeniu hranice geofence. Hranicu nastavuj s rezervou na zastavenie, neistotu polohy, vietor a rozmery chráneného priestoru.",
+          "en": "Link loss may coincide with position failure or low battery. PX4 handles combinations through its state machine and available estimates; exact behaviour depends on version and configuration. Check documentation matching the deployed firmware. Inertia and response delay can carry the vehicle beyond a geofence boundary. Place boundaries with margin for stopping distance, position uncertainty, wind, and the dimensions of the protected area."
         }
       },
       {
@@ -1494,8 +1494,8 @@
           "en": "Series and parallel connections"
         },
         "body": {
-          "sk": "Pri vhodne navrhnutom sériovom zapojení sa napätia článkov sčítajú, zatiaľ čo kapacita v Ah zostáva približne kapacitou jedného článku. Paralelné zapojenie zvyšuje kapacitu pri rovnakom napätí. Také vzťahy predpokladajú kompatibilné články a správny návrh súpravy. Začiatočník má používať hotovú chránenú batériu s určenou nabíjačkou. Samotný matematický súčet neoveruje vyrovnanie článkov, povolené prúdy, istenie ani vhodnosť konektorov pre konkrétny robot.",
-          "en": "In a properly designed series pack, cell voltages add while capacity in Ah remains approximately that of one cell. Parallel connections increase capacity at the same voltage. These relationships assume compatible cells and a sound pack design. Beginners should use a finished protected battery with its specified charger. The arithmetic alone does not verify cell balance, allowable currents, protection, or connector suitability for the robot."
+          "sk": "Pri vhodne navrhnutom sériovom zapojení sa napätia článkov sčítajú, zatiaľ čo kapacita v Ah zostáva približne kapacitou jedného článku. Paralelné zapojenie zvyšuje kapacitu pri rovnakom napätí. Také vzťahy predpokladajú kompatibilné články a správny návrh súpravy. Pre prvú stavbu použi hotovú chránenú batériu s určenou nabíjačkou. Samotný matematický súčet neoveruje vyrovnanie článkov, povolené prúdy, istenie ani vhodnosť konektorov pre konkrétny robot.",
+          "en": "In a properly designed series pack, cell voltages add while capacity in Ah remains approximately that of one cell. Parallel connections increase capacity at the same voltage. These relationships assume compatible cells and a sound pack design. For a first build, use a finished protected battery with its specified charger. The arithmetic alone does not verify cell balance, allowable currents, protection, or connector suitability for the robot."
         }
       }
     ],
@@ -1511,8 +1511,8 @@
       "en": "Set 11.1 V, 2 Ah, 20% reserve, 100% efficiency and 12 W total load. Check a runtime of 88.8 min, then reduce efficiency to 90%. Enter power on the load side."
     },
     "pitfall": {
-      "sk": "mAh najprv prepočítaj na Ah; 2 000 mAh sú 2 Ah, nie 2 000 Ah.",
-      "en": "Convert mAh to Ah first; 2,000 mAh equals 2 Ah, not 2,000 Ah."
+      "sk": "Pred výpočtom preveď mAh na Ah delením 1 000: 2 000 mAh = 2 Ah.",
+      "en": "Convert mAh to Ah by dividing by 1,000: 2,000 mAh = 2 Ah."
     },
     "quiz": {
       "question": {
@@ -1872,8 +1872,8 @@
           "en": "Topics, services, and actions"
         },
         "body": {
-          "sk": "Téma je vhodná pre priebežný tok meraní alebo stavov. Služba spája krátku požiadavku s odpoveďou, napríklad načítanie nastavenia. Akcia je vhodná pre dlhšiu úlohu s priebežnou spätnou väzbou a možnosťou zrušenia. Voľba má odrážať životný cyklus operácie. Dlhý pohyb schovaný v blokujúcej službe komplikuje prerušenie aj sledovanie postupu. Ani prijatá akcia však sama nepotvrdzuje fyzické dokončenie úlohy.",
-          "en": "A topic suits a continuous stream of measurements or status. A service pairs a short request with a response, such as reading a setting. An action suits a longer task with progress feedback and cancellation. Choose an interface that reflects the operation's lifecycle. Hiding a long movement inside a blocking service complicates interruption and progress tracking. An accepted action does not itself confirm physical completion."
+          "sk": "Téma je vhodná pre priebežný tok meraní alebo stavov. Služba spája krátku požiadavku s odpoveďou, napríklad načítanie nastavenia. Akcia je vhodná pre dlhšiu úlohu s priebežnou spätnou väzbou a možnosťou zrušenia. Voľba má odrážať životný cyklus operácie. Dlhý pohyb vykonávaný blokujúcou službou komplikuje prerušenie aj sledovanie postupu. Ani prijatá akcia však sama nepotvrdzuje fyzické dokončenie úlohy.",
+          "en": "A topic suits a continuous stream of measurements or status. A service pairs a short request with a response, such as reading a setting. An action suits a longer task with progress feedback and cancellation. Choose an interface that reflects the operation's lifecycle. Executing a long movement through a blocking service complicates interruption and progress tracking. An accepted action does not itself confirm physical completion."
         }
       },
       {
@@ -2147,8 +2147,8 @@
       },
       {
         "title": {
-          "sk": "Enkodér meria otočenie, nie podlahu",
-          "en": "An encoder measures rotation, not the floor"
+          "sk": "Meranie enkodérom a vplyv sklzu",
+          "en": "Encoder measurements and wheel slip"
         },
         "body": {
           "sk": "Enkodér udáva zmenu uhlovej polohy hriadeľa. Na dráhu kolesa ju prevedieš cez prevodový pomer a polomer. Over, čo výrobca myslí počtom impulzov: výsledok závisí aj od spôsobu dekódovania hrán. Ak koleso prešmykuje, enkodér stále hlási pohyb, hoci robot prejde menej. Rozdiel priemerov kolies zas vytvára systematické zatáčanie. Odometria preto integruje aj malé chyby a potrebuje pravidelnú kontrolu nezávislou referenciou.",
@@ -2254,8 +2254,8 @@
       },
       {
         "title": {
-          "sk": "Úspech má aj hranice platnosti",
-          "en": "Success has a defined operating range"
+          "sk": "Podmienky platnosti skúšky",
+          "en": "Validated operating conditions"
         },
         "body": {
           "sk": "Záverečná skúška má sledovať celý reťazec od merania cez plán až po fyzický výsledok. Definuj požiadavky na presnosť, čas, spotrebu a reakciu na poruchu. Uchovaj verziu softvéru, konfiguráciu, podmienky aj surový záznam. Zopakuj skúšku pri hraničnom náklade a realistickom stave batérie. Výsledok formuluj ako overené podmienky, nie všeobecné tvrdenie, že robot vždy funguje. Po zmene mechaniky alebo riadenia zopakuj dotknuté skúšky.",
