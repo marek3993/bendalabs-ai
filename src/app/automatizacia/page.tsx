@@ -7,13 +7,14 @@ import { automationModules, euro, readAutomationModules } from "@/lib/bendalabs/
 import "./automation.css";
 
 export const metadata: Metadata = {
-  title: "AI automatizácia dokumentov a hľadania zákaziek | BendaLabs",
-  description: "AI za vás denne hľadá zákazky a pripravuje prvé e-maily. Z dokladov načíta údaje do vašich zmlúv. Vlastný online dashboard na mieru od BendaLabs.",
+  title: "AI automatizácie na mieru | BendaLabs",
+  description: "Menej rutinnej práce s AI. Automatizácia dokumentov, e-mailov, vyhľadávania aj prepojenie aplikácií a fyzických zariadení. Riešenie na mieru vašej firme.",
   alternates: { canonical: "https://bendalabs.sk/automatizacia" },
-  openGraph: { title: "AI hľadá zákazky a pripravuje dokumenty za vás.", description: "Denne vybrané zákazky s kontaktmi a prvým e-mailom. Zmluvy a dodatky z vašich dokladov a šablón. AI automatizácia vo vlastnom dashboarde na mieru.", url: "https://bendalabs.sk/automatizacia", locale: "sk_SK", type: "website" },
+  openGraph: { title: "AI automatizácie na mieru | BendaLabs", description: "Od dokumentov a e-mailov po prepojené aplikácie a zariadenia. AI, ktorá vám uvoľní ruky na dôležitejšiu prácu.", url: "https://bendalabs.sk/automatizacia", locale: "sk_SK", type: "website" },
 };
 
 const faqs = [
+  ["Čo ak potrebujeme aj niečo mimo tejto ponuky?", "Napíšte nám konkrétny príklad do formulára. Môžeme začať jedným postupom a postupne pridávať ďalšie. Prejdeme si aj počet ľudí v tíme, ich prístupy a prípadné napojenia na nástroje, ktoré už používate."],
   ["Musíme vám dať zoznam webov, na ktorých má AI hľadať?", "Nie. Stačí nám povedať, čo vaša firma ponúka, kde pôsobí a aké zákazky chce získavať. Vhodné weby a zdroje vyhľadáme my. Pripravíme aj nastavenie AI, výber príležitostí a návrhy oslovení, aby ste dostali použiteľné podklady pre nový obchod."],
   ["Bude AI posielať e-maily alebo používať dokumenty bez mojej kontroly?", "Nie. AI pripraví podklady: vybrané zákazky, návrhy e-mailov alebo vyplnené dokumenty. Vy ich skontrolujete a rozhodnete o odoslaní či použití. Pri zmluvách vychádzame z vašich schválených vzorov."],
   ["Objednávam si odoslaním formulára službu za 500 €?", "Nie. Pošlete iba stručný opis svojej situácie. Najprv ju zanalyzujeme a prejdeme si možnosti. Realizáciu, rozsah a konkrétnu cenu si dohodneme osobitne, až keď vám riešenie bude dávať zmysel."],
@@ -23,7 +24,6 @@ const faqs = [
   ["Čo dostaneme pri vyhľadávaní zákaziek?", "AI denne prehľadáva internet a vyberá nájdené zákazky podľa zamerania vašej firmy. Vhodné zdroje aj nastavenie vyhľadávania zabezpečíme my. V dashboarde uvidíte stručný opis, dostupné podmienky, dohľadaný kontakt, pôvodný zdroj a návrh prvého e-mailu. Kontakty ani vhodná zákazka nemusia byť dostupné pri každom vyhľadávaní. Text skontrolujete, doplníte svoju ponuku a sami ho odošlete."],
   ["Čo presne zahŕňa cena?", "Jednorazová cena je za prípravu a nastavenie systému podľa dohodnutého postupu, vlastný dashboard a vysvetlenie používania. Mesačná cena pokrýva dohodnutú prevádzku, hosting, zálohy a opravy chýb. Konkrétnu ponuku dostanete pred začiatkom práce. Uvádzacie ceny platia pre prvých päť klientov."],
   ["Ako prebieha platba a odovzdanie?", "Polovica jednorazovej ceny sa platí na začiatku a polovica po odovzdaní. Najprv systém spolu vyskúšame na vašich podkladoch. Mesačná prevádzka sa začne účtovať až po odovzdaní."],
-  ["Čo ak potrebujeme aj niečo mimo tejto ponuky?", "Napíšte nám konkrétny príklad do formulára. Môžeme začať jedným postupom a postupne pridávať ďalšie. Prejdeme si aj počet ľudí v tíme, ich prístupy a prípadné napojenia na nástroje, ktoré už používate."],
 ];
 
 export default async function AutomationPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -32,39 +32,59 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
   const jobs = initialModules.length === 1 && initialModules[0] === "prilezitosti";
   const docs = initialModules.length === 1 && initialModules[0] === "dokumenty";
   const orderedModules = jobs ? [...automationModules].reverse() : automationModules;
-  function moduleLink(module: string) {
+  function moduleLink(module?: string) {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
       if (key.startsWith("utm_") && value) {
         for (const item of Array.isArray(value) ? value : [value]) query.append(key, item);
       }
     }
-    query.set("modul", module);
-    return `/automatizacia?${query.toString()}#konfigurator`;
+    if (module) query.set("modul", module);
+    const search = query.toString();
+    return `/automatizacia${search ? `?${search}` : ""}#konfigurator`;
   }
   return <div className="bl-site auto-site"><a href="#main" className="bl-skip">Prejsť na obsah</a>
-    <header className="auto-header"><div className="bl-wrap auto-header-inner"><Brand /><nav aria-label="Navigácia ponuky"><a href="#moduly">Služby a ceny</a><a href="#ako-to-funguje">Ako to funguje</a><a href="#o-mne">Kto to pripraví</a></nav><a className="bl-button bl-button-small" href="#konfigurator">Opísať situáciu <Arrow /></a></div></header>
+    <header className="auto-header"><div className="bl-wrap auto-header-inner"><Brand /><nav aria-label="Navigácia ponuky"><a href="#moduly">Služby a ceny</a><a href="#ako-to-funguje">Ako to funguje</a><a href="#o-mne">Kto to pripraví</a></nav><a className="bl-button bl-button-small" href="#konfigurator">Napíšte nám <Arrow /></a></div></header>
     <main id="main">
       <section className="auto-hero bl-wrap">
         <div className="auto-hero-copy"><p className="auto-kicker">BENDA LABS / AUTOMATIZÁCIA POMOCOU AI</p>
-          <h1>{jobs ? <>AI hľadá zákazky za vás. <span>Vy vyberiete, koho oslovíte.</span></> : docs ? <>Nahrajte doklad. <span>AI pripraví vaše dokumenty.</span></> : <>AI pripraví dokumenty. <span>A vyhľadá zákazky za vás.</span></>}</h1>
-          <p className="auto-lead">{jobs ? "AI každý deň prehľadáva internet a hľadá nové zákazky pre vašu firmu. Vyberie vhodné príležitosti, zhrnie zadanie, dohľadá dostupné kontakty a pripraví prvý e-mail." : docs ? "Nahrajete fotku alebo PDF dokladu. AI z neho načíta údaje a doplní ich do vašich zmlúv, dodatkov či nástupných formulárov. Vy skontrolujete výsledok — bez prepisovania mena a adresy do každého súboru." : "AI načíta údaje z dokladov a vyplní vaše firemné dokumenty. Alebo každý deň prehľadáva internet, hľadá nové zákazky pre vašu firmu a pripravuje e-maily na oslovenie. Vy skontrolujete výsledok a rozhodnete o ďalšom kroku."}</p>
+          <h1>{jobs ? <>AI hľadá zákazky za vás. <span>Vy vyberiete, koho oslovíte.</span></> : docs ? <>Nahrajte doklad. <span>AI pripraví vaše dokumenty.</span></> : <>AI prevezme rutinu. <span>Vy získate čas.</span></>}</h1>
+          <p className="auto-lead">{jobs ? "AI každý deň prehľadáva internet a hľadá nové zákazky pre vašu firmu. Vyberie vhodné príležitosti, zhrnie zadanie, dohľadá dostupné kontakty a pripraví prvý e-mail." : docs ? "Nahrajete fotku alebo PDF dokladu. AI z neho načíta údaje a doplní ich do vašich zmlúv, dodatkov či nástupných formulárov. Vy skontrolujete výsledok — bez prepisovania mena a adresy do každého súboru." : "Menej prepisovania, hľadania a opakujúcich sa úloh. Pripravíme AI automatizáciu na mieru vašej firme — od dokumentov a e-mailov po vyhľadávanie zákaziek či prepojenie aplikácií."}</p>
           {jobs && <p className="auto-custom-note">Pri rannej káve otvoríte vybrané príležitosti, pozriete si podmienky a skontrolujete pripravený e-mail. Doplníte svoju ponuku a odošlete ju.</p>}
           {jobs && <p className="auto-custom-note">Vy nám poviete, čo vaša firma ponúka a akých klientov hľadá. O výber zdrojov, nastavenie AI a prípravu príležitostí sa postaráme my.</p>}
-          <p className="auto-custom-note">Všetko máte vo vlastnom online dashboarde v prehliadači. AI aj dashboard pripravíme na mieru vašej firme — od výberu funkcií po nastavenie a úpravy podľa vašich potrieb.</p>
-          <div className="auto-hero-actions"><a className="bl-button" href="#konfigurator">Opísať moju situáciu <Arrow /></a><a className="bl-text-link" href="#ukazka">Pozrieť ukážku dashboardu</a></div>
+          <p className="auto-custom-note">{jobs || docs ? "Všetko máte vo vlastnom online dashboarde v prehliadači. AI aj dashboard pripravíme na mieru vašej firme — od výberu funkcií po nastavenie a úpravy podľa vašich potrieb." : "Systém vieme prepojiť aj s fyzickými zariadeniami: displejmi, reproduktormi, mikrofónmi či senzormi. Vaše aplikácie aj zariadenia tak môžu spolupracovať v jednom riešení."}</p>
+          <div className="auto-hero-actions"><a className="bl-button" href="#konfigurator">Napíšte nám <Arrow /></a><a className="bl-text-link" href="#ukazka">Pozrieť ukážku dashboardu</a></div>
         </div>
         <AutomationConfigurator key={initialModules.join(",")} initialModules={initialModules} />
       </section>
       <section className="auto-start bl-wrap" id="ako-zacneme" aria-label="Ako začneme"><ol>
-        <li><span>01</span><h2>Opíšete situáciu</h2><p>Stačí krátka veta alebo konkrétny príklad. Bez objednávky služby.</p></li>
-        <li><span>02</span><h2>Navrhneme riešenie</h2><p>Zistíme, čo potrebujete dosiahnuť, a navrhneme, ako vám s tým AI pomôže.</p></li>
-        <li><span>03</span><h2>Dohodneme riešenie</h2><p>Až potom si odsúhlasíme rozsah, cenu a úpravy dashboardu pre váš tím.</p></li>
+        <li><span>01</span><h2>Napíšete nám</h2><p>Necháte e-mail a pár slov o svojej situácii.</p></li>
+        <li><span>02</span><h2>Ozveme sa vám</h2><p>Porozprávame sa o tom, ako by vám automatizácia mohla pomôcť.</p></li>
+        <li><span>03</span><h2>Vy sa rozhodnete</h2><p>Keď vám riešenie bude dávať zmysel, dohodneme rozsah aj cenu.</p></li>
       </ol></section>
       <section className="auto-demo-section bl-wrap" id="ukazka"><div><p className="bl-eyebrow">Takto môže vyzerať váš dashboard</p><h2>{jobs ? <>Zákazka, stručné zhrnutie<br />a e-mail pripravený AI.</> : <>Z dokladu do zmluvy.<br />Pozrite si postup.</>}</h2><p>{jobs ? "Vyskúšajte si, ako otvoríte nájdenú príležitosť a pozriete si pripravené oslovenie. V reálnom dashboarde AI vyberá zákazky podľa nastavenia vašej firmy." : "V ukážke už AI načítala údaje z dokladu. Kliknite na prípravu dokumentov alebo skúste dodatok z uloženého profilu."} Ide o modelový príklad; váš dashboard upravíme na mieru.</p><a className="bl-text-link" href="#konfigurator">Opísať, čo potrebujem <Arrow /></a></div><AutomationPreview key={initialModules.join(",")} initialTab={jobs ? "prilezitosti" : "nastup"} /></section>
       <section className="auto-modules" id="moduly"><div className="bl-wrap">
-        <div className="auto-heading-row"><div><p className="bl-eyebrow">Čo za vás urobí AI</p><h2>Čo môže AI robiť<br />vo vašej firme?</h2></div><p>Orientačné ceny realizácie po dohode. Najprv nám pošlite svoju situáciu; odoslanie formulára nie je objednávka.</p></div>
-        <div className="auto-module-grid">{orderedModules.map(module => <article key={module.id} className="auto-module-card"><div className="auto-module-number"><span>{module.id === "dokumenty" ? "DOKUMENTY A ADMINISTRATÍVA" : "OBCHODNÉ PRÍLEŽITOSTI"}</span></div><h3>{module.title}</h3><p>{module.description}</p><ul>{module.benefits.map(line => <li key={line}>{line}</li>)}</ul><div className="auto-module-price"><span>Nastavenie vrátane dashboardu</span><strong><small>od </small>{euro(module.totalSetup)}<small> jednorazovo</small></strong><p>+ od {euro(module.totalMonthly)} / mesiac</p></div><Link href={moduleLink(module.id)} className="bl-text-link">{module.id === "dokumenty" ? "Opísať prácu s dokumentmi" : "Opísať hľadanie zákaziek"} <Arrow /></Link></article>)}</div>
+        <div className="auto-heading-row"><div><p className="bl-eyebrow">Čo za vás urobí AI</p><h2>Čo môže AI robiť<br />vo vašej firme?</h2></div><p>Od jednej opakujúcej sa úlohy po prepojený systém. Vyberte si z príkladov alebo nám napíšte vlastnú predstavu.</p></div>
+        <div className="auto-module-grid">
+          <article className="auto-module-card auto-custom-card">
+            <div className="auto-custom-card-copy">
+              <div className="auto-module-number"><span>PODĽA VAŠICH POTRIEB</span></div>
+              <h3>AI automatizácie na mieru</h3>
+              <p>Prepojte to, čo dnes robíte ručne. Navrhneme automatizáciu pre váš spôsob práce — od jednoduchej úlohy po systém, v ktorom spolupracujú aplikácie aj fyzické zariadenia.</p>
+            </div>
+            <ul>
+              <li>Spracovanie e-mailov a dokumentov, triedenie údajov a pravidelné prehľady</li>
+              <li>Prepojenie firemných aplikácií, prenos údajov a automatické upozornenia</li>
+              <li>AI asistenti, vyhľadávanie informácií a hlasové ovládanie</li>
+              <li>Displeje, reproduktory, mikrofóny či senzory napojené na váš systém</li>
+            </ul>
+            <div className="auto-custom-card-footer">
+              <div className="auto-module-price"><span>Cena podľa náročnosti</span><strong>Individuálna ponuka</strong><p>Podľa rozsahu, prepojení a potrebných zariadení.</p></div>
+              <Link href={moduleLink()} className="bl-text-link">Napíšte nám svoju predstavu <Arrow /></Link>
+            </div>
+          </article>
+          {orderedModules.map(module => <article key={module.id} className="auto-module-card"><div className="auto-module-number"><span>{module.id === "dokumenty" ? "DOKUMENTY A ADMINISTRATÍVA" : "OBCHODNÉ PRÍLEŽITOSTI"}</span></div><h3>{module.title}</h3><p>{module.description}</p><ul>{module.benefits.map(line => <li key={line}>{line}</li>)}</ul><div className="auto-module-price"><span>Nastavenie vrátane dashboardu</span><strong><small>od </small>{euro(module.totalSetup)}<small> jednorazovo</small></strong><p>+ od {euro(module.totalMonthly)} / mesiac</p></div><Link href={moduleLink(module.id)} className="bl-text-link">{module.id === "dokumenty" ? "Opísať prácu s dokumentmi" : "Opísať hľadanie zákaziek"} <Arrow /></Link></article>)}
+        </div>
         <p className="auto-modules-note">Uvádzacie ceny pre prvých 5 klientov. Konkrétny postup a cenu si potvrdíme pred začiatkom práce.</p>
       </div></section>
       <section className="auto-how bl-wrap" id="ako-to-funguje">
@@ -81,7 +101,7 @@ export default async function AutomationPage({ searchParams }: { searchParams: P
       </div></section>
 
       <section className="auto-founder bl-wrap" id="o-mne"><div className="auto-founder-id"><span className="auto-founder-mark" aria-hidden="true">MB</span><div><h2>Marek Benda</h2><p>Tvorca BendaLabs</p><a href="mailto:info@bendalabs.sk">info@bendalabs.sk</a><a href="tel:+421944388123">+421 944 388 123</a></div></div><div className="auto-founder-copy"><h3>Vaše zadanie prejdete priamo so mnou.</h3><p>V BendaLabs tvorím automatizácie pomocou AI. Ukážete mi dokument, ktorý ručne vypĺňate, alebo zákazku, akú chcete nájsť. Na tomto konkrétnom príklade navrhnem, čo za vás bude robiť AI a čo zostane na vašej kontrole.</p><p>Podobnej práci s dokladmi a zmluvami sa venujem aj v projekte Zmluvomat. Výsledný systém nastavím podľa potrieb vašej firmy a ukážem vášmu tímu, ako ho používať.</p><Link href="/labs" className="bl-text-link">Pozrieť moje ďalšie projekty <Arrow /></Link></div></section>
-      <div className="auto-final-cta bl-wrap"><h2>Začnime tým, čo dnes riešite.</h2><a className="bl-button" href="#konfigurator">Poslať krátky opis situácie <Arrow /></a></div>
+      <div className="auto-final-cta bl-wrap"><h2>Stačí krátka správa. Ozveme sa vám.</h2><a className="bl-button" href="#konfigurator">Napíšte nám <Arrow /></a></div>
       <section className="auto-faq bl-wrap"><div><p className="bl-eyebrow">Pred spoluprácou</p><h2>Časté otázky</h2></div><div>{faqs.map(([question, answer]) => <details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>
     </main><Footer />
   </div>;

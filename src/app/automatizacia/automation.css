@@ -434,3 +434,16 @@
 .auto-measurement-consent a { text-decoration: underline; }
 
 .auto-intake .auto-form-fields > label { margin-bottom: 0; }
+
+.auto-custom-card { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 28px 48px; }
+.auto-custom-card-copy { min-width: 0; }
+.auto-custom-card h3 { min-height: 0; }
+.auto-custom-card-copy > p { margin-top: 16px; font-size: 14px; line-height: 1.8; color: #5b6560; }
+.auto-custom-card > ul { margin: 0; align-self: center; }
+.auto-custom-card-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-top: 1px solid #e1e7dd; padding-top: 22px; }
+.auto-custom-card-footer .auto-module-price { margin: 0; padding: 0; border: 0; }
+.auto-custom-card-footer > a { font-size: 13px; gap: 20px; }
+@media (max-width: 800px) {
+  .auto-custom-card { grid-template-columns: 1fr; gap: 24px; }
+  .auto-custom-card-footer { align-items: flex-start; flex-direction: column; }
+}
