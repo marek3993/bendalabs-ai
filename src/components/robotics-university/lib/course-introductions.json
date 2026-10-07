@@ -50,49 +50,49 @@
   {
     "id": "robot-components",
     "title": {
-      "sk": "Od príkazu k pohybu motora",
-      "en": "From a command to motor motion"
+      "sk": "Prečo motor potrebuje driver",
+      "en": "Why a motor needs a driver"
     },
     "purpose": {
-      "sk": "Pri stavbe potrebuješ odlíšiť riadiaci signál od napájania motora. Táto schéma ukazuje funkciu dosky, drivera, batérie a senzora.",
-      "en": "When building a robot, you need to distinguish a control signal from motor power. This diagram shows the roles of the board, driver, battery and sensor."
+      "sk": "Doska môže bežať a posielať príkazy, hoci motor stojí. Na schéme jedného pohonu zistíš, čo dodáva signál, čo energiu a prečo je potrebná spoločná GND.",
+      "en": "The board can be running and sending commands while the motor stays still. Use a single-drive diagram to distinguish signals from energy and see why common GND matters."
     },
     "steps": [
       {
-        "sk": "Na modeli si prezri dosku, motorový driver a pohony.",
-        "en": "Inspect the board, motor driver and drives on the rover model."
+        "sk": "Sleduj zelený riadiaci signál z dosky a žltú napájaciu vetvu z batérie do drivera.",
+        "en": "Trace the green control signal from the board and the yellow battery power path to the driver."
       },
       {
-        "sk": "V schéme doplň, kam ide príkaz z dosky a kam vstupuje meranie senzora.",
-        "en": "Complete the diagram: where does the board command go, and where does the sensor reading enter?"
+        "sk": "Zvoľ Smer A. Výstupy drivera roztočia motor; doska ho nenapája priamo.",
+        "en": "Select Direction A. The driver outputs rotate the motor; the board does not power it directly."
       },
       {
-        "sk": "Po doplnení spojení vyskúšaj pohyb a stlač STOP. Sleduj, ktorá časť pohonu dostala nový príkaz.",
-        "en": "Once the connections are complete, try movement and press STOP. Observe which drive component received the new command."
+        "sk": "Stlač STOP. Motor už nie je poháňaný, ale na VM zostáva 12 V. Potom opravíš prerušené prepojenia.",
+        "en": "Press STOP. The motor is no longer driven, but VM remains at 12 V. Next, repair the open connections."
       }
     ],
     "success": {
-      "sk": "Príkaz vedie z dosky cez driver k motoru, meranie zo senzora do dosky a STOP preruší pohyb.",
-      "en": "Commands pass from the board through the driver to the motor, readings enter the board, and STOP interrupts motion."
+      "sk": "Obnov napájanie a spoločnú GND. Over oba smery motora a STOP.",
+      "en": "Restore motor power and common GND. Verify both motor directions and STOP."
     },
     "figure": "signals",
     "guidedSteps": [
       {
-        "sk": "Vyber dosku, driver alebo motor a nájdi ich na modeli. Schéma vysvetľuje ich úlohu.",
-        "en": "Select the board, driver or motor and locate them on the model. The diagram explains their roles."
+        "sk": "Sleduj zelený riadiaci signál z dosky a žltú napájaciu vetvu z batérie do drivera.",
+        "en": "Trace the green control signal from the board and the yellow battery power path to the driver."
       },
       {
-        "sk": "Podrž smerový ovládač a pohni roverom.",
-        "en": "Hold a direction control to move the rover."
+        "sk": "Zvoľ Smer A. Výstupy drivera roztočia motor; doska ho nenapája priamo.",
+        "en": "Select Direction A. The driver outputs rotate the motor; the board does not power it directly."
       },
       {
-        "sk": "Stlač STOP. V ďalšom kroku doplníš cestu príkazu a merania do schémy.",
-        "en": "Press STOP. Next, complete the command and measurement paths in the diagram."
+        "sk": "Stlač STOP. Motor už nie je poháňaný, ale na VM zostáva 12 V. Potom opravíš prerušené prepojenia.",
+        "en": "Press STOP. The motor is no longer driven, but VM remains at 12 V. Next, repair the open connections."
       }
     ],
     "guidedSuccess": {
-      "sk": "Pohyb a následný STOP ukázali zmenu príkazu pohonu.",
-      "en": "Motion followed by STOP demonstrates changing the drive command."
+      "sk": "Spustíš motor a zastavíš pohon, pričom napájanie drivera zostáva zapnuté.",
+      "en": "Run and stop the motor while the driver supply remains on."
     }
   },
   {

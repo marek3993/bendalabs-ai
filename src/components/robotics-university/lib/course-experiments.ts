@@ -39,7 +39,7 @@ export type Evidence={collision:boolean;travel:number;strafe:number;forward:numb
 export const emptyEvidence=():Evidence=>({collision:false,travel:0,strafe:0,forward:0,turn:0,visited:0,loopVisited:0,stationDwell:[],functionStationDwell:[],functionReturns:[],stoppedProgram:false,stoppedMotor:false,twoSpeeds:false,reactivePassed:false,connections:false});
 export function assessCourse(id:CourseId,pose:Pose,trial:Trial,program:Program,e:Evidence,running:boolean):string|null {
  if(running)return 'running';if(e.collision)return 'collision';
- if(id==='robot-components')return e.connections&&e.stoppedMotor?null:'connections';
+ if(id==='robot-components')return 'motor-circuit'; // Evaluated by the dedicated motor-circuit state machine.
  if(id==='range-input')return e.reactivePassed?null:'sensor';
  if(e.travel<.2)return 'move';
  if(!parked(pose,trial.world.bay))return 'park';

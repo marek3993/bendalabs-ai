@@ -43,42 +43,42 @@
   {
     "id": "robot-components",
     "title": {
-      "sk": "Od príkazu k pohybu motora",
-      "en": "From a command to motor motion"
+      "sk": "Prečo motor potrebuje driver",
+      "en": "Why a motor needs a driver"
     },
     "goal": {
-      "sk": "Príkaz vedie z dosky cez driver k motoru, meranie zo senzora do dosky a STOP preruší pohyb.",
-      "en": "Commands pass from the board through the driver to the motor, readings enter the board, and STOP interrupts motion."
+      "sk": "Obnov napájanie a spoločnú GND. Over oba smery motora a STOP.",
+      "en": "Restore motor power and common GND. Verify both motor directions and STOP."
     },
     "prerequisite": {
-      "sk": "Vieš pohnúť roverom a zastaviť ho.",
-      "en": "You can move the rover and stop it."
+      "sk": "Nepotrebuješ vedieť zapájať piny. Najprv rozlíšiš signál, napájanie a motor.",
+      "en": "No pin-wiring knowledge is required. First distinguish the signal, power supply and motor."
     },
     "problem": {
-      "sk": "Prezri si na modeli dosku, driver a motory. Schéma vedľa modelu odlišuje príkaz od napájania. Vyskúšaj pohyb a stlač STOP; potom budeš zapájať funkčné väzby samostatne.",
-      "en": "Inspect the board, driver and motors on the model. The diagram distinguishes commands from power. Try movement and press STOP, then connect the functional links yourself."
+      "sk": "V hotovej schéme zvoľ Smer A a sleduj motor. Potom stlač STOP a porovnaj stav motora s napájaním VM.",
+      "en": "In the connected circuit, select Direction A and observe the motor. Then press STOP and compare the motor state with its VM supply."
     },
     "explanation": {
-      "sk": "Batéria dodáva energiu. Riadiaca doska spracuje vstup a určí príkaz. Motorový driver podľa príkazu riadi prúd do motora. Senzor poskytuje údaj o okolí. STOP zmení príkaz pohonu; nie je to odpojenie batérie. Schéma ukazuje funkčné vzťahy, nie zapojenie konkrétnych pinov.",
-      "en": "The battery supplies energy. The control board processes inputs and produces commands. The motor driver uses those commands to control current through the motor. A sensor reports something about the environment. STOP changes the drive command; it does not disconnect the battery. The diagram shows functional relationships, not specific pin wiring."
+      "sk": "Doska posiela riadiaci signál do drivera. Prúd motora dodáva batéria cez výkonovú časť drivera. STOP zmení povel, ale napájanie VM zostáva pripojené. GND dosky a drivera tvorí spoločnú referenciu pre riadiaci signál.",
+      "en": "The board sends control signals to the driver. Motor current comes from the battery through the driver power stage. STOP changes the command while VM remains powered. Board and driver GND provide a common reference for control signals."
     },
     "independent": {
-      "sk": "Obnov cestu príkazu z dosky cez driver k motoru a cestu merania zo senzora do dosky. Spusti pohon a over, že STOP zmení jeho stav.",
-      "en": "Restore the command path from the board through the driver to the motor and the measurement path from the sensor to the board. Run the drive and verify that STOP changes its state."
+      "sk": "Doska je zapnutá, motor nereaguje. Skontroluj napájanie VM a spoločnú GND v schéme. Obnov prerušené prepojenia, vyskúšaj Smer A aj Smer B a nakoniec stlač STOP.",
+      "en": "The board is powered, but the motor does not respond. Inspect VM power and common GND in the diagram. Restore the open connections, test Direction A and Direction B, then press STOP."
     },
     "hints": [
       {
-        "sk": "Motorový driver patrí medzi riadiacu dosku a motor. GPIO dosky nemá napájať motor.",
-        "en": "The motor driver belongs between the control board and the motor. A board's GPIO must not power the motor."
+        "sk": "VM je napájací vstup pohonu. Keď je na ňom 0 V, samotný príkaz z dosky motor neroztočí.",
+        "en": "VM is the motor power input. At 0 V, a board command alone cannot drive the motor."
       },
       {
-        "sk": "Meranie vstupuje do riadiacej dosky. Príkaz pohonu z nej smeruje von.",
-        "en": "A measurement enters the control board. A drive command leaves it."
+        "sk": "GND dosky musí mať spoločnú referenciu s GND drivera. Prepojenia v tomto pokuse meníš pri povele STOP.",
+        "en": "The board GND must share a reference with driver GND. Change the connections in this experiment with STOP selected."
       }
     ],
     "bridge": {
-      "sk": "Robot má vlastné smery dopredu a doľava. Na mape však môžu smerovať inam.",
-      "en": "The robot has its own forward and left directions. On the map, they may point somewhere else."
+      "sk": "Overil si rozdiel medzi riadením a napájaním pohonu. V ďalšej lekcii využiješ riadenie motorov na otočenie roveru na mieste.",
+      "en": "You verified the difference between control and motor power. Next, use motor control to turn the rover in place."
     }
   },
   {
