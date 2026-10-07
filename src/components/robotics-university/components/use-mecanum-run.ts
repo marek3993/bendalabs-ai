@@ -6,10 +6,11 @@ import {emptyEvidence,type Trial,type Evidence} from '@/components/robotics-univ
 export type Run={pose:Pose;velocity:Velocity;trail:Pose[];evidence:Evidence;elapsed:number;running:boolean;path:string;ended:number};
 type Runtime=Run&{plan:Plan|null;planOrigin:'program'|'jog'|null;functionArrivals:boolean[];manual:Velocity;lastCommand:number;trial:Trial};
 function initial(trial:Trial,flags?:Partial<Evidence>):Runtime{return {pose:{...trial.world.start},velocity:zeroVelocity,trail:[{...trial.world.start}],evidence:{...emptyEvidence(),...flags},elapsed:0,running:false,path:'',ended:0,plan:null,planOrigin:null,functionArrivals:[],manual:zeroVelocity,lastCommand:0,trial};}
-export function useMecanumRun(trial:Trial){
+export function useMecanumRun(trial:Trial,options:{playback?:number;stopPractice?:boolean}={}){
+ const optionsRef=useRef(options);optionsRef.current=options;
  const runtime=useRef(initial(trial)),[run,setRun]=useState<Run>(runtime.current),[error,setError]=useState('');
  const publish=useCallback(()=>{const r=runtime.current;setRun({...r,evidence:{...r.evidence},trail:[...r.trail]});},[]);
- const stop=useCallback((intentional=false)=>{const r=runtime.current;if(intentional&&r.evidence.travel>.02)r.evidence.stoppedMotor=true;if(intentional&&r.running&&r.planOrigin==='program'&&r.pose.y>=1.3&&r.pose.y<=1.9)r.evidence.stoppedProgram=true;r.plan=null;r.planOrigin=null;r.manual=zeroVelocity;r.velocity=zeroVelocity;r.running=false;r.path='';publish();},[publish]);
+ const stop=useCallback((intentional=false)=>{const r=runtime.current;if(intentional&&r.evidence.travel>.02)r.evidence.stoppedMotor=true;if(intentional&&r.running&&r.planOrigin==='program'&&r.evidence.travel>.02)r.evidence.stoppedProgram=true;r.plan=null;r.planOrigin=null;r.manual=zeroVelocity;r.velocity=zeroVelocity;r.running=false;r.path='';publish();},[publish]);
  const reset=useCallback((next:Trial,keepFlags=false)=>{const e=runtime.current.evidence;runtime.current=initial(next,keepFlags?{stoppedProgram:e.stoppedProgram,stoppedMotor:e.stoppedMotor,reactivePassed:e.reactivePassed,twoSpeeds:e.twoSpeeds,connections:e.connections}:undefined);setError('');publish();},[publish]);
  const start=useCallback((program:Program,speed:number)=>{try{const actions=compileProgram(program,speed),old=runtime.current;runtime.current=initial(old.trial,{stoppedProgram:old.evidence.stoppedProgram,stoppedMotor:old.evidence.stoppedMotor,reactivePassed:old.evidence.reactivePassed,twoSpeeds:old.evidence.twoSpeeds,connections:old.evidence.connections});runtime.current.plan=newPlan(actions);runtime.current.planOrigin='program';runtime.current.running=true;setError('');publish();return true;}catch(error){setError(error instanceof Error?error.message:'value');return false;}},[publish]);
  const manual=useCallback((velocity:Velocity)=>{const r=runtime.current;if(r.evidence.collision)return;r.plan=null;r.planOrigin=null;r.path='';r.manual=velocity;r.lastCommand=performance.now();r.running=!!(velocity.vx||velocity.vy||velocity.omega);r.velocity=velocity;publish();},[publish]);
@@ -17,10 +18,13 @@ export function useMecanumRun(trial:Trial){
  const jog=useCallback((velocity:Velocity)=>{const r=runtime.current;if(r.running||r.evidence.collision)return;const seconds=velocity.omega?Math.PI/12/Math.abs(velocity.omega):.1/Math.hypot(velocity.vx,velocity.vy);r.plan=newPlan([{velocity,seconds,path:''}]);r.planOrigin='jog';r.path='';r.running=true;publish();},[publish]);
  const flag=useCallback((value:Partial<Evidence>)=>{Object.assign(runtime.current.evidence,value);publish();},[publish]);
  useEffect(()=>{let frame=0,last=performance.now(),lastPublish=0;const tick=(now:number)=>{
-  const dt=Math.min(.04,(now-last)/1000);last=now;const r=runtime.current;
-  if(r.running&&!document.hidden){
+  const realDt=Math.min(.04,(now-last)/1000);last=now;const r=runtime.current;
+  const playback=r.planOrigin==='program'&&!(optionsRef.current.stopPractice&&!r.evidence.stoppedProgram)?(optionsRef.current.playback??1):1;
+  let budget=realDt*playback;
+  while(r.running&&!document.hidden&&budget>1e-8){
+   const dt=Math.min(.01,budget,r.plan&&r.plan.remaining>1e-8?r.plan.remaining:.01);budget-=dt;
    const before=r.pose;let collision=false,done=false,velocity=r.manual;
-   if(r.plan){const step=stepPlan(r.pose,r.plan,dt,r.trial.world);r.pose=step.pose;r.plan=step.plan;collision=step.collision;done=step.done;r.path=step.path;velocity=step.velocity;}
+   if(r.plan){const action=r.plan.actions[r.plan.index];const step=stepPlan(r.pose,r.plan,dt,r.trial.world);r.pose=step.pose;r.plan=step.plan;collision=step.collision;done=step.done;r.path=step.path;velocity=action?.velocity??zeroVelocity;}
    else if(now-r.lastCommand>350){velocity=zeroVelocity;r.manual=zeroVelocity;done=true;}
    else {const moved=moveSafely(r.pose,r.manual,dt,r.trial.world);r.pose=moved.pose;collision=moved.collision;}
    const travelled=Math.hypot(r.pose.x-before.x,r.pose.y-before.y),fromProgram=r.planOrigin==='program',fromFunction=fromProgram&&r.path.startsWith('f.'),fromLoop=fromProgram&&/^\d+\./.test(r.path);
@@ -34,7 +38,7 @@ export function useMecanumRun(trial:Trial){
     if(fromFunction&&travelled>1e-8&&distance>.3&&r.functionArrivals[i]&&(r.evidence.functionStationDwell[i]??0)>=.9)r.evidence.functionReturns[i]=true;
    });
    if(r.trail.length<4000&&Math.hypot(r.pose.x-r.trail.at(-1)!.x,r.pose.y-r.trail.at(-1)!.y)>.012)r.trail.push({...r.pose});
-   if(collision||done){r.running=false;r.plan=null;r.planOrigin=null;r.manual=zeroVelocity;r.velocity=zeroVelocity;r.ended++;}
+   if(collision||done){r.running=false;r.plan=null;r.planOrigin=null;r.manual=zeroVelocity;r.velocity=zeroVelocity;r.ended++;publish();runEnded.current=r.ended;}
   }
   if(now-lastPublish>40){lastPublish=now;if(r.running||r.ended!==runEnded.current){publish();runEnded.current=r.ended;}}
   frame=requestAnimationFrame(tick);

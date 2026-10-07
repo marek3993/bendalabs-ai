@@ -6,7 +6,14 @@ import ts from "typescript";
 const file = new URL("../src/components/bendalabs/mecanum-scene.ts", import.meta.url);
 const js = ts.transpileModule(fs.readFileSync(file, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
 const loaded = { exports: {} };
-vm.runInNewContext(js, { exports: loaded.exports, module: loaded, Math, Float32Array });
+const geometry = { exports: {} };
+const geometryFile = new URL('../src/components/robotics-university/lib/bendalabs-rover-geometry.ts', import.meta.url);
+const geometryJs = ts.transpileModule(fs.readFileSync(geometryFile, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
+vm.runInNewContext(geometryJs, { exports: geometry.exports, module: geometry, Math, Float32Array });
+vm.runInNewContext(js, { exports: loaded.exports, module: loaded, Math, Float32Array, require(name) {
+  assert.equal(name, '@/components/robotics-university/lib/bendalabs-rover-geometry');
+  return geometry.exports;
+} });
 const { advanceDrive, advanceDriveHold, releaseDriveHold, driveCanvasSize, initialDrivePose, wheelSpeeds, DRIVE_ARENA, DRIVE_ENVELOPE, DRIVE_PARK, headingDifference, crossesCheckpoint, isParked } = loaded.exports;
 const close = (a, b, message) => assert.ok(Math.abs(a - b) < 1e-8, `${message}: ${a} versus ${b}`);
 const pose = { ...initialDrivePose(), x: 0, y: 0 };

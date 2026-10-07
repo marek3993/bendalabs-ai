@@ -4,12 +4,13 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {wheelSpeeds,wheelIds,chassis,type Pose,type Velocity,type World,type Reading} from '@/components/robotics-university/lib/mecanum';
+import {makeBody,makeWheel} from '@/components/robotics-university/lib/bendalabs-rover-geometry';
 import type {Lang} from '@/components/robotics-university/lib/atlas-data';
 
-type Props={pose:Pose;velocity:Velocity;world:World;trail:Pose[];waypoints?:Pose[];lang:Lang;reading?:Reading;highlight?:string};
+type Props={pose:Pose;velocity:Velocity;world:World;trail:Pose[];waypoints?:Pose[];lang:Lang;reading?:Reading;highlight?:string;playback?:number;showTarget?:boolean};
 export default function MecanumScene(props:Props){
  const mount=useRef<HTMLDivElement>(null),latest=useRef(props);latest.current=props;
- const [flat,setFlat]=useState(false),[retry,setRetry]=useState(0),[failed,setFailed]=useState(false),[top,setTop]=useState(false),[detail,setDetail]=useState(false),topRef=useRef(top),detailRef=useRef(detail);topRef.current=top;detailRef.current=detail;
+ const [flat,setFlat]=useState(false),[retry,setRetry]=useState(0),[failed,setFailed]=useState(false),[top,setTop]=useState(false),[detail,setDetail]=useState(props.showTarget===false&&!props.reading),topRef=useRef(top),detailRef=useRef(detail);topRef.current=top;detailRef.current=detail;
  useEffect(()=>{
   const el=mount.current;if(!el||flat)return;let renderer:THREE.WebGLRenderer;
   try{renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});}catch{setFailed(true);return;}
@@ -41,23 +42,22 @@ export default function MecanumScene(props:Props){
   const gridPoints=[];for(let x=0;x<=6;x+=.5)gridPoints.push(x,-.024,0,x,-.024,-4);for(let y=0;y<=4;y+=.5)gridPoints.push(0,-.024,-y,6,-.024,-y);
   const gridMaterial=new THREE.LineBasicMaterial({color:0x345a44,transparent:true,opacity:.7});scene.add(new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(gridPoints,3)),gridMaterial));
   const walls=new THREE.Group();scene.add(walls);const bay=new THREE.Group();scene.add(bay);const markers=new THREE.Group();scene.add(markers);let worldRef:World|undefined,sceneLang:Lang|undefined;
-  const body=new THREE.Group();scene.add(body);const parts:Record<string,THREE.Object3D[]>={battery:[],controller:[],driver:[],motor:[],sensor:[]};
-  box(body,[.48,.045,.36],[0,.16,0],materials.dark);for(const x of [-.16,.16])for(const z of [-.13,.13])box(body,[.02,.16,.02],[x,.245,z],materials.metal,.003);
-  const topPlate=box(body,[.45,.025,.35],[0,.325,0],materials.shell);topPlate.material=new THREE.MeshStandardMaterial({color:0xdae5dc,roughness:.4,metalness:.25,transparent:true,opacity:.86});
-  parts.battery.push(box(body,[.15,.09,.13],[-.095,.23,0],materials.mint));box(body,[.035,.095,.135],[-.095,.23,0],materials.rubber);
-  parts.controller.push(box(body,[.11,.012,.1],[.065,.23,-.075],materials.board));box(body,[.045,.018,.048],[.065,.245,-.075],materials.dark);box(body,[.025,.012,.035],[.105,.246,-.075],materials.metal);
-  parts.driver.push(box(body,[.09,.014,.09],[.065,.23,.075],materials.board));for(const z of [.055,.095])box(body,[.04,.025,.026],[.065,.247,z],materials.dark);
-  const wheelGroups:THREE.Group[]=[];
-  for(const [index,id] of wheelIds.entries()){
-   const x=index<2?chassis.a:-chassis.a,z=index%2===0?-chassis.b:chassis.b,handed=index===0||index===3?-1:1;
-   const axle=box(body,[.075,.055,.12],[x,.1,z*.65],materials.metal);parts.motor.push(axle);
-   const wheel=new THREE.Group();wheel.position.set(x,chassis.radius,z);body.add(wheel);wheelGroups.push(wheel);
-   const hub=new THREE.Mesh(new THREE.CylinderGeometry(.042,.042,.046,20),materials.metal);hub.rotation.x=Math.PI/2;wheel.add(hub);
-   for(let i=0;i<8;i++){const a=i*Math.PI/4,roller=new THREE.Mesh(new THREE.CapsuleGeometry(.013,.044,3,8),materials.rubber);roller.position.set(.052*Math.cos(a),.052*Math.sin(a),0);roller.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(-Math.sin(a),Math.cos(a),handed).normalize());roller.castShadow=true;wheel.add(roller);}
-   for(const side of [-1,1]){const disc=new THREE.Mesh(new THREE.CylinderGeometry(.034,.034,.008,24),materials.amber);disc.rotation.x=Math.PI/2;disc.position.z=side*.03;wheel.add(disc);}
+  const body=new THREE.Group();scene.add(body);
+  const roverMaterial=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.65,metalness:.15,side:THREE.DoubleSide});
+  sharedMaterials.add(roverMaterial);
+  function roverMesh(packed:Float32Array){
+   const positions:number[]=[],normals:number[]=[],colors:number[]=[],color=new THREE.Color();
+   for(let i=0;i<packed.length;i+=9){positions.push(packed[i+1]*.275,packed[i+2]*.275,packed[i]*.275);normals.push(packed[i+4],packed[i+5],packed[i+3]);color.setRGB(packed[i+6],packed[i+7],packed[i+8]).convertSRGBToLinear();colors.push(color.r,color.g,color.b);}
+   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+   const mesh=new THREE.Mesh(geometry,roverMaterial);mesh.castShadow=true;mesh.receiveShadow=true;return mesh;
   }
-  parts.sensor.push(box(body,[.025,.055,.14],[.252,.26,0],materials.dark));for(const z of [-.044,.044]){const eye=new THREE.Mesh(new THREE.CylinderGeometry(.022,.022,.016,24),materials.metal);eye.rotation.z=Math.PI/2;eye.position.set(.272,.26,z);body.add(eye);}
-  const arrow=makeArrow(new THREE.Vector3(1,0,0),new THREE.Vector3(-.06,.348,0),.23,0x1e6247,.065,.065);body.add(arrow);
+  body.add(roverMesh(makeBody()));
+  const wheelGroups:THREE.Group[]=[];
+  for(let i=0;i<4;i++){const wheel=new THREE.Group();wheel.position.set((i<2?.66:-.66)*.275,.287*.275,(i%2===0?-.655:.655)*.275);wheel.add(roverMesh(makeWheel(i===0||i===3?1:-1)));body.add(wheel);wheelGroups.push(wheel);}
+  const front=makeArrow(new THREE.Vector3(1,0,0),new THREE.Vector3(.29,.03,0),.21,0xb2e2bc,.07,.08);body.add(front);
+  const highlights:Record<string,{size:number[];pos:number[]}>= {battery:{size:[.32,.08,.26],pos:[.235,.092,0]},controller:{size:[.23,.06,.105],pos:[-.013,.148,0]},driver:{size:[.075,.04,.24],pos:[.138,.148,0]},motor:{size:[.46,.07,.4],pos:[0,.077,0]}};
+  const outline=new THREE.BoxHelper(body,0xe6b26b);body.add(outline);outline.visible=false;
+  let highlighted='';
   const traceMaterial=new THREE.LineBasicMaterial({color:0xb2e2bc,transparent:true,opacity:.55}),traceGeometry=new THREE.BufferGeometry();traceGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(12000),3));const trace=new THREE.Line(traceGeometry,traceMaterial);scene.add(trace);
   const rayMaterial=new THREE.LineBasicMaterial({color:0xe9bd74}),rayGeometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3()]),ray=new THREE.Line(rayGeometry,rayMaterial);scene.add(ray);
   function disposeChildren(group:THREE.Group){for(const child of [...group.children]){disposeObject(child);group.remove(child);}}
@@ -71,6 +71,7 @@ export default function MecanumScene(props:Props){
     const bayLabel=makeLabel(p.lang==='sk'?'CIEĽ':'TARGET','#b2e2bc',true);if(bayLabel){bayLabel.position.set(0,.18,-b.width/2-.2);bay.add(bayLabel);}
     for(const [index,point] of (p.waypoints??[]).entries()){const ring=new THREE.Mesh(new THREE.TorusGeometry(.14,.013,6,40),materials.amber);ring.rotation.x=Math.PI/2;ring.position.set(point.x,.012,-point.y);markers.add(ring);const label=makeLabel(String(index+1),'#e6b26b');if(label){label.position.set(point.x,.22,-point.y);markers.add(label);}}
    }
+   bay.visible=p.showTarget!==false;
    const close=detailRef.current,above=topRef.current,view=(close?2:0)+(above?1:0);
    trackedTarget.set(close?p.pose.x:3,close?.18:0,close?-p.pose.y:-2);
    if(view!==lastView){
@@ -78,9 +79,8 @@ export default function MecanumScene(props:Props){
     if(close)camera.position.copy(trackedTarget).add(above?new THREE.Vector3(0,1.8,.001):new THREE.Vector3(1.05,.78,.92));
     else camera.position.set(above?3:5.4,above?7.6:5,above?-1.999:2.1);
    }else if(close){trackingDelta.subVectors(trackedTarget,orbit.target);camera.position.add(trackingDelta);orbit.target.copy(trackedTarget);}
-   body.position.set(p.pose.x,0,-p.pose.y);body.rotation.y=p.pose.yaw;const w=wheelSpeeds(p.velocity);wheelGroups.forEach((g,i)=>g.rotation.z-=w[wheelIds[i]]*dt);
-   for(const [id,objects] of Object.entries(parts))for(const object of objects){object.scale.setScalar(p.highlight===id?1.1:1);}
-   (topPlate.material as THREE.MeshStandardMaterial).opacity=p.highlight?.length ? .3 : .86;
+   body.position.set(p.pose.x,0,-p.pose.y);body.rotation.y=p.pose.yaw;const w=wheelSpeeds(p.velocity);wheelGroups.forEach((g,i)=>g.rotation.z-=w[wheelIds[i]]*dt*(p.playback??1));
+   if(highlighted!==(p.highlight??'')){highlighted=p.highlight??'';outline.visible=!!highlights[highlighted];if(outline.visible){const area=highlights[highlighted];const dummy=new THREE.Mesh(new THREE.BoxGeometry(...area.size as [number,number,number]));dummy.position.set(...area.pos as [number,number,number]);dummy.updateMatrixWorld();outline.setFromObject(dummy);dummy.geometry.dispose();(dummy.material as THREE.Material).dispose();}}
    const points=p.trail.slice(-4000),position=traceGeometry.getAttribute('position') as THREE.BufferAttribute;points.forEach((q,i)=>position.setXYZ(i,q.x,.004,-q.y));position.needsUpdate=true;traceGeometry.setDrawRange(0,points.length);trace.frustumCulled=false;
    ray.visible=!!p.reading&&p.reading.state!=='invalid';if(ray.visible){const len=p.reading?.state==='valid'?p.reading.metres:2.5,dx=Math.cos(p.pose.yaw),dy=Math.sin(p.pose.yaw),attr=rayGeometry.getAttribute('position') as THREE.BufferAttribute;attr.setXYZ(0,p.pose.x+dx*(chassis.length/2),.25,-p.pose.y-dy*(chassis.length/2));attr.setXYZ(1,p.pose.x+dx*(chassis.length/2+len),.25,-p.pose.y-dy*(chassis.length/2+len));attr.needsUpdate=true;ray.frustumCulled=false;}
    if(!document.hidden){orbit.update();renderer.render(scene,camera);}frame=requestAnimationFrame(animate);
@@ -90,9 +90,9 @@ export default function MecanumScene(props:Props){
  const t=(sk:string,en:string)=>props.lang==='sk'?sk:en,inDiagram=flat||failed;
  return <div className="mecanum-view"><div className="mecanum-canvas" ref={mount} role="img" aria-label={t('Mecanum rover, parkovacie miesto a prekážky. Šípka na podvozku označuje predok.','Mecanum rover, parking bay and obstacles. The chassis arrow marks the front.')}>{inDiagram&&<MecanumMap {...props}/>}</div><div className="mecanum-view-tools" style={{flexWrap:'wrap',right:10}}>{!inDiagram&&<button aria-pressed={detail} onClick={()=>{setDetail(!detail);setTop(false);}}>{detail?t('Celé pracovisko','Full workspace'):t('Detail robota','Robot detail')}</button>}<button onClick={()=>{if(inDiagram){setFlat(false);setDetail(false);setTop(false);setRetry(v=>v+1);}else setTop(!top);}}>{inDiagram?t('Zobraziť 3D','Show 3D'):t(top?'Priestorový pohľad':'Pohľad zhora',top?'Perspective view':'Top view')}</button>{!inDiagram&&<button onClick={()=>{setFlat(true);setDetail(false);setTop(false);}}>{t('Schéma','Diagram')}</button>}</div><div className="mecanum-scale">{t('Mriežka 50 cm · ideálny model','50 cm grid · ideal model')}{inDiagram?' · 2D':''}</div></div>;
 }
-function MecanumMap({pose,world,trail,waypoints,reading,lang}:Props){
+function MecanumMap({pose,world,trail,waypoints,reading,lang,showTarget=true}:Props){
  const x=(v:number)=>v*100,y=(v:number)=>400-v*100;
- return <svg viewBox="-15 -15 630 430" className="mecanum-map" role="img" aria-label={lang==='sk'?'Pôdorys pracoviska':'Workspace plan'}><defs><pattern id="mecanum-grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0V50" fill="none" stroke="#31553e" strokeWidth=".65"/></pattern></defs><rect width="600" height="400" fill="#10271d" stroke="#53725c"/><rect width="600" height="400" fill="url(#mecanum-grid)"/>{world.walls.map((w,i)=><rect key={i} x={x(w.x)} y={y(w.y+w.height)} width={x(w.width)} height={x(w.height)} fill="#42604e" stroke="#718678"/>)}<g transform={`translate(${x(world.bay.x)},${y(world.bay.y)}) rotate(${-world.bay.yaw*180/Math.PI})`}><rect x={-world.bay.length*50} y={-world.bay.width*50} width={world.bay.length*100} height={world.bay.width*100} fill="#b2e2bc12" stroke="#b2e2bc" strokeWidth="2"/><path d="M-15 0H15L7 -7M15 0L7 7" fill="none" stroke="#b2e2bc" strokeWidth="2"/></g>{waypoints?.map((p,i)=><g key={i}><circle cx={x(p.x)} cy={y(p.y)} r="14" fill="none" stroke="#e6b26b"/><text x={x(p.x)} y={y(p.y)+4} textAnchor="middle" fontSize="12" fill="#e6b26b">{i+1}</text></g>)}<polyline points={trail.map(p=>`${x(p.x)},${y(p.y)}`).join(' ')} fill="none" stroke="#b2e2bc" strokeDasharray="4 3"/>{reading&&reading.state!=='invalid'&&<line x1={x(pose.x+chassis.length/2*Math.cos(pose.yaw))} y1={y(pose.y+chassis.length/2*Math.sin(pose.yaw))} x2={x(pose.x+(chassis.length/2+(reading.state==='valid'?reading.metres:2.5))*Math.cos(pose.yaw))} y2={y(pose.y+(chassis.length/2+(reading.state==='valid'?reading.metres:2.5))*Math.sin(pose.yaw))} stroke="#e6b26b" strokeDasharray="5 2"/>}<g transform={`translate(${x(pose.x)},${y(pose.y)}) rotate(${-pose.yaw*180/Math.PI})`}>{[-1,1].flatMap(a=>[-1,1].map(b=><g key={`${a}${b}`} transform={`translate(${a*18},${b*24})`}><rect x="-8" y="-6" width="16" height="12" rx="3" fill="#121a15" stroke="#9aa69c"/>{[-4,0,4].map(c=><path key={c} d={`M${c+3*a*b} -5L${c-3*a*b} 5`} stroke="#ceae77" strokeWidth="2"/>)}</g>))}<rect x="-25" y="-18" width="50" height="36" rx="5" fill="#dce8dd" stroke="#0d1c13"/><rect x="-19" y="-12" width="15" height="24" rx="2" fill="#244b35"/><rect x="0" y="-11" width="13" height="10" fill="#4c9b76"/><path d="M-1 7H17L11 1M17 7L11 13" stroke="#183a27" fill="none" strokeWidth="3"/></g></svg>;
+ return <svg viewBox="-15 -15 630 430" className="mecanum-map" role="img" aria-label={lang==='sk'?'Pôdorys pracoviska':'Workspace plan'}><defs><pattern id="mecanum-grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0V50" fill="none" stroke="#31553e" strokeWidth=".65"/></pattern></defs><rect width="600" height="400" fill="#10271d" stroke="#53725c"/><rect width="600" height="400" fill="url(#mecanum-grid)"/>{world.walls.map((w,i)=><rect key={i} x={x(w.x)} y={y(w.y+w.height)} width={x(w.width)} height={x(w.height)} fill="#42604e" stroke="#718678"/>)}{showTarget&&<g transform={`translate(${x(world.bay.x)},${y(world.bay.y)}) rotate(${-world.bay.yaw*180/Math.PI})`}><rect x={-world.bay.length*50} y={-world.bay.width*50} width={world.bay.length*100} height={world.bay.width*100} fill="#b2e2bc12" stroke="#b2e2bc" strokeWidth="2"/><path d="M-15 0H15L7 -7M15 0L7 7" fill="none" stroke="#b2e2bc" strokeWidth="2"/></g>}{waypoints?.map((p,i)=><g key={i}><circle cx={x(p.x)} cy={y(p.y)} r="14" fill="none" stroke="#e6b26b"/><text x={x(p.x)} y={y(p.y)+4} textAnchor="middle" fontSize="12" fill="#e6b26b">{i+1}</text></g>)}<polyline points={trail.map(p=>`${x(p.x)},${y(p.y)}`).join(' ')} fill="none" stroke="#b2e2bc" strokeDasharray="4 3"/>{reading&&reading.state!=='invalid'&&<line x1={x(pose.x+chassis.length/2*Math.cos(pose.yaw))} y1={y(pose.y+chassis.length/2*Math.sin(pose.yaw))} x2={x(pose.x+(chassis.length/2+(reading.state==='valid'?reading.metres:2.5))*Math.cos(pose.yaw))} y2={y(pose.y+(chassis.length/2+(reading.state==='valid'?reading.metres:2.5))*Math.sin(pose.yaw))} stroke="#e6b26b" strokeDasharray="5 2"/>}<g transform={`translate(${x(pose.x)},${y(pose.y)}) rotate(${-pose.yaw*180/Math.PI})`}>{[-1,1].flatMap(a=>[-1,1].map(b=><g key={`${a}${b}`} transform={`translate(${a*18},${b*24})`}><rect x="-8" y="-6" width="16" height="12" rx="3" fill="#121a15" stroke="#9aa69c"/>{[-4,0,4].map(c=><path key={c} d={`M${c+3*a*b} -5L${c-3*a*b} 5`} stroke="#ceae77" strokeWidth="2"/>)}</g>))}<rect x="-25" y="-18" width="50" height="36" rx="5" fill="#dce8dd" stroke="#0d1c13"/><rect x="-19" y="-12" width="15" height="24" rx="2" fill="#244b35"/><rect x="0" y="-11" width="13" height="10" fill="#4c9b76"/><path d="M-1 7H17L11 1M17 7L11 13" stroke="#183a27" fill="none" strokeWidth="3"/></g></svg>;
 }
 
 

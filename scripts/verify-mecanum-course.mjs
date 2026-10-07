@@ -31,19 +31,19 @@ const move=(direction,value,timed=false)=>({type:'move',direction,value,timed});
 const program=(steps,distance=100,maneuver=[])=>({steps,distance,maneuver});
 const world=(start={x:1,y:1,yaw:0},walls=[])=>({width:6,height:4,start,bay:{x:4,y:2,yaw:0,width:.8,length:.85},walls});
 function runPure(prog,w=world(),speed=.4,dt=.01){let pose={...w.start},plan=m.newPlan(m.compileProgram(prog,speed)),elapsed=0;for(let i=0;i<20000;i++){const step=m.stepPlan(pose,plan,dt,w);pose=step.pose;plan=step.plan;elapsed+=dt;if(step.done)return {pose,collision:step.collision,elapsed,velocity:step.velocity};}throw Error('Program did not terminate');}
-function withRun(trial,work){
+function withRun(trial,work,options){
  const keys=['window','document','performance','requestAnimationFrame','cancelAnimationFrame'],original=new Map(keys.map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
  let now=0,nextFrame=0;const frames=new Map(),window=new EventTarget(),document=new EventTarget();document.hidden=false;
  const values={window,document,performance:{now:()=>now},requestAnimationFrame:fn=>{frames.set(++nextFrame,fn);return nextFrame;},cancelAnimationFrame:id=>frames.delete(id)};
  for(const key of keys)Object.defineProperty(globalThis,key,{configurable:true,writable:true,value:values[key]});
  const hooks={states:[],effects:[]};activeHooks=hooks;let cleanups=[];
- try{const api=useMecanumRun(trial);cleanups=hooks.effects.map(fn=>fn()).filter(Boolean);const harness={api,get run(){return hooks.states[0].value;},get error(){return hooks.states[1].value;},advance(seconds){const count=Math.round(seconds/.01);for(let i=0;i<count;i++){now+=10;const callbacks=[...frames.values()];frames.clear();callbacks.forEach(fn=>fn(now));}},blur(){window.dispatchEvent(new Event('blur'));},hide(){document.hidden=true;document.dispatchEvent(new Event('visibilitychange'));}};return work(harness);}
+ try{const api=useMecanumRun(trial,options);cleanups=hooks.effects.map(fn=>fn()).filter(Boolean);const harness={api,get run(){return hooks.states[0].value;},get error(){return hooks.states[1].value;},advance(seconds){const count=Math.round(seconds/.01);for(let i=0;i<count;i++){now+=10;const callbacks=[...frames.values()];frames.clear();callbacks.forEach(fn=>fn(now));}},blur(){window.dispatchEvent(new Event('blur'));},hide(){document.hidden=true;document.dispatchEvent(new Event('visibilitychange'));}};return work(harness);}
  finally{cleanups.forEach(fn=>fn());for(const key of keys){const descriptor=original.get(key);if(descriptor)Object.defineProperty(globalThis,key,descriptor);else delete globalThis[key];}activeHooks=undefined;}
 }
 const assess=(id,trial,prog,run)=>c.assessCourse(id,run.pose,trial,prog,run.evidence,run.running);
 const solvedPrograms={
  'sideways-parking':program([move('right',250),move('forward',100)]),
- 'robot-frame':program([move('forward',220),move('right',150)]),
+ 'robot-frame':program([move('forward',220),{type:'turn',value:-90},move('forward',150)]),
  'manual-sequence':program([move('forward',100),move('right',150)]),
  'command-parameters':program([move('forward',150),move('right',150)]),
  'time-distance':program([move('forward',250),move('left',150)]),
@@ -80,7 +80,7 @@ test('Every initial scene is unsolved',()=>{for(const id of c.courseIds){const t
 test('Reaching a bay during active motion cannot count completion',()=>{const id='sideways-parking',trial=c.courseTrial(id,true),e={...c.emptyEvidence(),travel:3.5,strafe:2.5};assert.equal(c.assessCourse(id,trial.world.bay,trial,solvedPrograms[id],e,true),'running');assert.equal(c.assessCourse(id,trial.world.bay,trial,solvedPrograms[id],e,false),null);});
 test('Any collision invalidates an otherwise correct endpoint',()=>{for(const id of Object.keys(solvedPrograms)){const trial=c.courseTrial(id,true),e={...c.emptyEvidence(),collision:true,travel:10,strafe:4,forward:4,visited:9,stationDwell:[1,1],stoppedProgram:true,twoSpeeds:true};assert.equal(c.assessCourse(id,trial.world.bay,trial,solvedPrograms[id],e,false),'collision');}});
 test('Sideways lesson cannot pass by ordinary forward/turn travel only',()=>{const trial=c.courseTrial('sideways-parking',true);assert.notEqual(c.assessCourse('sideways-parking',trial.world.bay,trial,solvedPrograms['sideways-parking'],{...c.emptyEvidence(),travel:4,forward:4,strafe:0},false),null);});
-test('Body-frame route with turning is rejected even at correct endpoint',()=>{const trial=c.courseTrial('robot-frame',true),prog=program([{type:'turn',value:360},...solvedPrograms['robot-frame'].steps]);withRun(trial,h=>{h.api.start(prog,.4);h.advance(40);assert.equal(m.parked(h.run.pose,trial.world.bay),true);assert.notEqual(assess('robot-frame',trial,prog,h.run),null);});});
+test('Docking at the right position but wrong heading is rejected',()=>{const trial=c.courseTrial('robot-frame',true),prog=program([move('forward',220),move('right',150)]);withRun(trial,h=>{h.api.start(prog,.4);h.advance(40);close(h.run.pose.x,trial.world.bay.x);close(h.run.pose.y,trial.world.bay.y);assert.notEqual(assess('robot-frame',trial,prog,h.run),null);});});
 test('Completing a sequence without interrupting it does not satisfy STOP lesson',()=>{const id='manual-sequence',trial=c.courseTrial(id,true),prog=solvedPrograms[id];withRun(trial,h=>{h.api.start(prog,.4);h.advance(10);assert.equal(assess(id,trial,prog,h.run),'stop');});});
 test('Manual STOP cannot be mistaken for interruption of a saved program',()=>{const trial=c.courseTrial('manual-sequence',true);withRun(trial,h=>{h.api.manual({vx:.4,vy:0,omega:0});for(let i=0;i<6;i++){h.api.refresh();h.advance(.2);}h.api.stop(true);assert.equal(h.run.evidence.stoppedMotor,true);assert.equal(h.run.evidence.stoppedProgram,false);});});
 test('A short manual jog is not a saved-program STOP exercise',()=>{const trial=c.courseTrial('manual-sequence',true);withRun(trial,h=>{h.api.manual({vx:.4,vy:0,omega:0});for(let i=0;i<6;i++){h.api.refresh();h.advance(.2);}h.api.stop();h.api.jog({vx:.4,vy:0,omega:0});h.advance(.1);h.api.stop(true);assert.equal(h.run.evidence.stoppedProgram,false);});});
@@ -135,6 +135,17 @@ test('Valid rows after STOP and an unused function remain editable without execu
  const source=program([move('forward',50),{type:'stop'},move('left',100)],100,[move('left',30),{type:'wait',value:1},move('right',30)]),cleaned=m.cleanProgram(source);
  assert.deepEqual(cleaned,source);assert.notEqual(cleaned.steps,source.steps);assert.notEqual(cleaned.maneuver,source.maneuver);const result=runPure(cleaned);close(result.pose.x,1.5);close(result.pose.y,1);
 });
+test('Repeated short accelerated runs always publish completion',()=>withRun(c.courseTrial('variables',true),h=>{const p=program([move('forward',1)]);for(let i=0;i<4;i++){h.api.start(p,.4);h.advance(.1);assert.equal(h.run.running,false);close(h.run.pose.x,1.01);}},{playback:6}));
+for(const id of ['variables','loops','functions','robot-frame'])test('6x playback preserves physical result and evidence: '+id,()=>{
+ const trial=c.courseTrial(id,true),prog=solvedPrograms[id];let normal,fast;
+ withRun(trial,h=>{h.api.start(prog,.4);h.advance(60);normal=h.run;},{playback:1});
+ withRun(trial,h=>{h.api.start(prog,.4);h.advance(10);fast=h.run;},{playback:6});
+ assert.equal(fast.running,false);close(fast.pose.x,normal.pose.x);close(fast.pose.y,normal.pose.y);close(fast.pose.yaw,normal.pose.yaw);close(fast.elapsed,normal.elapsed,.015);assert.equal(assess(id,trial,prog,fast),null);
+});
+test('6x playback completes a 7.5s route in under 1.4s',()=>withRun(c.courseTrial('variables',true),h=>{h.api.start(solvedPrograms.variables,.4);h.advance(1.4);assert.equal(h.run.running,false);close(h.run.elapsed,7.5,.015);},{playback:6}));
+test('STOP practice starts at 1x and later runs accelerate',()=>withRun(c.courseTrial('manual-sequence',true),h=>{h.api.start(solvedPrograms['manual-sequence'],.4);h.advance(.5);assert.equal(h.run.running,true);close(h.run.evidence.travel,.2,.02);h.api.stop(true);assert.equal(h.run.evidence.stoppedProgram,true);h.api.start(solvedPrograms['manual-sequence'],.4);h.advance(1.2);assert.equal(h.run.running,false);},{playback:6,stopPractice:true}));
+test('Photographed variables attempt parks but gets variable-specific feedback',()=>{const trial=c.courseTrial('variables',true),prog=program([move('forward','d'),move('left',150),move('forward',50)],100);withRun(trial,h=>{h.api.start(prog,.4);h.advance(2);assert.equal(m.parked(h.run.pose,trial.world.bay),true);assert.equal(assess('variables',trial,prog,h.run),'variable');},{playback:6});});
+test('Visible variable solution passes without hidden trial flags',()=>{const trial=c.courseTrial('variables',true);withRun(trial,h=>{h.api.start(solvedPrograms.variables,.4);h.advance(2);assert.equal(h.run.evidence.twoSpeeds,false);assert.equal(assess('variables',trial,solvedPrograms.variables,h.run),null);},{playback:6});});
 console.log(`\n${passed} passed, ${failures.length} failed`);
 if(failures.length){console.log(JSON.stringify(failures,null,2));process.exitCode=1;}
 

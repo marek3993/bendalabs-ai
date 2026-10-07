@@ -2,12 +2,12 @@
   {
     "id": "sideways-parking",
     "title": {
-      "sk": "Zaparkuj bokom",
-      "en": "Park sideways"
+      "sk": "Presun do úzkeho parkovacieho miesta",
+      "en": "Move into a narrow parking bay"
     },
     "goal": {
-      "sk": "Presuň rover do parkovacieho miesta bočným pohybom a zachovaj smer jeho predku.",
-      "en": "Move the rover sideways into the parking bay while keeping its front facing the same direction."
+      "sk": "Celý rover je v parkovacom mieste, predok je zarovnaný so šípkou a trasa je bez kolízie.",
+      "en": "The whole rover fits inside the bay, its front follows the arrow, and the route has no collision."
     },
     "prerequisite": {
       "sk": "Bez predchádzajúcich znalostí. Stačí prehliadač.",
@@ -43,20 +43,20 @@
   {
     "id": "robot-components",
     "title": {
-      "sk": "Čo riadi pohyb",
-      "en": "What controls the motion"
+      "sk": "Od príkazu k pohybu motora",
+      "en": "From a command to motor motion"
     },
     "goal": {
-      "sk": "Rozlíš zdroj energie, riadenie, pohon a meranie na jednom roveri.",
-      "en": "Distinguish energy supply, control, drive, and measurement on one rover."
+      "sk": "Príkaz vedie z dosky cez driver k motoru, meranie zo senzora do dosky a STOP preruší pohyb.",
+      "en": "Commands pass from the board through the driver to the motor, readings enter the board, and STOP interrupts motion."
     },
     "prerequisite": {
       "sk": "Vieš pohnúť roverom a zastaviť ho.",
       "en": "You can move the rover and stop it."
     },
     "problem": {
-      "sk": "Ovládač posiela príkaz, ale motor potrebuje aj energiu. Sleduj na modeli, kadiaľ ide príkaz a kadiaľ napájanie. Potom doplň chýbajúce spojenia v schéme.",
-      "en": "The controller sends a command, but the motor also needs energy. Follow the command and power paths on the model, then restore the missing connections in the diagram."
+      "sk": "Prezri si na modeli dosku, driver a motory. Schéma vedľa modelu odlišuje príkaz od napájania. Vyskúšaj pohyb a stlač STOP; potom budeš zapájať funkčné väzby samostatne.",
+      "en": "Inspect the board, driver and motors on the model. The diagram distinguishes commands from power. Try movement and press STOP, then connect the functional links yourself."
     },
     "explanation": {
       "sk": "Batéria dodáva energiu. Riadiaca doska spracuje vstup a určí príkaz. Motorový driver podľa príkazu riadi prúd do motora. Senzor poskytuje údaj o okolí. STOP zmení príkaz pohonu; nie je to odpojenie batérie. Schéma ukazuje funkčné vzťahy, nie zapojenie konkrétnych pinov.",
@@ -84,37 +84,37 @@
   {
     "id": "robot-frame",
     "title": {
-      "sk": "Smer robota a smer mapy",
-      "en": "Robot direction and map direction"
+      "sk": "Otočenie na mieste a dokovanie",
+      "en": "Turn in place and dock"
     },
     "goal": {
-      "sk": "Dostaň natočený rover do cieľa pomocou smerov, ktoré sa vzťahujú na jeho predok.",
-      "en": "Move a rotated rover to the target using directions relative to its front."
+      "sk": "Rover prešiel bodom 1, vykonal otočenie a stojí celý v cieli so správnym natočením.",
+      "en": "The rover passed marker 1, performed a turn, and stopped fully inside the bay at the correct heading."
     },
     "prerequisite": {
       "sk": "Rozlíšiš bočný pohyb od otočenia a nájdeš predok roveru.",
       "en": "You can distinguish sideways motion from turning and identify the rover's front."
     },
     "problem": {
-      "sk": "Rover je otočený o štvrť otáčky. Príkaz dopredu je stále ten istý, ale na mape teraz vedie iným smerom. Porovnaj ho s bočným pohybom.",
-      "en": "The rover has turned by a quarter turn. Forward is still the same command, but it now points elsewhere on the map. Compare it with sideways motion."
+      "sk": "Otoč rover na mieste o 90° doľava, potom prejdi dopredu 220 cm do cieľa. Predok musí smerovať podľa šípky v parkovacom mieste.",
+      "en": "Turn the rover 90° left in place, then drive forward 220 cm into the bay. Match its front to the target arrow."
     },
     "explanation": {
       "sk": "Smer dopredu je viazaný na telo robota. Otočenie zmení tento smer aj smery vľavo a vpravo. Bočný pohyb sám o sebe predok neotáča. Mapa je vonkajší pohľad na tú istú jazdu.",
       "en": "Forward is attached to the robot's body. Turning changes forward as well as left and right. A sideways move does not rotate the front. The map is an outside view of the same motion."
     },
     "independent": {
-      "sk": "Rover začína v novom natočení. Presuň ho cez vyznačený bod do parkovacieho miesta bez otáčania. Použi dopredný aj bočný pohyb.",
-      "en": "The rover starts at a new heading. Move through the marked point into the parking bay without turning. Use both forward and sideways movement."
+      "sk": "Prejdi dopredu 220 cm cez bod 1. Na mieste sa otoč o 90° doprava a pokračuj dopredu 150 cm k pracovisku. Cieľová šípka určuje smer dokovania.",
+      "en": "Drive forward 220 cm through marker 1. Turn 90° right in place, then drive forward 150 cm to the workstation. The target arrow defines the docking heading."
     },
     "hints": [
       {
-        "sk": "Najprv si všimni šípku predku. Z nej urč smer dopredu aj ľavú stranu roveru.",
-        "en": "First locate the front arrow. Use it to identify the rover's forward and left directions."
+        "sk": "Pri presnom ovládaní má jedno stlačenie otočenia 15°. Štvrť otáčky je šesť stlačení.",
+        "en": "In precise control, each turn step is 15°. A quarter turn takes six steps."
       },
       {
-        "sk": "Vzdialenosť odčítaj podľa mriežky. Pri zmene natočenia sa mierka mapy nemení.",
-        "en": "Use the grid to measure the distance. Changing the heading does not change the map scale."
+        "sk": "Najprv prejdi k bodu 1. Až tam zmeň natočenie a pokračuj k parkovaciemu miestu.",
+        "en": "Reach marker 1 first. Change heading there, then continue towards the bay."
       }
     ],
     "bridge": {
@@ -125,28 +125,28 @@
   {
     "id": "manual-sequence",
     "title": {
-      "sk": "Od ovládača k programu",
-      "en": "From manual control to a program"
+      "sk": "Spustenie a prerušenie programu",
+      "en": "Run and interrupt a program"
     },
     "goal": {
-      "sk": "Spusti uloženú sekvenciu a zastav ju počas vykonávania.",
-      "en": "Run a saved sequence and stop it while it is executing."
+      "sk": "Jeden beh bol prerušený tlačidlom STOP. Ďalší beh dokončil celú trasu do cieľa.",
+      "en": "One run was interrupted with STOP. The next run completed the route into the bay."
     },
     "prerequisite": {
       "sk": "Vieš určiť smer pohybu aj pri natočenom roveri.",
       "en": "You can determine movement directions even when the rover is rotated."
     },
     "problem": {
-      "sk": "Pri ručnej jazde rozhoduješ o každom pohybe ty. Program uloží poradie a hodnoty príkazov. Spusti pripravený prejazd a sleduj zvýraznený riadok.",
-      "en": "During manual driving, you decide each movement. A program stores command order and values. Run the prepared sequence and watch the highlighted row."
+      "sk": "Spusti program, sleduj zvýraznený riadok a počas jazdy stlač STOP. Potom ho spusti znova. Uvidíš rozdiel medzi prerušením celej sekvencie a jej dokončením.",
+      "en": "Run the program, follow the highlighted row, and press STOP during motion. Then restart it. Compare canceling the whole sequence with completing it."
     },
     "explanation": {
       "sk": "Sekvencia vykonáva príkazy v poradí. Pohyb dopredu a bočný posun sú dve samostatné akcie. STOP zruší rozbehnuté vykonávanie vrátane čakajúcich príkazov. Nový beh začne až po ďalšom spustení.",
       "en": "A sequence runs commands in order. A forward move and a sideways move are two separate actions. STOP cancels the active run, including commands still waiting. Another run begins only when you start it again."
     },
     "independent": {
-      "sk": "V prvom pohybe stlač STOP po 30 až 90 cm jazdy. Oranžový bod označuje stred tejto zóny. Potom znova stlač Spustiť program a nechaj celý prejazd dokončiť.",
-      "en": "During the first movement, press STOP after traveling 30–90 cm. The orange marker shows the centre of this zone. Then press Run program again and let the full sequence finish."
+      "sk": "Spusti pripravenú trasu a počas pohybu stlač STOP. Potom spusti program znova a nechaj rover dôjsť do cieľa. Prvé prerušenie skúšaš bežnou rýchlosťou; ďalšie jazdy sú zrýchlené.",
+      "en": "Run the prepared route and press STOP while it moves. Then restart the program and let the rover reach the bay. The first interruption runs at normal playback; later runs are accelerated."
     },
     "hints": [
       {
@@ -166,12 +166,12 @@
   {
     "id": "command-parameters",
     "title": {
-      "sk": "Príkaz a jeho parametre",
-      "en": "Commands and parameters"
+      "sk": "Oprav program pre nové pracovisko",
+      "en": "Adapt the program to a new workstation"
     },
     "goal": {
-      "sk": "Úpravou smeru a vzdialenosti prispôsob krátky program novému parkovaciemu miestu.",
-      "en": "Adapt a short program to a new parking bay by changing direction and distance."
+      "sk": "Upravený program zaparkuje do nového miesta bez kolízie.",
+      "en": "The edited program parks in the new bay without a collision."
     },
     "prerequisite": {
       "sk": "Vieš spustiť sekvenciu a nájsť práve vykonávaný príkaz.",
@@ -207,12 +207,12 @@
   {
     "id": "time-distance",
     "title": {
-      "sk": "Poradie, čas a vzdialenosť",
-      "en": "Order, time, and distance"
+      "sk": "Rovnaký cieľ pri inej rýchlosti",
+      "en": "Reach the same target at another speed"
     },
     "goal": {
-      "sk": "Rozlíš čas jazdy od prejdenej vzdialenosti a zostav prejazd, ktorý funguje pri dvoch rýchlostiach.",
-      "en": "Distinguish driving time from traveled distance and build a route that works at two speeds."
+      "sk": "Rovnaký program dosiahne vyznačené miesto pri 30 aj 60 cm/s. Mení sa čas jazdy, nie cieľ.",
+      "en": "The same program reaches the marked bay at both 30 and 60 cm/s. Travel time changes; the destination does not."
     },
     "prerequisite": {
       "sk": "Vieš meniť smer a vzdialenosť pohybového príkazu.",
@@ -227,8 +227,8 @@
       "en": "At constant model speed, distance = speed × time. A timed command therefore travels farther at a higher speed. A distance command in the simulation ends after the requested travel. On a physical robot, that result requires motion measurement or calibration."
     },
     "independent": {
-      "sk": "Najprv sa dostaň za koniec steny, potom prejdi bokom do cieľa. Rovnaký program musí fungovať pri 30 aj 60 cm/s. Tlačidlo Overiť spustí obe skúšky automaticky.",
-      "en": "First move beyond the end of the wall, then slide into the target bay. The same program must work at both 30 and 60 cm/s. Verify runs both tests automatically."
+      "sk": "Dostaň rover za koniec steny a potom bokom do cieľa: 250 cm dopredu a 150 cm doľava. Po dojazde sa automaticky porovná tá istá trasa pri 30 a 60 cm/s. Cieľ zostáva na rovnakom mieste.",
+      "en": "Pass the end of the wall, then slide into the bay: 250 cm forward and 150 cm left. After arrival, the same route is automatically compared at 30 and 60 cm/s. The target stays in the same place."
     },
     "hints": [
       {
@@ -248,28 +248,28 @@
   {
     "id": "variables",
     "title": {
-      "sk": "Jedna hodnota, viac pohybov",
-      "en": "One value, several movements"
+      "sk": "Zmeň dve vzdialenosti jednou hodnotou",
+      "en": "Change two distances with one value"
     },
     "goal": {
-      "sk": "Použi jednu premennú pre viac úsekov a jej zmenou uprav celý manéver.",
-      "en": "Use one variable for several segments and change the whole maneuver by editing its value."
+      "sk": "Oba pohyby používajú d a rover zaparkuje do zobrazeného cieľa.",
+      "en": "Both movements use d and the rover parks in the target shown on the map."
     },
     "prerequisite": {
       "sk": "Rozumieš parametru vzdialenosti a poradiu pohybov.",
       "en": "You understand distance parameters and movement order."
     },
     "problem": {
-      "sk": "Dva pohyby majú rovnakú vzdialenosť. Nahraď ju spoločnou premennou d a zmeň oba úseky jednou úpravou.",
-      "en": "Two movements have the same distance. Replace it with a shared variable d and change both segments with one edit."
+      "sk": "Pripravené dva pohyby používajú rovnakú vzdialenosť d = 100 cm. Spusti program: rover prejde 100 cm dopredu a 100 cm doľava. V ďalšom kroku tento manéver zväčšíš jednou hodnotou.",
+      "en": "Both prepared movements use the same distance d = 100 cm. Run the program: the rover travels 100 cm forward and 100 cm left. In the next step, resize this maneuver with one value."
     },
     "explanation": {
       "sk": "Premenná priradí hodnote meno. Príkazy s označením d čítajú tú istú vzdialenosť v centimetroch. Pevné číslo v inom príkaze sa zmenou d nezmení.",
       "en": "A variable gives a value a name. Commands marked d read the same distance in centimetres. A fixed number in another command does not change when d changes."
     },
     "independent": {
-      "sk": "Použi premennú d v oboch pohyboch a nastav ju pre nový cieľ. Overenie spustí ten istý program pre d = 100 cm aj d = 150 cm, vždy s príslušným cieľom.",
-      "en": "Use variable d in both movements and set it for the new target. Verification runs the same program with d = 100 cm and d = 150 cm, each with its corresponding target."
+      "sk": "Nové miesto je 150 cm dopredu a 150 cm doľava. Použi dva pohyby, oba so spoločnou vzdialenosťou d, a nastav d na 150 cm. Spusti riešenie; hodnotí sa cieľ, ktorý vidíš na mape.",
+      "en": "The new bay is 150 cm forward and 150 cm left. Use two movements, both linked to the shared distance d, and set d to 150 cm. Run your solution; it is checked against the target visible on the map."
     },
     "hints": [
       {
@@ -289,12 +289,12 @@
   {
     "id": "loops",
     "title": {
-      "sk": "Opakovaný manéver",
-      "en": "Repeating a maneuver"
+      "sk": "Obslúž štyri stanovištia jedným vzorom",
+      "en": "Visit four stations with one pattern"
     },
     "goal": {
-      "sk": "Zopakuj krátky vzor pomocou cyklu a over počet vykonaných pohybov.",
-      "en": "Repeat a short pattern with a loop and check the number of movements executed."
+      "sk": "Rover prejde body 1–4 v poradí pomocou cyklu a skončí v cieľovom mieste.",
+      "en": "The rover visits markers 1–4 in order using the loop and finishes in the target bay."
     },
     "prerequisite": {
       "sk": "Vieš zostaviť sekvenciu a použiť premennú v pohybovom príkaze.",
@@ -330,12 +330,12 @@
   {
     "id": "functions",
     "title": {
-      "sk": "Funkcia: jeden postup na dvoch miestach",
-      "en": "Functions: one procedure in two places"
+      "sk": "Použi rovnakú obsluhu na dvoch miestach",
+      "en": "Reuse the same service at two locations"
     },
     "goal": {
-      "sk": "Uprav pomenovaný manéver a zavolaj ho pri dvoch pracoviskách.",
-      "en": "Edit a named maneuver and call it at two workstations."
+      "sk": "Pri oboch pracoviskách rover vojde k bodu, počká 1 sekundu, vráti sa a dokončí prejazd.",
+      "en": "At both workstations, the rover reaches the marker, waits 1 second, returns and completes the route."
     },
     "prerequisite": {
       "sk": "Rozumieš sekvencii, premenným a opakovaniu príkazov.",
@@ -371,12 +371,12 @@
   {
     "id": "range-input",
     "title": {
-      "sk": "Vzdialenosť ako vstup",
-      "en": "Distance as an input"
+      "sk": "Rozhodni, kedy môže rover vyraziť",
+      "en": "Decide when the rover may move"
     },
     "goal": {
-      "sk": "Rozlíš vzdialenú prekážku, blízku prekážku a chýbajúce meranie.",
-      "en": "Distinguish a distant obstacle, a nearby obstacle, and an unavailable measurement."
+      "sk": "Jazda je povolená iba pri 90 cm. Ostatné tri prípady vedú k STOP.",
+      "en": "Movement is permitted only at 90 cm. The other three cases lead to STOP."
     },
     "prerequisite": {
       "sk": "Vieš, čo je vstup do riadiacej dosky, a pracuješ s hodnotou v centimetroch.",

@@ -5,8 +5,8 @@ export type Wall = {x:number;y:number;width:number;height:number};
 export type Bay = Pose & {width:number;length:number};
 export type World = {start:Pose;bay:Bay;walls:Wall[];width:number;height:number};
 export type Wheels = {fl:number;fr:number;rl:number;rr:number};
-// Full collision footprint includes rollers and the front sensor, not just the deck.
-export const chassis = {length:.56,width:.56,radius:.065,a:.18,b:.24};
+// Conservative clearance envelope around the detailed rover; dimensions are simulation units.
+export const chassis = {length:.56,width:.56,radius:.078925,a:.1815,b:.180125};
 export const zeroVelocity:Velocity={vx:0,vy:0,omega:0};
 export const wheelIds=['fl','fr','rl','rr'] as const;
 export const radians=(degrees:number)=>degrees*Math.PI/180;

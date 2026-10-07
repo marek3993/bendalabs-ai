@@ -1,1 +1,1 @@
-export const universityRevision = 'cac67b091bc60182f3ef';
+export const universityRevision = '943dbb2c23087a8131e3';

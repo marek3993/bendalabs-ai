@@ -10,7 +10,7 @@ export function courseTrial(id:CourseId,independent:boolean):Trial {
  if(id==='sideways-parking'){
   world.bay={...world.bay,x:independent?3.5:3,y:independent?2:1};world.walls=[{x:.6,y:2,width:.8,height:.5},{x:4.3,y:.4,width:.6,height:2.4}];steps=[move('right',200)];
  }else if(id==='robot-frame'){
-  world.start={x:4.7,y:1,yaw:independent?Math.PI:Math.PI/2};world.bay={...world.bay,x:2.5,y:independent?2.5:1,yaw:world.start.yaw};
+  world.start={x:4.7,y:1,yaw:independent?Math.PI:Math.PI/2};world.bay={...world.bay,x:2.5,y:independent?2.5:1,yaw:independent?Math.PI/2:Math.PI};
   if(independent)waypoints.push({x:2.5,y:1,yaw:Math.PI});steps=[];
  }else if(id==='manual-sequence'){
   world.bay={...world.bay,x:independent?2.5:2,y:2};steps=[move('forward',100),move('right',independent?150:100)];
@@ -44,10 +44,10 @@ export function assessCourse(id:CourseId,pose:Pose,trial:Trial,program:Program,e
  if(e.travel<.2)return 'move';
  if(!parked(pose,trial.world.bay))return 'park';
  if(id==='sideways-parking'&&e.strafe<.4)return 'strafe';
- if(id==='robot-frame'&&(e.visited<1||e.strafe<.3||e.forward<.3||e.turn>radians(1)))return 'frame';
+ if(id==='robot-frame'&&(e.visited<1||e.forward<.3||e.turn<radians(80)))return 'frame';
  if(id==='manual-sequence'&&!e.stoppedProgram)return 'stop';
  if(id==='time-distance'&&!e.twoSpeeds)return 'speeds';
- if(id==='variables'&&(!hasVariable(program.steps)||program.steps.filter(op=>op.type==='move'&&op.value==='d').length<2||!e.twoSpeeds))return 'variable';
+ if(id==='variables'&&(!hasVariable(program.steps)||program.steps.filter(op=>op.type==='move'&&op.value==='d').length<2))return 'variable';
  if(id==='loops'&&(e.loopVisited<trial.waypoints.length||!program.steps.some(op=>op.type==='repeat'&&op.count>=2&&op.body.length>=2)))return 'loop';
  if(id==='functions'&&(countOps(program.steps,'call')<2||e.visited<2||trial.waypoints.some((_,i)=>(e.functionStationDwell[i]??0)<.9||!e.functionReturns[i])))return 'function';
  return null;
