@@ -3,7 +3,7 @@
 declare const Deno: { env: { get(name: string): string | undefined }; serve(handler: (request: Request) => Response | Promise<Response>): unknown };
 
 const EXPECTED_KEY_SHA256 = "3411f1413194e6073724ea0298682f5871acd8a6a2e9cad33e1898ec0ce082e6";
-const CHAPTERS = new Set(["loop", "frames", "timing", "vision", "imitation", "vla", "range", "calibration", "fusion", "motors", "pid", "ik", "flight", "autopilot", "failsafe", "energy", "bms", "distribution", "states", "ros", "qos", "prototype", "odometry", "validation"]);
+const CHAPTERS = new Set(["loop", "frames", "timing", "vision", "imitation", "vla", "range", "calibration", "fusion", "motors", "pid", "ik", "flight", "autopilot", "failsafe", "energy", "bms", "distribution", "states", "ros", "qos", "prototype", "odometry", "validation", "sideways-parking", "robot-components", "robot-frame", "manual-sequence", "command-parameters", "time-distance", "variables", "loops", "functions", "range-input"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const reply = (body: object, status = 200) => Response.json(body, { status, headers: { "cache-control": "no-store" } });
 

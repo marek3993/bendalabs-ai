@@ -1,9 +1,10 @@
 import curriculum from "@/components/robotics-university/lib/curriculum.json";
+import courseLessons from "@/components/robotics-university/lib/course-lessons.json";
 import { feedbackActorHash, submitFeedback } from "@/lib/university-feedback/server";
 import { isSameOriginRequest, readBoundedBody, validateFeedback } from "@/lib/university-feedback/validation";
 
 export const runtime = "nodejs";
-const chapterIds = new Set(curriculum.map(chapter => chapter.id));
+const chapterIds = new Set([...curriculum, ...courseLessons].map(lesson => lesson.id));
 const response = (data: object, status: number) => Response.json(data, { status, headers: { "cache-control": "no-store", ...(status === 429 ? { "retry-after": "3600" } : {}) } });
 
 export async function POST(request: Request) {
