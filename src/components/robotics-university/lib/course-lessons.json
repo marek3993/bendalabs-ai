@@ -43,12 +43,12 @@
   {
     "id": "robot-components",
     "title": {
-      "sk": "Prečo motor potrebuje driver",
-      "en": "Why a motor needs a driver"
+      "sk": "Ako doska riadi motor",
+      "en": "How a board controls a motor"
     },
     "goal": {
-      "sk": "Obnov napájanie a spoločnú GND. Over oba smery motora a STOP.",
-      "en": "Restore motor power and common GND. Verify both motor directions and STOP."
+      "sk": "Vysvetli riadenie H-mostíka, uprav program a meraním oprav nefunkčný pohon.",
+      "en": "Explain H-bridge control, edit a program and use measurements to repair a faulty drive."
     },
     "prerequisite": {
       "sk": "Nepotrebuješ vedieť zapájať piny. Najprv rozlíšiš signál, napájanie a motor.",
