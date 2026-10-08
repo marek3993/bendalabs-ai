@@ -32,7 +32,7 @@ function CourseLesson({id,lang,draft,onSave,onSeen,onSolved,solved,onNavigate,fe
  const [independent,setIndependent]=useState(draft?.independent??false);
  const [program,setProgram]=useState<Program>(draft?.program??courseTrial(id,false).program);
  const [policy,setPolicy]=useState<Policy>(draft?.policy??startingPolicy);
- const [note,setNote]=useState(draft?.note??''),[hint,setHint]=useState(0),[speed,setSpeed]=useState(manual?.6:.4);
+ const [note,setNote]=useState(draft?.note??''),[hint,setHint]=useState(0),[speed,setSpeed]=useState(manual?1.8:.4);
  const [message,setMessage]=useState(''),[passed,setPassed]=useState(false),[guidedDone,setGuidedDone]=useState(false);
  const [introOpen,setIntroOpen]=useState(true);
  const [comparisons,setComparisons]=useState<ReturnType<typeof compareTrials>>([]);
@@ -41,7 +41,7 @@ function CourseLesson({id,lang,draft,onSave,onSeen,onSolved,solved,onNavigate,fe
  modeDrafts.current[independent?'independentProgram':'guidedProgram']=program;
  modeDrafts.current[independent?'independentPolicy':'guidedPolicy']=policy;
  const trial=useMemo(()=>courseTrial(id,independent),[id,independent]);
- const sim=useMecanumRun(trial,{playback:6,stopPractice:id==='manual-sequence'});
+ const sim=useMecanumRun(trial,{playback:24,stopPractice:id==='manual-sequence'});
  const currentDraft={program,independent,policy,note,...modeDrafts.current},saveRef=useRef({onSave,draft:currentDraft});saveRef.current={onSave,draft:currentDraft};
  useEffect(()=>{const timer=setTimeout(()=>saveRef.current.onSave(saveRef.current.draft),350);return()=>clearTimeout(timer);},[program,independent,policy,note]);
  useEffect(()=>()=>saveRef.current.onSave(saveRef.current.draft),[]);
@@ -77,8 +77,8 @@ function CourseLesson({id,lang,draft,onSave,onSeen,onSolved,solved,onNavigate,fe
   else if(!manual&&sim.run.ended||error==='collision'||manual&&(evidence.stoppedMotor||Math.hypot(sim.run.pose.x-trial.world.bay.x,sim.run.pose.y-trial.world.bay.y)<.6))setMessage(error);
  };
  const finishRef=useRef(check);finishRef.current=check;
- const wasRunning=useRef(false);
- useEffect(()=>{if(!sim.run.running&&(wasRunning.current||sim.run.evidence.stoppedMotor))finishRef.current();wasRunning.current=sim.run.running;},[sim.run.running,sim.run.ended,sim.run.evidence.stoppedMotor,sim.run.evidence.connections]);
+ const wasRunning=useRef(false),lastFinished=useRef(0);
+ useEffect(()=>{if(!sim.run.running&&(wasRunning.current||sim.run.ended!==lastFinished.current&&sim.run.ended>0||sim.run.evidence.stoppedMotor))finishRef.current();wasRunning.current=sim.run.running;lastFinished.current=sim.run.ended;},[sim.run.running,sim.run.ended,sim.run.evidence.stoppedMotor,sim.run.evidence.connections]);
  const errors:Record<string,string>={
   collision:t('Rover narazil. Uprav úsek, ktorý je zvýraznený, a spusti program znova. Pri ručnom ovládaní použi návrat na štart.','The rover collided. Adjust the highlighted segment and run again. For manual control, reset to the start.'),
   park:t('Trasa ešte nekončí v parkovacom mieste so správnym natočením. Skontroluj vzdialenosti a šípku cieľa.','The route does not yet end inside the bay with the correct heading. Check the distances and the target arrow.'),
@@ -93,16 +93,17 @@ function CourseLesson({id,lang,draft,onSave,onSeen,onSolved,solved,onNavigate,fe
   guided:lesson.problem[lang],
   program:t('Skontroluj hodnoty: vzdialenosť 1–300 cm, čas 0,1–10 s, opakovanie 1–8. Pridaj aspoň jeden príkaz.','Check the values: distance 1–300 cm, time 0.1–10 s, repeats 1–8. Add at least one command.')
  };
- const start=()=>{if(sim.start(program,speed)){markSeen();setMessage('');setPassed(false);setGuidedDone(false);setComparisons([]);}};
+ const start=(instant=false)=>{if(sim.start(program,speed,instant)){markSeen();setMessage('');setPassed(false);setGuidedDone(false);setComparisons([]);}};
  const advance=()=>passed?onNavigate('course',next??'overview'):changeMode(true);
- const playback=id==='manual-sequence'&&!sim.run.evidence.stoppedProgram?1:6;
+ const playback=id==='manual-sequence'&&!sim.run.evidence.stoppedProgram?1:24;
  const complete=passed||guidedDone;
  const action=<div className="course-run-controls">
-  {complete?<button ref={primary} className="button primary" onClick={advance}>{passed?(next?t('Pokračovať na ďalšiu lekciu','Continue to the next lesson'):t('Zobraziť výsledky kurzu','View course results')):t('Pokračovať na vlastné riešenie','Continue to your own solution')}<ArrowRight size={17}/></button>:!manual&&!sensor&&!parts?<button ref={primary} className="button primary" disabled={sim.run.running||introOpen} onClick={start}><Play size={17}/>{sim.run.running?t('Program beží…','Running…'):independent?t('Spustiť riešenie','Run your solution'):t('Spustiť program','Run program')}</button>:null}
+  {complete?<button ref={primary} className="button primary" onClick={advance}>{passed?(next?t('Pokračovať na ďalšiu lekciu','Continue to the next lesson'):t('Zobraziť výsledky kurzu','View course results')):t('Pokračovať na vlastné riešenie','Continue to your own solution')}<ArrowRight size={17}/></button>:!manual&&!sensor&&!parts?<button ref={primary} className="button primary" disabled={sim.run.running||introOpen} onClick={()=>start()}><Play size={17}/>{sim.run.running?t('Program beží…','Running…'):independent?t('Spustiť riešenie','Run your solution'):t('Spustiť program','Run program')}</button>:null}
+  {!manual&&!sensor&&!parts&&!complete&&playback>1&&<button className="text-button" disabled={sim.run.running||introOpen} onClick={()=>start(true)}>{t('Okamžite vyhodnotiť','Evaluate instantly')}</button>}
   {!sensor&&!parts&&!complete&&<button className="button course-stop" onClick={()=>sim.stop(true)}><Octagon size={17}/>STOP</button>}
   {!sensor&&!parts&&<button className="course-reset" aria-label={t('Vrátiť rover na štart','Return rover to start')} title={t('Vrátiť rover na štart','Return rover to start')} onClick={()=>reset()}><RotateCcw size={17}/></button>}
  </div>;
- const practiceText=id==='manual-sequence'&&sim.run.evidence.stoppedProgram?t('Prerušenie programu máš overené. Teraz spusti dlhšiu trasu a nechaj rover dôjsť do nového cieľa. Ďalšie jazdy sa prehrávajú 6× rýchlejšie.','Program interruption is verified. Now run the longer route and let the rover reach the new bay. Further runs play 6× faster.'):lesson.independent[lang];
+ const practiceText=id==='manual-sequence'&&sim.run.evidence.stoppedProgram?t('Prerušenie programu máš overené. Teraz spusti dlhšiu trasu a nechaj rover dôjsť do nového cieľa. Ďalšie jazdy sa prehrávajú 24× rýchlejšie.','Program interruption is verified. Now run the longer route and let the rover reach the new bay. Further runs play 24× faster.'):lesson.independent[lang];
  const result=<div className={'course-inline-result '+(complete?'passed':'')} role="status">
   {complete?<><CheckCircle2 size={20}/><div><strong>{passed?t('Úloha splnená','Task complete'):t('Pokus dokončený','Experiment complete')}</strong><p>{passed?lesson.bridge[lang]:lesson.explanation[lang]}</p></div></>:message||sim.error?<p>{errors[sim.error?'program':message]??message}</p>:<p>{manual?t('Zastav v cieli. Výsledok sa vyhodnotí automaticky.','Stop inside the bay. The result is checked automatically.'):t('Po dojazde sa zobrazí výsledok a ďalší krok.','The result and next step appear when the program finishes.')}</p>}
  </div>;
@@ -122,7 +123,7 @@ function CourseLesson({id,lang,draft,onSave,onSeen,onSolved,solved,onNavigate,fe
     <div className="course-control-column">
      {manual?<><h3>{t('Ovládanie roveru','Rover controls')}</h3><ManualControl lang={lang} speed={speed} onMove={v=>{sim.manual(v);markSeen();}} onStop={sim.stop} onRefresh={sim.refresh} stepBusy={sim.run.running} onStep={v=>{sim.jog(v);markSeen();}} disabled={introOpen||complete}/></>:<MecanumProgram program={program} onChange={changeProgram} lang={lang} level={index} running={sim.run.running||introOpen} path={sim.run.path} variableError={message==='variable'}/>}
      {!manual&&<div className="course-playback"><span>{t('Prehrávanie','Playback')} {playback}×</span><small>{playback===1?t('Bežná rýchlosť na vyskúšanie STOP.','Normal playback for practicing STOP.'):t('Rýchle prehrávanie, nezmenené vzdialenosti.','Fast playback, unchanged distances.')}</small></div>}
-     {(manual||id==='time-distance')&&<label className="course-slider">{t('Rýchlosť jazdy','Travel speed')}<output>{Math.round(speed*100)} cm/s</output><input aria-label={t('Rýchlosť jazdy','Travel speed')} type="range" min=".15" max=".6" step=".05" value={speed} disabled={sim.run.running} onChange={e=>{setSpeed(Number(e.target.value));setGuidedDone(false);}}/></label>}
+     {(manual||id==='time-distance')&&<label className="course-slider">{t('Rýchlosť jazdy','Travel speed')}<output>{Math.round(speed*100)} cm/s</output><input aria-label={t('Rýchlosť jazdy','Travel speed')} type="range" min=".15" max={manual?2.4:.6} step=".05" value={speed} disabled={sim.run.running} onChange={e=>{setSpeed(Number(e.target.value));setGuidedDone(false);}}/></label>}
      {!manual&&<details className="course-editor-tools"><summary>{t('Možnosti programu','Program options')}</summary><button className="text-button" onClick={()=>reset(true)}>{t('Vrátiť pôvodný program','Restore the original program')}</button></details>}
     </div>
    </div>}
