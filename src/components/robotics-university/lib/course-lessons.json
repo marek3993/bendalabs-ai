@@ -2,12 +2,12 @@
   {
     "id": "sideways-parking",
     "title": {
-      "sk": "Presun do úzkeho parkovacieho miesta",
-      "en": "Move into a narrow parking bay"
+      "sk": "Prečo tento robot dokáže jazdiť bokom?",
+      "en": "Why can this robot drive sideways?"
     },
     "goal": {
-      "sk": "Celý rover je v parkovacom mieste, predok je zarovnaný so šípkou a trasa je bez kolízie.",
-      "en": "The whole rover fits inside the bay, its front follows the arrow, and the route has no collision."
+      "sk": "Pochop kombináciu štyroch pohonov a naplánuj vlastný manéver na zmenenom pracovisku.",
+      "en": "Understand the four-drive combination and plan your own manoeuvre in a changed workspace."
     },
     "prerequisite": {
       "sk": "Bez predchádzajúcich znalostí. Stačí prehliadač.",

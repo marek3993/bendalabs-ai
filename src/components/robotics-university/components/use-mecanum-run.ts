@@ -42,7 +42,7 @@ export function useMecanumRun(trial:Trial,options:{playback?:number;stopPractice
   setError('');publish();return true;}catch(error){setError(error instanceof Error?error.message:'value');return false;}},[publish]);
  const manual=useCallback((velocity:Velocity)=>{const r=runtime.current;if(r.evidence.collision)return;r.plan=null;r.planOrigin=null;r.path='';r.manual=velocity;r.lastCommand=performance.now();r.running=!!(velocity.vx||velocity.vy||velocity.omega);r.velocity=velocity;publish();},[publish]);
  const refresh=useCallback(()=>{runtime.current.lastCommand=performance.now();},[]);
- const jog=useCallback((velocity:Velocity)=>{const r=runtime.current;if(r.running||r.evidence.collision)return;const seconds=velocity.omega?Math.PI/12/Math.abs(velocity.omega):.1/Math.hypot(velocity.vx,velocity.vy);r.plan=newPlan([{velocity,seconds,path:''}]);r.planOrigin='jog';r.path='';r.running=true;publish();},[publish]);
+ const jog=useCallback((velocity:Velocity,amount?:number)=>{const r=runtime.current;if(r.running||r.evidence.collision)return;const magnitude=velocity.omega?Math.abs(velocity.omega):Math.hypot(velocity.vx,velocity.vy);if(!magnitude)return;const seconds=(amount??(velocity.omega?Math.PI/12:.1))/magnitude;r.plan=newPlan([{velocity,seconds,path:''}]);r.planOrigin='jog';r.path='';r.running=true;publish();},[publish]);
  const flag=useCallback((value:Partial<Evidence>)=>{Object.assign(runtime.current.evidence,value);publish();},[publish]);
  useEffect(()=>{let frame=0,last=performance.now(),lastPublish=0;const tick=(now:number)=>{
   const r=runtime.current,realDt=Math.min(r.planOrigin==='program'?.25:.1,(now-last)/1000);last=now;
