@@ -1,9 +1,3 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "crons": [
-    { "path": "/api/cron/leadpilot", "schedule": "0 4 * * *" },
-    { "path": "/api/cron/leadpilot", "schedule": "0 5 * * *" },
-    { "path": "/api/cron/leadpilot", "schedule": "30 11 * * *" },
-    { "path": "/api/cron/leadpilot", "schedule": "30 12 * * *" }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json"
 }

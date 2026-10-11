@@ -1,0 +1,13 @@
+[Unit]
+Description=BendaLabs daily demand discovery
+
+[Timer]
+OnCalendar=*-*-* 06:00:00 Europe/Bratislava
+OnCalendar=*-*-* 13:30:00 Europe/Bratislava
+AccuracySec=1s
+RandomizedDelaySec=0
+Persistent=false
+Unit=bendalabs-leadpilot.service
+
+[Install]
+WantedBy=timers.target

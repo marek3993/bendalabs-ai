@@ -25,11 +25,24 @@ test('both Slovakia times survive the spring and autumn DST transitions', () => 
   }
   assert.equal(schedule.scoutRunKey(new Date('2026-10-11T22:05:00Z')), '2026-10-12@06:00');
 });
-test('UTC cron triggers start two paid slots, not four, in either season', () => {
+test('one scheduler registers both Slovakia slots across seasons', () => {
   const config = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
+  const registered = (config.crons ?? []).filter(cron => cron.path === '/api/cron/leadpilot');
+  if (!registered.length) {
+    const timer = fs.readFileSync('ops/leadpilot/bendalabs-leadpilot.timer', 'utf8');
+    assert.deepEqual(timer.split(/\r?\n/).filter(line => line.startsWith('OnCalendar=')), [
+      'OnCalendar=*-*-* 06:00:00 Europe/Bratislava',
+      'OnCalendar=*-*-* 13:30:00 Europe/Bratislava',
+    ]);
+    assert.ok(timer.includes('AccuracySec=1s'));
+    assert.ok(timer.includes('RandomizedDelaySec=0'));
+    assert.ok(timer.includes('Persistent=false'));
+  }
+  const utcCallbacks = registered.length ? registered : ['0 4 * * *', '0 5 * * *', '30 11 * * *', '30 12 * * *']
+    .map(schedule => ({ path: '/api/cron/leadpilot', schedule }));
   for (const day of ['2026-01-15', '2026-07-15', '2026-10-25']) {
     const keys = [];
-    for (const cron of config.crons) {
+    for (const cron of utcCallbacks) {
       assert.equal(cron.path, '/api/cron/leadpilot');
       const [minute, hour, ...rest] = cron.schedule.split(' ');
       assert.deepEqual(rest, ['*', '*', '*']);
