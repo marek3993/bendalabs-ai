@@ -1,7 +1,7 @@
 // Only the BendaLabs server can use this narrowly scoped storage bridge.
 declare const Deno: { env: { get(name: string): string | undefined }; serve(handler: (request: Request) => Promise<Response>): unknown };
 const EXPECTED_KEY_SHA256 = "23f9e79238b05f0d1b4d1f04de04c21fa7029cf11f9ec97a1513d7a23973adc2";
-const tables = new Set(["contact_requests", "site_audits", "audit_failures", "audit_lead_rollups"]);
+const tables = new Set(["contact_requests", "site_audits", "audit_failures", "audit_lead_rollups", "opportunities", "leadpilot_runs"]);
 const reply = (error: string, status: number) => Response.json({ error }, { status, headers: { "cache-control": "no-store" } });
 
 export async function authorized(key: string | null, expectedHash = EXPECTED_KEY_SHA256) {
@@ -21,10 +21,20 @@ export async function handler(request: Request): Promise<Response> {
     const text = await request.text();
     if (new TextEncoder().encode(text).length > 100_000) return reply("invalid", 413);
     const input = JSON.parse(text);
-    if (!input || !tables.has(input.table) || !["GET", "POST"].includes(input.method)
+    if (!input || !tables.has(input.table) || !["GET", "POST", "PATCH"].includes(input.method)
       || typeof input.query !== "string" || input.query.length > 4000
       || typeof input.prefer !== "string" || !["", "count=exact", "return=representation"].includes(input.prefer)
       || (input.method === "POST" && (input.table === "audit_lead_rollups" || !input.body || typeof input.body !== "object" || Array.isArray(input.body)))) return reply("invalid", 400);
+    if (input.method === "PATCH") {
+      if (!["opportunities", "leadpilot_runs"].includes(input.table)) return reply("invalid", 400);
+      const params = new URLSearchParams(input.query);
+      const keys = [...params.keys()];
+      if (!["opportunities", "leadpilot_runs"].includes(input.table)
+        || keys.length !== 1 || keys[0] !== "id" || !/^eq\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.get("id") || "")
+        || !input.body || typeof input.body !== "object" || Array.isArray(input.body)) return reply("invalid", 400);
+      const allowed = input.table === "opportunities" ? ["status", "proposal", "fetched_at", "published_at", "publication_evidence", "verification", "source_text"] : ["status", "finished_at", "found", "saved", "skipped", "errors"];
+      if (!Object.keys(input.body).length || Object.keys(input.body).some(field => !allowed.includes(field))) return reply("invalid", 400);
+    }
     const base = Deno.env.get("SUPABASE_URL"), key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!base || !key) return reply("unavailable", 503);
     const url = new URL(`/rest/v1/bendalabs_${input.table}`, base);
@@ -32,7 +42,7 @@ export async function handler(request: Request): Promise<Response> {
     const response = await fetch(url, {
       method: input.method,
       headers: { apikey: key, authorization: `Bearer ${key}`, "content-type": "application/json", prefer: input.prefer },
-      ...(input.method === "POST" ? { body: JSON.stringify(input.body) } : {}),
+      ...(["POST", "PATCH"].includes(input.method) ? { body: JSON.stringify(input.body) } : {}),
       signal: AbortSignal.timeout(10_000),
     });
     if (!response.ok) return reply("unavailable", 503);
