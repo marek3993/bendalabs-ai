@@ -11,7 +11,7 @@
     "test:browser": "node scripts/check-english-browser.cjs",
     "test:automation": "node scripts/check-automation.cjs",
     "test:leads": "node --test scripts/leads-storage.test.cjs",
-    "test:leadpilot": "node --test scripts/leadpilot.test.cjs && node scripts/check-leadpilot.cjs"
+    "test:leadpilot": "node --test scripts/leadpilot.test.cjs scripts/leadpilot-schedule.test.cjs && node scripts/check-leadpilot.cjs"
   },
   "dependencies": {
     "next": "16.1.6",

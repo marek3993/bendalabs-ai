@@ -32,12 +32,16 @@ const server = http.createServer(async (req, res) => {
 async function run() {
   await new Promise(resolve => server.listen(4338, '127.0.0.1', resolve));
   const log = fs.openSync(path.join(output, 'server.log'), 'w');
-  app = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', '3238'], { cwd: root, stdio: ['ignore', log, log], env: { ...process.env, ADMIN_LEADS_PASSWORD: 'isolated-admin-test', BENDALABS_LEADS_URL: 'http://127.0.0.1:4338/edge', BENDALABS_LEADS_KEY: 'test-only-key', SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', OPENAI_API_KEY: 'isolated-not-a-real-api-key' } });
+  app = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', '3238'], { cwd: root, stdio: ['ignore', log, log], env: { ...process.env, ADMIN_LEADS_PASSWORD: 'isolated-admin-test', BENDALABS_LEADS_URL: 'http://127.0.0.1:4338/edge', BENDALABS_LEADS_KEY: 'test-only-key', SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', OPENAI_API_KEY: 'isolated-not-a-real-api-key', CRON_SECRET: 'isolated-cron-secret', LEADPILOT_SCHEDULE_ENABLED: 'false' } });
   let ready = false;
   for (let i = 0; i < 60; i++) { try { ready = (await fetch(base + '/admin/leads')).ok; } catch {} if (ready) break; await new Promise(resolve => setTimeout(resolve, 500)); }
   assert.ok(ready);
   assert.equal(storageReads, 0, 'Anonymous page load never reads private data');
   assert.equal((await fetch(base + '/api/admin/leadpilot', { method: 'POST', body: '{}' })).status, 401);
+  assert.equal((await fetch(base + '/api/cron/leadpilot')).status, 401);
+  const disabledCron = await fetch(base + '/api/cron/leadpilot', { headers: { authorization: 'Bearer isolated-cron-secret' } });
+  assert.equal(disabledCron.status, 200); assert.equal((await disabledCron.json()).skipped, true);
+  assert.equal(storageReads, 0, 'Disabled cron never reads leads or calls AI');
   const login = await fetch(base + '/admin/leads/login', { method: 'POST', body: new URLSearchParams({ password: 'isolated-admin-test' }), redirect: 'manual' });
   const cookie = login.headers.get('set-cookie').split(';')[0];
   const call = body => fetch(base + '/api/admin/leadpilot', { method: 'POST', headers: { cookie, origin: base, 'content-type': 'application/json' }, body: JSON.stringify(body) });

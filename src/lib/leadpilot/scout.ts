@@ -3,7 +3,9 @@ import { zodResponseFormat, zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import { analysisSchema, groundedAnalysis, isFresh, type Opportunity, type Proposal } from "./model";
 import { canonicalSourceUrl, communityCandidates, fetchDemandPage, SOURCE_HOSTS, type SourcePage } from "./sources";
-import { finishRun, listOpportunities, recentRuns, saveOpportunity, startRun } from "./repository";
+import { finishRun, getRun, listOpportunities, saveOpportunity, startRun } from "./repository";
+import { scoutDayKey, scoutRunKey } from "./schedule";
+import type { ScoutRun } from "./model";
 
 const locatorSchema = z.object({ urls: z.array(z.string()) });
 export function scoutConfigured() { return Boolean(process.env.OPENAI_API_KEY?.trim()); }
@@ -51,12 +53,21 @@ export async function analyzeDemand(page: SourcePage): Promise<Omit<Opportunity,
     verification: verified ? "verified" : "review", status: verified ? "new" : "review",
     score: (verified ? 60 : 20) + (result.budget_text ? 15 : 0) + (result.hours_max <= 60 ? 15 : 0) + (result.questions.length <= 3 ? 10 : 0), proposal };
 }
-export async function runScout() {
+export async function runScout(now = new Date()) {
+  const started = Date.now();
   if (!scoutConfigured()) throw new Error("AI vyhľadávanie ešte nie je nakonfigurované.");
-  const key = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Bratislava", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-  const previous = (await recentRuns()).find(run => run.run_key === key);
+  const key = scoutRunKey(now);
+  // A run created by the previous once-per-day version consumes its corresponding slot.
+  const [current, legacy] = await Promise.all([getRun(key), getRun(scoutDayKey(now))]);
+  const previous = current ?? (legacy && scoutRunKey(new Date(legacy.created_at)) === key ? legacy : null);
   if (previous) return { ...previous, reused: true };
-  const run = await startRun(key); // Unique run_key prevents concurrent paid searches.
+  let run: ScoutRun;
+  try { run = await startRun(key); } // Unique run_key atomically claims the slot.
+  catch (error) {
+    const claimed = await getRun(key);
+    if (claimed) return { ...claimed, reused: true };
+    throw error;
+  }
   const errors: string[] = [];
   let found = 0, saved = 0, skipped = 0;
   try {
@@ -68,12 +79,12 @@ export async function runScout() {
       for (const candidate of result.value) { const url = canonicalSourceUrl(candidate); if (url) candidates.add(url); }
     }
     found = candidates.size;
-    // Bounded API cost: at most 6 analyses + one search per day; duplicates cost no analysis.
+    // At most 6 analyses + one search per slot (2 slots/day); duplicates cost no analysis.
     let analyzed = 0;
-    const started = Date.now();
     for (const url of candidates) {
       if (existing.has(url)) { skipped++; continue; }
-      if (analyzed >= 6 || Date.now() - started > 190_000) { skipped++; continue; }
+      // Leave time for the final page fetch, model call, save and run receipt within 300s.
+      if (analyzed >= 6 || Date.now() - started > 180_000) { skipped++; continue; }
       try {
         const page = await fetchDemandPage(url);
         if (page.closed || (page.publishedAt && !isFresh(page.publishedAt))) { skipped++; continue; }

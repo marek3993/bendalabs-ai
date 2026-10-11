@@ -3,6 +3,7 @@ import { getRecentContactRequests } from "@/lib/leads/repository";
 import { isLeadStorageConfigured } from "@/lib/leads/supabase";
 import { dashboardSnapshotTime, listOpportunities, recentRuns } from "@/lib/leadpilot/repository";
 import { scoutConfigured } from "@/lib/leadpilot/scout";
+import { scoutScheduleConfigured } from "@/lib/leadpilot/schedule";
 import { LeadPilotDashboard } from "@/components/leadpilot/dashboard";
 import { privatePageMetadata } from "@/lib/bendalabs/seo";
 
@@ -19,5 +20,5 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams?: 
   if (leads.status === "rejected") errors.push("Nájdené dopyty sa nepodarilo načítať.");
   if (contacts.status === "rejected") errors.push("Dopyty z webu sa nepodarilo načítať.");
   if (runs.status === "rejected") errors.push("Stav vyhľadávania nie je dostupný.");
-  return <LeadPilotDashboard opportunities={leads.status === "fulfilled" ? leads.value : []} contacts={contacts.status === "fulfilled" ? contacts.value : []} runs={runs.status === "fulfilled" ? runs.value : []} errors={errors} configured={scoutConfigured()} asOf={dashboardSnapshotTime()} />;
+  return <LeadPilotDashboard opportunities={leads.status === "fulfilled" ? leads.value : []} contacts={contacts.status === "fulfilled" ? contacts.value : []} runs={runs.status === "fulfilled" ? runs.value : []} errors={errors} configured={scoutConfigured()} scheduled={scoutScheduleConfigured()} asOf={dashboardSnapshotTime()} />;
 }

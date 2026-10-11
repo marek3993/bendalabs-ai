@@ -8,9 +8,10 @@ import type { ContactRequestRecord } from "@/lib/leads/types";
 import "./dashboard.css";
 
 const dateFormat = new Intl.DateTimeFormat("sk-SK", { dateStyle: "medium", timeZone: "Europe/Bratislava" });
+const runDateFormat = new Intl.DateTimeFormat("sk-SK", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Bratislava" });
 function date(value: string | null) { return value && Number.isFinite(Date.parse(value)) ? dateFormat.format(new Date(value)) : "Dátum nezistený"; }
 type Tab = "active" | "review" | "inbound" | "history";
-type Props = { opportunities: Opportunity[]; contacts: Pick<ContactRequestRecord, "id" | "created_at" | "name" | "email" | "message">[]; runs: ScoutRun[]; errors: string[]; configured: boolean; asOf: number };
+type Props = { opportunities: Opportunity[]; contacts: Pick<ContactRequestRecord, "id" | "created_at" | "name" | "email" | "message">[]; runs: ScoutRun[]; errors: string[]; configured: boolean; scheduled: boolean; asOf: number };
 
 async function requestAction(body: object) {
   const response = await fetch("/api/admin/leadpilot", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -18,7 +19,7 @@ async function requestAction(body: object) {
   if (!response.ok) throw new Error(result.error || "Operácia zlyhala.");
   return result;
 }
-export function LeadPilotDashboard({ opportunities, contacts, runs, errors, configured, asOf }: Props) {
+export function LeadPilotDashboard({ opportunities, contacts, runs, errors, configured, scheduled, asOf }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("active");
   const [query, setQuery] = useState("");
@@ -42,7 +43,7 @@ export function LeadPilotDashboard({ opportunities, contacts, runs, errors, conf
       const result = await requestAction(action === "scout" ? { action } : { action, url });
       if (result.run) {
         const r = result.run as ScoutRun;
-        setNotice(result.run.reused ? `Dnešné vyhľadávanie už prebehlo. Uložených ${r.saved} dopytov.` : `Vyhľadávanie dokončené: ${r.saved} uložených dopytov z ${r.found} kandidátov.${r.errors.length ? " Niektoré zdroje sa nepodarilo overiť." : ""}`);
+        setNotice(result.run.reused ? (r.status === "running" ? "Vyhľadávanie pre tento čas už prebieha." : r.status === "failed" ? "Vyhľadávanie pre tento čas zlyhalo. Pozrite podrobnosti posledného behu." : `Vyhľadávanie pre tento čas už prebehlo. Uložených ${r.saved} dopytov.`) : `Vyhľadávanie dokončené: ${r.saved} uložených dopytov z ${r.found} kandidátov.${r.errors.length ? " Niektoré zdroje sa nepodarilo overiť." : ""}`);
         setFailed(r.status === "failed" || r.status === "partial");
       } else { setNotice(result.duplicate ? "Tento dopyt už máte uložený." : "Dopyt je uložený vrátane návrhu riešenia a ponuky."); setUrl(""); }
       router.refresh();
@@ -60,7 +61,8 @@ export function LeadPilotDashboard({ opportunities, contacts, runs, errors, conf
     {errors.length > 0 && <div className="lp-notice lp-error" role="alert">{errors.join(" ")} Nedostupné údaje sa nezapočítavajú ako nula.</div>}
     <section className="lp-scout">
       <div><h2><Radar size={21} /> Nájsť nové zadania</h2><p>Platené dopyty na dokumenty, e-maily, CRM, reporty a prepojenia systémov. Prednosť majú čerstvé zadania zo Slovenska a Česka; zahraničné sú tiež zahrnuté.</p>
-      <div className="lp-run">{lastRun ? <>Posledný beh: {date(lastRun.created_at)} · {lastRun.status === "running" ? "Prebieha" : lastRun.status === "completed" ? "Dokončený" : lastRun.status === "partial" ? "Čiastočne dokončený" : "Zlyhal"} · {lastRun.saved} uložených{lastRun.errors.length > 0 && <details><summary>Čo sa nepodarilo</summary>{lastRun.errors.map((error, i) => <p key={i}>{error}</p>)}</details>}</> : "Vyhľadávanie zatiaľ neprebehlo."}</div></div>
+      <p>{scheduled ? "Denný plán: 6:00 a 13:30 slovenského času." : "Automatické vyhľadávanie zatiaľ nie je aktivované."}</p>
+      <div className="lp-run">{lastRun ? <>Posledný beh: {runDateFormat.format(new Date(lastRun.created_at))} · {lastRun.status === "running" ? "Prebieha" : lastRun.status === "completed" ? "Dokončený" : lastRun.status === "partial" ? "Čiastočne dokončený" : "Zlyhal"} · {lastRun.saved} uložených{lastRun.errors.length > 0 && <details><summary>Čo sa nepodarilo</summary>{lastRun.errors.map((error, i) => <p key={i}>{error}</p>)}</details>}</> : "Vyhľadávanie zatiaľ neprebehlo."}</div></div>
       <button className="lp-button lp-primary" onClick={() => run("scout")} disabled={busy || !configured || errors.length > 0}><Search size={17} /> {busy ? "Spracúvam…" : "Vyhľadať dopyty"}</button>
     </section>
     {!configured && <div className="lp-notice">Vyhľadávanie potrebuje dokončiť pripojenie AI. Uložené dopyty a správy z webu zostávajú dostupné.</div>}

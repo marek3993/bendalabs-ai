@@ -38,6 +38,12 @@ export async function recentRuns(): Promise<ScoutRun[]> {
   });
   return response.json();
 }
+export async function getRun(runKey: string): Promise<ScoutRun | null> {
+  const response = await supabaseRestFetch("leadpilot_runs", {
+    searchParams: new URLSearchParams({ select: "*", run_key: `eq.${runKey}`, limit: "1" }),
+  });
+  return (await response.json())[0] ?? null;
+}
 export async function startRun(runKey: string): Promise<ScoutRun> {
   const response = await supabaseRestFetch("leadpilot_runs", {
     method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ run_key: runKey, status: "running" }),

@@ -11,6 +11,7 @@ function moduleAt(file, globals = {}, dependencies = {}) {
   return exports;
 }
 const model = moduleAt('src/lib/leadpilot/model.ts');
+const schedule = moduleAt('src/lib/leadpilot/schedule.ts');
 const source = (fetch) => moduleAt('src/lib/leadpilot/sources.ts', { fetch }, { './model': model });
 const analysis = { is_paid_demand: true, is_closed: false, title: 'Automate invoice extraction', demand_excerpt: 'We need a developer to automate invoice extraction.', hours_min: 20, hours_max: 30, days_min: 4, days_max: 6, budget_text: '$900', budget_excerpt: 'Budget $900', region: 'USA' };
 test('only fresh, recently verified, unresolved demands belong to the active queue', () => {
@@ -62,7 +63,7 @@ test('English replies contain the calculated quote and conditional delivery in E
   assert.ok(reply.includes('1')); assert.ok(reply.includes('working days')); assert.ok(reply.includes('preliminary estimate'));
   assert.ok(!reply.includes('Orientačná'));
 });
-test('discovery analyzes only new original requests, saves grounded demand, and reuses the daily run', async () => {
+test('discovery saves grounded demands and shares exactly two slots between manual and scheduled runs', async () => {
   let analyses = 0, searches = 0;
   const original = 'We need a developer to automate invoice extraction. Budget $900. USA';
   const duplicate = 'https://community.n8n.io/t/old/123';
@@ -74,19 +75,48 @@ test('discovery analyzes only new original requests, saves grounded demand, and 
   }
   const sources = source();
   const repository = {
-    listOpportunities: async () => [{ source_url: duplicate }],
-    recentRuns: async () => runs,
-    startRun: async key => { const run = { id: 'run-1', run_key: key }; runs.push(run); return run; },
+    listOpportunities: async () => [{ source_url: duplicate }, ...saved],
+    getRun: async key => runs.find(run => run.run_key === key) ?? null,
+    startRun: async key => { const run = { id: `run-${runs.length + 1}`, run_key: key }; runs.push(run); return run; },
     finishRun: async (id, result) => Object.assign(runs.find(run => run.id === id), result),
     saveOpportunity: async lead => { saved.push(lead); return lead; },
   };
   const scout = moduleAt('src/lib/leadpilot/scout.ts', { process: { env: { OPENAI_API_KEY: 'isolated-only' } } }, {
     openai: FakeOpenAI, 'openai/helpers/zod': { zodResponseFormat: () => ({}), zodTextFormat: () => ({}) }, './model': model,
-    './sources': { ...sources, communityCandidates: async () => [duplicate, fresh], fetchDemandPage: async url => ({ url, text: original, publishedAt: new Date().toISOString(), publicationEvidence: 'Original post #1', closed: false }) }, './repository': repository,
+    './sources': { ...sources, communityCandidates: async () => [duplicate, fresh], fetchDemandPage: async url => ({ url, text: original, publishedAt: new Date().toISOString(), publicationEvidence: 'Original post #1', closed: false }) }, './repository': repository, './schedule': schedule,
   });
-  const first = await scout.runScout();
+  const first = await scout.runScout(new Date('2026-10-11T04:00:00Z'));
   assert.equal(first.saved, 1); assert.equal(analyses, 1); assert.equal(searches, 1);
+  assert.equal(first.run_key, '2026-10-11@06:00');
   assert.equal(saved[0].verification, 'verified'); assert.equal(saved[0].budget_text, 'Budget $900');
-  const second = await scout.runScout();
+  const second = await scout.runScout(new Date('2026-10-11T10:00:00Z'));
   assert.equal(second.reused, true); assert.equal(analyses, 1); assert.equal(searches, 1);
+  const afternoon = await scout.runScout(new Date('2026-10-11T11:30:00Z'));
+  assert.equal(afternoon.reused, false); assert.equal(afternoon.run_key, '2026-10-11@13:30');
+  assert.equal(searches, 2); assert.equal(analyses, 1); assert.equal(afternoon.saved, 0);
+  assert.equal((await scout.runScout(new Date('2026-10-11T20:00:00Z'))).reused, true);
+  assert.equal(searches, 2);
+  await scout.runScout(new Date('2026-10-12T04:00:00Z'));
+  assert.equal(searches, 3); assert.equal(analyses, 1);
+});
+
+test('a concurrently claimed slot and a legacy daily run cannot trigger additional paid calls', async () => {
+  let apiCalls = 0;
+  class ForbiddenOpenAI { constructor() { apiCalls++; throw new Error('Paid call forbidden'); } }
+  const legacy = { id: 'legacy', run_key: '2026-10-11', created_at: '2026-10-11T15:00:00Z' };
+  let claimed = null;
+  const scout = moduleAt('src/lib/leadpilot/scout.ts', { process: { env: { OPENAI_API_KEY: 'isolated-only' } } }, {
+    openai: ForbiddenOpenAI, 'openai/helpers/zod': {}, './model': model, './sources': {}, './schedule': schedule,
+    './repository': {
+      getRun: async key => key === legacy.run_key ? legacy : claimed?.run_key === key ? claimed : null,
+      startRun: async key => { claimed = { id: 'winner', run_key: key, status: 'running' }; throw new Error('Unique constraint'); },
+    },
+  });
+  const reused = await scout.runScout(new Date('2026-10-11T16:00:00Z'));
+  assert.equal(reused.id, 'legacy'); assert.equal(reused.reused, true);
+  const collision = await scout.runScout(new Date('2026-10-11T04:00:00Z'));
+  assert.equal(collision.id, 'winner'); assert.equal(collision.reused, true); assert.equal(apiCalls, 0);
+  claimed.status = 'failed';
+  assert.equal((await scout.runScout(new Date('2026-10-11T05:00:00Z'))).status, 'failed');
+  assert.equal(apiCalls, 0);
 });
