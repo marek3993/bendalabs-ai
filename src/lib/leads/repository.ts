@@ -665,3 +665,27 @@ export async function getRecentContactRequests({ query, limit = 25 }: RecentAudi
 
   return safeArray(await response.json(), normalizeRecentContactRequestRecord);
 }
+
+export const CONTACT_REQUEST_PAGE_SIZE = 50;
+
+// Preserve all saved submissions. Fetch one extra row to detect the next page.
+export async function getContactRequestsPage(page = 1) {
+  const currentPage = Number.isSafeInteger(page) && page > 0 ? page : 1;
+  const response = await supabaseRestFetch("contact_requests", {
+    headers: { Prefer: "count=exact" },
+    searchParams: new URLSearchParams({
+      select: "id,created_at,name,email,website,message,source,normalized_domain,linked_audit_domain,referrer",
+      order: "created_at.desc,id.desc",
+      limit: String(CONTACT_REQUEST_PAGE_SIZE + 1),
+      offset: String((currentPage - 1) * CONTACT_REQUEST_PAGE_SIZE),
+    }),
+  });
+  const rows = safeArray(await response.json(), normalizeRecentContactRequestRecord);
+  const contentRange = response.headers.get("content-range");
+  return {
+    contacts: rows.slice(0, CONTACT_REQUEST_PAGE_SIZE),
+    page: currentPage,
+    hasNext: rows.length > CONTACT_REQUEST_PAGE_SIZE,
+    total: contentRange && /\/\d+$/.test(contentRange) ? parseCountHeader(contentRange) : null,
+  };
+}

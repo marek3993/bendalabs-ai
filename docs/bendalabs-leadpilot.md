@@ -17,7 +17,9 @@ AI prepares a limited first stage, requirements, solution, assumptions, exclusio
 
 Statuses: new, review, proposal, sent, won, lost, archived. Copying a draft does not mark it sent. There is no message-sending endpoint.
 
-Recent inbound contacts use the existing contact table. Technical test identities, including the two October 6 checks, are excluded from business counts. Storage failures display errors and unknown counts rather than zero leads.
+The default `/admin/leads` screen is the independent form inbox. It reads all submissions from the existing contact table without date or identity exclusions, paginates in groups of 50, labels possible test emails, and refreshes once a minute while visible. Form messages retain campaign information when supplied. A contact-storage failure displays an error rather than an empty inbox. The inbox does not query LeadPilot tables, so discovery failures cannot hide incoming submissions.
+
+LeadPilot remains available at `/admin/leads?view=leadpilot`. Its discovery logic, scheduling, opportunity views and recent-contact summary are unchanged. Use the top-level **Odpovede z formulárov** link for the complete inbox.
 
 ## Storage and access
 
@@ -42,6 +44,6 @@ The endpoint `/api/cron/leadpilot` is separate from the admin session/CSRF endpo
 
 ## Validation
 
-Build first, then run `npm run test:leadpilot` and `npm run test:leads`. `scripts/check-leadpilot.cjs` starts a production Next server with isolated mock storage; verifies auth, CSRF, persistence, current/old queues, test exclusion, storage errors, and desktop/mobile rendering. It makes no paid AI calls. Set `CHROME_PATH` to an installed Chromium executable, or install the Playwright browser locally.
+Build first, then run `npm run test:inbox`, `npm run test:leadpilot` and `npm run test:leads`. `scripts/check-leadpilot.cjs` starts a production Next server with isolated mock storage; verifies auth, CSRF, persistence, current/old queues, test exclusion, storage errors, and desktop/mobile rendering. It makes no paid AI calls. Set `CHROME_PATH` to an installed Chromium executable, or install the Playwright browser locally.
 
 The existing short automation form remains covered by `node scripts/check-automation.cjs --api-only`.
