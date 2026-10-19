@@ -60,6 +60,7 @@ async function run() {
     await page.goto(base + '/admin/leads');
     await page.getByLabel('Heslo', { exact: true }).fill('isolated-admin-test');
     await page.getByRole('button', { name: 'Prihlásiť sa', exact: true }).click();
+    await page.getByRole('link', { name: 'LeadPilot', exact: true }).click();
     await page.getByRole('heading', { name: 'LeadPilot.' }).waitFor();
     assert.equal(await page.locator('.lp-card').count(), 1);
     assert.ok(!await page.getByText('TEST ONLY · Old request', { exact: true }).count());
@@ -81,7 +82,7 @@ async function run() {
   }
   failure = true;
   assert.equal((await call({ action: 'update', id: uuid, status: 'sent' })).status, 503);
-  const failed = await (await fetch(base + '/admin/leads', { headers: { cookie } })).text();
+  const failed = await (await fetch(base + '/admin/leads?view=leadpilot', { headers: { cookie } })).text();
   assert.ok(failed.includes('Nedostupné údaje sa nezapočítavajú ako nula'));
   assert.deepEqual(errors, []);
   console.log('PASS: admin auth, private reads, CSRF, validation, freshness, test exclusion, desktop/mobile, persisted proposal/status and explicit storage failure. No paid AI calls.');
