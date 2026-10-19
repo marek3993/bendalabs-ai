@@ -3,14 +3,14 @@ import {useEffect,useRef,useState} from 'react';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
-import {wheelSpeeds,wheelIds,chassis,type Pose,type Velocity,type World,type Reading} from '@/components/robotics-university/lib/mecanum';
+import {wheelSpeeds,wheelIds,chassis,type Pose,type Velocity,type World,type Reading,type Wheels} from '@/components/robotics-university/lib/mecanum';
 import {makeBody,makeWheel} from '@/components/robotics-university/lib/bendalabs-rover-geometry';
 import {roverPlanImage} from '@/components/robotics-university/lib/rover-plan';
 import type {Lang} from '@/components/robotics-university/lib/atlas-data';
 
-type Props={pose:Pose;velocity:Velocity;world:World;trail:Pose[];waypoints?:Pose[];lang:Lang;reading?:Reading;highlight?:string;playback?:number;showTarget?:boolean;lesson?:boolean;initialTop?:boolean};
+type Props={pose:Pose;velocity:Velocity;wheels?:Wheels;world:World;trail:Pose[];waypoints?:Pose[];lang:Lang;reading?:Reading;highlight?:string;playback?:number;showTarget?:boolean;lesson?:boolean;initialTop?:boolean};
 function activeArea(world:World){
- const margin=.5,points=[world.start, {x:world.bay.x-.5,y:world.bay.y-.5},{x:world.bay.x+.5,y:world.bay.y+.5},...world.walls.flatMap(w=>[{x:w.x,y:w.y},{x:w.x+w.width,y:w.y+w.height}])];
+ const margin=.5,points=[{x:0,y:0},{x:world.width,y:world.height},world.start, {x:world.bay.x-.5,y:world.bay.y-.5},{x:world.bay.x+.5,y:world.bay.y+.5},...world.walls.flatMap(w=>[{x:w.x,y:w.y},{x:w.x+w.width,y:w.y+w.height}])];
  const left=Math.max(0,Math.min(...points.map(p=>p.x))-margin),right=Math.min(world.width,Math.max(...points.map(p=>p.x))+margin),bottom=Math.max(0,Math.min(...points.map(p=>p.y))-margin),top=Math.min(world.height,Math.max(...points.map(p=>p.y))+margin);
  return {x:(left+right)/2,y:(bottom+top)/2,width:right-left,height:top-bottom};
 }
@@ -86,7 +86,7 @@ export default function MecanumScene(props:Props){
     else if(p.lesson&&above){const area=activeArea(p.world),distance=Math.max(area.height,area.width/camera.aspect)/(2*Math.tan(camera.fov*Math.PI/360));orbit.minDistance=2.8;orbit.target.set(area.x,0,-area.y);camera.position.set(area.x,distance+.35,-area.y+.001);}
     else camera.position.set(above?3:5.4,above?7.6:5,above?-1.999:2.1);
    }else if(close){trackingDelta.subVectors(trackedTarget,orbit.target);camera.position.add(trackingDelta);orbit.target.copy(trackedTarget);}
-   body.position.set(p.pose.x,0,-p.pose.y);body.rotation.y=p.pose.yaw;const w=wheelSpeeds(p.velocity);wheelGroups.forEach((g,i)=>g.rotation.z-=w[wheelIds[i]]*dt*(p.playback??1));
+   body.position.set(p.pose.x,0,-p.pose.y);body.rotation.y=p.pose.yaw;const w=p.wheels??wheelSpeeds(p.velocity);wheelGroups.forEach((g,i)=>g.rotation.z-=w[wheelIds[i]]*dt*(p.playback??1));
    if(highlighted!==(p.highlight??'')){highlighted=p.highlight??'';outline.visible=!!highlights[highlighted];if(outline.visible){const area=highlights[highlighted];const dummy=new THREE.Mesh(new THREE.BoxGeometry(...area.size as [number,number,number]));dummy.position.set(...area.pos as [number,number,number]);dummy.updateMatrixWorld();outline.setFromObject(dummy);dummy.geometry.dispose();(dummy.material as THREE.Material).dispose();}}
    const points=p.trail.slice(-4000),position=traceGeometry.getAttribute('position') as THREE.BufferAttribute;points.forEach((q,i)=>position.setXYZ(i,q.x,.004,-q.y));position.needsUpdate=true;traceGeometry.setDrawRange(0,points.length);trace.frustumCulled=false;
    ray.visible=!!p.reading&&p.reading.state!=='invalid';if(ray.visible){const len=p.reading?.state==='valid'?p.reading.metres:2.5,dx=Math.cos(p.pose.yaw),dy=Math.sin(p.pose.yaw),attr=rayGeometry.getAttribute('position') as THREE.BufferAttribute;attr.setXYZ(0,p.pose.x+dx*(chassis.length/2),.25,-p.pose.y-dy*(chassis.length/2));attr.setXYZ(1,p.pose.x+dx*(chassis.length/2+len),.25,-p.pose.y-dy*(chassis.length/2+len));attr.needsUpdate=true;ray.frustumCulled=false;}

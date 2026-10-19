@@ -43,6 +43,9 @@ export function useMecanumRun(trial:Trial,options:{playback?:number;stopPractice
  const manual=useCallback((velocity:Velocity)=>{const r=runtime.current;if(r.evidence.collision)return;r.plan=null;r.planOrigin=null;r.path='';r.manual=velocity;r.lastCommand=performance.now();r.running=!!(velocity.vx||velocity.vy||velocity.omega);r.velocity=velocity;publish();},[publish]);
  const refresh=useCallback(()=>{runtime.current.lastCommand=performance.now();},[]);
  const jog=useCallback((velocity:Velocity,amount?:number)=>{const r=runtime.current;if(r.running||r.evidence.collision)return;const magnitude=velocity.omega?Math.abs(velocity.omega):Math.hypot(velocity.vx,velocity.vy);if(!magnitude)return;const seconds=(amount??(velocity.omega?Math.PI/12:.1))/magnitude;r.plan=newPlan([{velocity,seconds,path:''}]);r.planOrigin='jog';r.path='';r.running=true;publish();},[publish]);
+ const drive=useCallback((velocity:Velocity,seconds:number)=>{const r=runtime.current;if(r.running||!(seconds>0))return;r.evidence.collision=false;r.plan=newPlan([{velocity,seconds,path:''}]);r.planOrigin='jog';r.path='';r.running=true;publish();},[publish]);
+ const place=useCallback((pose:Pose)=>{const r=runtime.current;r.pose={...pose};r.evidence.collision=false;r.plan=null;r.planOrigin=null;r.running=false;r.manual=zeroVelocity;r.velocity=zeroVelocity;r.trail.push({...pose});publish();},[publish]);
+ const clearCollision=useCallback(()=>{runtime.current.evidence.collision=false;publish();},[publish]);
  const flag=useCallback((value:Partial<Evidence>)=>{Object.assign(runtime.current.evidence,value);publish();},[publish]);
  useEffect(()=>{let frame=0,last=performance.now(),lastPublish=0;const tick=(now:number)=>{
   const r=runtime.current,realDt=Math.min(r.planOrigin==='program'?.25:.1,(now-last)/1000);last=now;
@@ -57,6 +60,6 @@ export function useMecanumRun(trial:Trial,options:{playback?:number;stopPractice
   frame=requestAnimationFrame(tick);
  };const clear=()=>stop();const hide=()=>{if(document.hidden)stop();};window.addEventListener('blur',clear);document.addEventListener('visibilitychange',hide);frame=requestAnimationFrame(tick);return()=>{cancelAnimationFrame(frame);window.removeEventListener('blur',clear);document.removeEventListener('visibilitychange',hide);};},[publish,stop]);
  const runEnded=useRef(0);
- return {run,error,start,stop,manual,refresh,reset,flag,jog};
+ return {run,error,start,stop,manual,refresh,reset,flag,jog,drive,clearCollision,place};
 }
 
