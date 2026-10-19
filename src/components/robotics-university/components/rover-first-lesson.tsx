@@ -79,7 +79,7 @@ export default function RoverFirstLesson({lang, feedback, onNavigate}:{lang:Lang
   const repaired = !!test && test.kind==='check' && testFinished && test.passed;
   useEffect(()=>{if(repaired)setSaved(p=>p.done?p:{...p,done:true});},[repaired]);
   useEffect(()=>{if(ready&&!intro){const frame=requestAnimationFrame(()=>{heading.current?.scrollIntoView({block:'start',behavior:'instant'});heading.current?.focus({preventScroll:true});});return()=>cancelAnimationFrame(frame);}},[saved.stage,intro,ready]);
-  const enter = (stage:number) => {stop();setHint(null);setSaved(p=>({...p,stage,reached:Math.max(p.reached,stage)}));};
+  const enter = (stage:number) => {stop();setHint(null);setSaved(p=>({...p,stage,reached:Math.max(p.reached,stage)}));setIntro(stage<3);};
 
   /* Part 1: manual driving in the aisle */
   const step = (velocity:Velocity, amount?:number) => {if(run.running)return; lastTurn.current = velocity.omega!==0; if(run.evidence.collision) clearCollision(); else before.current = {...run.pose}; jog(velocity,amount);};
@@ -134,6 +134,35 @@ export default function RoverFirstLesson({lang, feedback, onNavigate}:{lang:Lang
 
   const stages=[t('Vyskúšaj pohyb','Try the movement'),t('Pochop kolesá','Understand the wheels'),t('Nájdi poruchu','Find the fault')];
   const shownWheels = run.running ? (saved.stage===2 ? test?.wheels : saved.stage===1 ? mixWheels(saved.mix) : undefined) : undefined;
+  // Every part opens with its own brief: what it is about, what to do and how the student knows it is done.
+  const briefs: {eyebrow:string; title:string; text:string; diagram:ReactNode; steps:string[]; done:string; button:string}[] = [
+    {eyebrow:t('ČASŤ 1 Z 3 / VYSKÚŠAJ POHYB','PART 1 OF 3 / TRY THE MOVEMENT'), title:t('Zaparkuj rover v úzkej uličke','Park the rover in a narrow aisle'),
+      text:t(`Rover stojí v stanici dole, predkom doľava. Dostaň ho do zeleného miesta medzi regálmi tak, aby predok smeroval k hornému regálu. Ulička má ${aisleCm} cm, podvozok ${chassisCm} cm, ale na otočenie na mieste potrebuje kruh ${circleCm} cm.`,`The rover sits in its station at the bottom, front facing left. Get it into the green bay between the shelves with its front toward the upper shelf. The aisle is ${aisleCm} cm wide, the chassis ${chassisCm} cm, but turning on the spot needs a ${circleCm} cm circle.`),
+      diagram:<BriefDiagram image={planImage} lang={lang}/>,
+      steps:[t('Ovládaš tlačidlami pod scénou alebo klávesmi W A S D (jazda a posun bokom) a Q / E (otáčanie). Jeden klik je 25 cm alebo 30°.','Use the buttons below the scene or the keys W A S D (driving and sliding) and Q / E (turning). One click is 25 cm or 30°.'),
+        t('Šípka na podvozku je predok robota. Šípka v zelenom obryse ukazuje, kam má predok smerovať na konci.','The chassis arrow is the robot front. The arrow in the green outline shows where the front must point at the end.'),
+        t('Naplánuj si, kde sa otočíš. V uličke na to miesto nie je.','Plan where you will turn. There is no room for it inside the aisle.')],
+      done:t('Hotovo, keď rover stojí v zelenom obryse predkom k regálu. Potom sa objaví tlačidlo na pokračovanie.','Done when the rover stands in the green outline facing the shelf. A button to continue then appears.'),
+      button:t('Rozumiem, idem jazdiť','Got it, let me drive')},
+    {eyebrow:t('ČASŤ 2 Z 3 / POCHOP KOLESÁ','PART 2 OF 3 / UNDERSTAND THE WHEELS'), title:t('Zisti, ako štyri kolesá vytvoria pohyb','Find out how four wheels create motion'),
+      text:t('Každé koleso má vlastný motor. Pri každom nastavíš dopredu, stoj alebo dozadu a rover hneď ukáže, kam ho táto kombinácia posunie. Pod pôdorysom vždy vidíš výsledok, napríklad „Výsledok: Bokom doľava“.','Each wheel has its own motor. Set each to forward, stop or backward and the rover immediately shows where that combination moves it. Below the plan you always see the result, for example “Result: Slide left”.'),
+      diagram:<GoalsDiagram lang={lang}/>,
+      steps:[t('Pozri si ukážky Dopredu a Bokom doľava. Všimni si, ktoré kolesá sa točia dopredu a ktoré dozadu.','Look at the Forward and Slide left examples. Note which wheels turn forward and which backward.'),
+        t('Nájdi nastavenie pre bokom doprava: rover sa posunie vpravo a predok stále smeruje dopredu.','Find the setting for slide right: the rover moves right while its front keeps pointing forward.'),
+        t('Nájdi nastavenie pre otočenie doprava na mieste: rover sa otočí v smere hodinových ručičiek a nikam neodíde.','Find the setting for turn right on the spot: the rover rotates clockwise without going anywhere.')],
+      done:t('Splnený pohyb sa v zozname úloh nad modelom označí fajkou. Keď máš oba, pokračuješ k poruche.','A solved movement gets a tick in the task list above the model. With both done, you move on to the fault.'),
+      button:t('Rozumiem, idem nastavovať kolesá','Got it, let me set the wheels')},
+    {eyebrow:t('ČASŤ 3 Z 3 / NÁJDI PORUCHU','PART 3 OF 3 / FIND THE FAULT'), title:t('Nájdi motor zapojený naopak','Find the motor wired in reverse'),
+      text:t('Rover sa má posunúť bokom doľava o 100 cm do zeleného miesta. Jeden zo štyroch motorov je však zapojený naopak: točí sa opačne, než mu program káže. Ktorý to je, nevieš. Musíš to zmerať.','The rover should slide 100 cm to the left into the green bay. But one of its four motors is wired in reverse: it turns opposite to what the program commands. You do not know which one. You have to measure it.'),
+      diagram:<FaultDiagram lang={lang}/>,
+      steps:[t('Spusti Test dopredu 100 cm. V tabuľke porovnaj stĺpce Očakávané a Namerané.','Run the Forward 100 cm test. In the table, compare the Expected and Measured columns.'),
+        t('Stočenie ti prezradí stranu, bočný drift konkrétne koleso. Návod nájdeš pod scénou v časti Ako čítať meranie.','Turning reveals the side, sideways drift the exact wheel. The guide is below the scene under How to read the measurement.'),
+        t('Prehoď vodiče podozrivého motora a spusti Kontrolnú jazdu do cieľa.','Swap the suspect motor’s wires and start the Check run into the bay.')],
+      done:t('Hotovo, keď kontrolná jazda skončí v zelenom mieste.','Done when the check run ends in the green bay.'),
+      button:t('Rozumiem, idem merať','Got it, let me measure')},
+  ];
+  const brief = briefs[saved.stage];
+  const opposite = saved.stage===1 && ((mixResult==='left'&&!saved.goals.right)||(mixResult==='turn-left'&&!saved.goals['turn-right'])) ? mixResult : null;
   return <article className="rover-lesson">
     <header className="rl-heading"><div><span className="eyebrow">{t('01 / POHYB MOBILNÉHO ROBOTA','01 / MOBILE ROBOT MOTION')}</span><h1>{t('Prečo tento robot dokáže jazdiť bokom?','Why can this robot drive sideways?')}</h1></div><span className="rl-free">{t('Zadarmo · bez registrácie','Free · no sign-up')}</span></header>
     <nav className="rl-stages" aria-label={t('Priebeh lekcie','Lesson progression')}>{stages.map((label,i)=><button key={i} disabled={i>saved.reached} aria-current={saved.stage===i?'step':undefined} onClick={()=>enter(i)}><span>{i+1}</span>{label}</button>)}</nav>
@@ -167,6 +196,7 @@ export default function RoverFirstLesson({lang, feedback, onNavigate}:{lang:Lang
       </div>
       <div className={'rl-result '+(goalsMet?'success':'')} role="status">{goalsMet?<><strong>{t('Obe kombinácie sedia.','Both combinations are right.')}</strong><p>{t('Bočný posun: diagonálne páry kolies idú proti sebe. Otáčanie: ľavá strana proti pravej. Teraz to využiješ na nájdenie skutočnej chyby.','Sideways: the diagonal wheel pairs run against each other. Turning: the left side against the right. Now you will use this to find a real fault.')}</p><button className="button primary" onClick={()=>enter(2)}>{t('Pokračovať k poruche','Continue to the fault')}<ArrowRight size={18}/></button></>
         :Math.abs(response.fight)>1e-9?<><strong>{t('Kolesá sa navzájom pretláčajú.','The wheels are fighting each other.')}</strong><p>{t('Predná a zadná dvojica tlačia proti sebe. Ideálny model ich príspevky vyruší; skutočné kolesá by preklzávali a míňali energiu bez pohybu.','The front and rear pairs push against each other. The ideal model cancels their contributions; real wheels would slip and waste energy without moving.')}</p></>
+        :opposite?<><strong>{opposite==='left'?t('Toto je bokom doľava, presný opak toho, čo hľadáš.','This is slide left, the exact opposite of what you are looking for.'):t('Toto je otočenie doľava, presný opak toho, čo hľadáš.','This is a left turn, the exact opposite of what you are looking for.')}</strong><p>{opposite==='left'?t('Hľadáš bokom doprava. Otoč smer každého zo štyroch kolies: dopredu na dozadu a dozadu na dopredu.','You are looking for slide right. Reverse every one of the four wheels: forward becomes backward and backward becomes forward.'):t('Hľadáš otočenie doprava, v smere hodinových ručičiek. Otoč smer každého zo štyroch kolies.','You are looking for a right turn, clockwise. Reverse every one of the four wheels.')}</p></>
         :<p>{t('Sleduj žlté šípky: zložky, ktoré mieria proti sebe, sa vyrušia. Tie, ktoré mieria rovnako, sa sčítajú.','Watch the yellow arrows: components pointing against each other cancel. Those pointing the same way add up.')}</p>}</div>
       <div className="rl-explain-copy"><section><h3>{t('Prečo koleso tlačí šikmo','Why a wheel pushes diagonally')}</h3><p>{t('Po obvode Mecanum kolesa sú voľne otočné valčeky naklonené o 45°. Keď sa koleso točí, valček sa po podlahe v jednom smere kotúľa a v druhom tlačí. Preto každé koleso posúva podvozok šikmo: žltá šípka v pôdoryse.','Around a Mecanum wheel sit freely spinning rollers angled at 45°. As the wheel turns, a roller rolls along the floor in one direction and pushes in the other. That is why each wheel moves the chassis diagonally: the yellow arrow in the plan.')}</p></section>
         <section><h3>{t('Štyri motory, tri pohyby','Four motors, three movements')}</h3><p>{t('Každú šikmú šípku rozlož na zložku dopredu a zložku do strany (prerušované čiary). Z ich súčtu vzniká jazda dopredu, posun do strany a otáčanie, aj ich kombinácie. Obyčajné koleso vie tlačiť len dopredu a dozadu.','Split each diagonal arrow into a forward and a sideways component (dashed lines). Their sum gives forward driving, sideways sliding and turning, and any combination of them. An ordinary wheel only pushes forward and backward.')}</p></section>
@@ -204,8 +234,8 @@ export default function RoverFirstLesson({lang, feedback, onNavigate}:{lang:Lang
       <label className="rl-notes">{t('Poznámka k vlastnému riešeniu','A note about your solution')}<textarea value={saved.notes} maxLength={3000} placeholder={t('Podľa čoho si spoznal obrátený motor?','How did you recognise the reversed motor?')} onChange={e=>setSaved(p=>({...p,notes:e.target.value}))}/></label><p className="rl-caption">{t('Poznámka aj postup sa ukladajú v tomto prehliadači.','Your note and progress are saved in this browser.')}</p>
       <div className="rl-finish-actions"><button className="button primary" onClick={()=>onNavigate('lesson','motor-control')}>{t('Ďalšia lekcia: Ako doska riadi motor','Next lesson: How a board drives a motor')}<ArrowRight size={17}/></button><button className="rl-secondary" onClick={download}><Download size={16}/>{t('Stiahnuť kontrolný postup pre skutočný rover','Download the check procedure for a real rover')}</button><button className="rl-secondary" onClick={()=>enter(2)}>{t('Vrátiť sa k diagnostike','Back to the diagnosis')}</button></div>{feedback}
     </div>}
-    <footer className="rl-footer"><button onClick={()=>setIntro(true)}>{t('Zobraziť zadanie lekcie','Show lesson brief')}</button><button onClick={()=>onNavigate('support')}>{t('Opýtať sa tímu BendaLabs','Ask the BendaLabs team')}</button><details><summary>{t('Technický zdroj a model','Technical source and model')}</summary><p>{t('Ideálny Mecanum model počíta pohyb podvozku zo štyroch pohonov. Nezahŕňa preklz, zotrvačnosť ani elektrické limity motorov. Rozmery podvozku sú rozmery modelu, nie meranie skutočného roveru.','The ideal Mecanum model computes chassis motion from four drives. It excludes slip, inertia and electrical motor limits. Chassis dimensions belong to the model, not to a measurement of the real rover.')}</p><a href="https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/mecanum-drive-kinematics.html" target="_blank" rel="noreferrer">WPILib · Mecanum drive kinematics</a></details></footer>
-    {intro&&<Dialog.Root open onOpenChange={setIntro}><Dialog.Portal container={typeof document!=='undefined'?document.getElementById('robotics-university'):undefined}><Dialog.Overlay className="course-intro-overlay"/><Dialog.Content className="rl-intro" onInteractOutside={e=>e.preventDefault()}><span className="eyebrow">{t('PRVÁ LEKCIA / MECANUM ROVER','FIRST LESSON / MECANUM ROVER')}</span><Dialog.Title>{t('Začni pohybom. Potom odhaľ jeho princíp.','Start with movement. Then uncover its principle.')}</Dialog.Title><Dialog.Description>{t('Vyvezieš rover zo stanice a zaparkuješ ho v úzkej uličke, zistíš, čo robí každé zo štyroch kolies, a nájdeš zle zapojený motor. Nepotrebuješ vybavenie ani predchádzajúce znalosti.','Drive the rover out of its station and park it in a narrow aisle, find out what each of the four wheels does, and track down a miswired motor. No equipment or prior knowledge needed.')}</Dialog.Description><BriefDiagram image={planImage} lang={lang}/><p>{t('Šípka na podvozku označuje predok. Zelené miesto aj jeho šípka ukazujú požadovanú polohu a natočenie.','The chassis arrow marks the front. The green bay and its arrow show the required position and heading.')}</p><Dialog.Close asChild><button className="button primary">{saved.stage>0?t('Pokračovať v lekcii','Continue the lesson'):t('Rozumiem zadaniu, idem jazdiť','Got it, let me drive')}<ArrowRight size={18}/></button></Dialog.Close></Dialog.Content></Dialog.Portal></Dialog.Root>}
+    <footer className="rl-footer">{brief&&<button onClick={()=>setIntro(true)}>{t('Zobraziť zadanie tejto časti','Show the brief for this part')}</button>}<button onClick={()=>onNavigate('support')}>{t('Opýtať sa tímu BendaLabs','Ask the BendaLabs team')}</button><details><summary>{t('Technický zdroj a model','Technical source and model')}</summary><p>{t('Ideálny Mecanum model počíta pohyb podvozku zo štyroch pohonov. Nezahŕňa preklz, zotrvačnosť ani elektrické limity motorov. Rozmery podvozku sú rozmery modelu, nie meranie skutočného roveru.','The ideal Mecanum model computes chassis motion from four drives. It excludes slip, inertia and electrical motor limits. Chassis dimensions belong to the model, not to a measurement of the real rover.')}</p><a href="https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/mecanum-drive-kinematics.html" target="_blank" rel="noreferrer">WPILib · Mecanum drive kinematics</a></details></footer>
+    {intro&&brief&&<Dialog.Root open onOpenChange={setIntro}><Dialog.Portal container={typeof document!=='undefined'?document.getElementById('robotics-university'):undefined}><Dialog.Overlay className="course-intro-overlay"/><Dialog.Content className="rl-intro" onInteractOutside={e=>e.preventDefault()}><span className="eyebrow">{brief.eyebrow}</span><Dialog.Title>{brief.title}</Dialog.Title><Dialog.Description>{brief.text}</Dialog.Description>{brief.diagram}<h3 className="rl-brief-heading">{t('Čo urobíš','What you will do')}</h3><ol className="rl-brief-steps">{brief.steps.map(s=><li key={s}>{s}</li>)}</ol><p className="rl-brief-done"><Check size={16}/>{brief.done}</p><Dialog.Close asChild><button className="button primary">{brief.button}<ArrowRight size={18}/></button></Dialog.Close></Dialog.Content></Dialog.Portal></Dialog.Root>}
   </article>;
 }
 
@@ -294,5 +324,48 @@ function BriefDiagram({image,lang}:{image?:string;lang:Lang}) {
     <rect x="304" y="71" width="34" height="32" fill="#b2e2bc16" stroke="#b2e2bc" strokeWidth="2"/><path d="M321 98V77L316 83M321 77L326 83" fill="none" stroke="#b2e2bc" strokeWidth="2"/>
     <text x="346" y="92" fill="#c2e9cb" fontSize="12">{sk?'CIEĽ':'TARGET'}</text>
     <text x="226" y="202" fill="#a9c7b3" fontSize="11" textAnchor="end">{sk?'ŠTART':'START'}</text>
+  </svg>;
+}
+
+/** Top view of the rover, front up: chassis, four wheels and the front arrow. */
+function RoverGlyph({x,y,ghost=false}:{x:number;y:number;ghost?:boolean}) {
+  const stroke=ghost?'#94cba3':'#b2e2bc';
+  return <g opacity={ghost?.55:1}>
+    {[[-28,-20],[18,-20],[-28,20],[18,20]].map(([dx,dy])=><rect key={`${dx}${dy}`} x={x+dx} y={y+dy-10} width="10" height="20" rx="2" fill={ghost?'none':'#2a3a30'} stroke={stroke} strokeDasharray={ghost?'3 3':undefined}/>)}
+    <rect x={x-18} y={y-28} width="36" height="56" rx="4" fill={ghost?'none':'#254c34'} stroke={stroke} strokeWidth="1.5" strokeDasharray={ghost?'4 3':undefined}/>
+    <path d={`M${x} ${y+14}V${y-16}M${x-6} ${y-10}L${x} ${y-16}L${x+6} ${y-10}`} fill="none" stroke={stroke} strokeWidth="2"/>
+  </g>;
+}
+
+function GoalsDiagram({lang}:{lang:Lang}) {
+  const sk = lang==='sk';
+  return <svg className="rl-brief-diagram" viewBox="0 0 560 200" role="img" aria-label={sk?'Dva hľadané pohyby: bokom doprava s predkom stále dopredu a otočenie doprava na mieste v smere hodinových ručičiek':'Two movements to find: slide right with the front still forward, and turn right on the spot, clockwise'}>
+    <defs><marker id="rl-brief-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#f2c779"/></marker></defs>
+    <rect x="16" y="10" width="256" height="180" rx="8" fill="#10281b" stroke="#42664d"/>
+    <rect x="288" y="10" width="256" height="180" rx="8" fill="#10281b" stroke="#42664d"/>
+    <text x="144" y="36" textAnchor="middle" fill="#e1ece2" fontSize="13">{sk?'1. BOKOM DOPRAVA':'1. SLIDE RIGHT'}</text>
+    <RoverGlyph x={92} y={108}/><RoverGlyph x={200} y={108} ghost/>
+    <path d="M128 108H166" stroke="#f2c779" strokeWidth="2.5" markerEnd="url(#rl-brief-arrow)"/>
+    <text x="144" y="176" textAnchor="middle" fill="#a9c7b3" fontSize="11">{sk?'predok stále smeruje hore':'the front keeps pointing up'}</text>
+    <text x="416" y="36" textAnchor="middle" fill="#e1ece2" fontSize="13">{sk?'2. OTOČENIE DOPRAVA NA MIESTE':'2. TURN RIGHT ON THE SPOT'}</text>
+    <RoverGlyph x={416} y={108}/>
+    <path d="M371 82A52 52 0 1 1 371 134" fill="none" stroke="#f2c779" strokeWidth="2.5" markerEnd="url(#rl-brief-arrow)"/>
+    <text x="416" y="176" textAnchor="middle" fill="#a9c7b3" fontSize="11">{sk?'v smere hodinových ručičiek, bez posunu':'clockwise, without moving away'}</text>
+  </svg>;
+}
+
+function FaultDiagram({lang}:{lang:Lang}) {
+  const sk = lang==='sk';
+  return <svg className="rl-brief-diagram" viewBox="0 0 560 200" role="img" aria-label={sk?'Rover má ísť bokom doľava do cieľa, ale s obráteným motorom sa stáča a sunie inam':'The rover should slide left into the bay, but with a reversed motor it turns and drifts elsewhere'}>
+    <defs><marker id="rl-fault-expected" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#94cba3"/></marker><marker id="rl-fault-actual" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#f2c779"/></marker></defs>
+    <rect x="16" y="10" width="528" height="180" rx="8" fill="#10281b" stroke="#42664d"/>
+    <rect x="66" y="68" width="62" height="70" fill="#b2e2bc16" stroke="#b2e2bc" strokeWidth="2"/>
+    <text x="97" y="58" textAnchor="middle" fill="#c2e9cb" fontSize="12">{sk?'CIEĽ':'BAY'}</text>
+    <RoverGlyph x={440} y={103}/>
+    <path d="M404 103H140" fill="none" stroke="#94cba3" strokeWidth="2" strokeDasharray="6 4" markerEnd="url(#rl-fault-expected)"/>
+    <text x="272" y="92" textAnchor="middle" fill="#c2e9cb" fontSize="12">{sk?'má ísť: bokom doľava 100 cm':'should: slide left 100 cm'}</text>
+    <path d="M404 116Q320 128 252 168" fill="none" stroke="#f2c779" strokeWidth="2.5" markerEnd="url(#rl-fault-actual)"/>
+    <text x="338" y="166" fill="#f2c779" fontSize="12">{sk?'ide: stáča sa a sunie inam':'does: turns and drifts away'}</text>
+    <text x="440" y="52" textAnchor="middle" fill="#f2c779" fontSize="13">{sk?'Ktorý motor?':'Which motor?'}</text>
   </svg>;
 }
