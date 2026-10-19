@@ -46,3 +46,11 @@
   .bl-arm-project .bl-study-panel { align-self: stretch; overflow: visible; }
   .bl-arm-project .bl-study-preview { position: sticky; top: 105px; height: min(660px, calc(100dvh - 125px)); }
 }
+
+/* Give the mobile model its own canvas; browser chrome must not shrink it
+   into a fraction of a viewport-height panel. Controls use normal page scroll. */
+@media (max-width: 760px) {
+  .bl-study-workspace { height: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; }
+  .bl-study-preview .bl-study-svg { flex: none; height: auto; aspect-ratio: 600 / 470; }
+  .bl-study-panel { overflow-y: visible; overscroll-behavior-y: auto; border-left: 0; border-top: 1px solid #39473e; }
+}
