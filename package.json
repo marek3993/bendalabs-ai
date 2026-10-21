@@ -12,7 +12,8 @@
     "test:automation": "node scripts/check-automation.cjs",
     "test:inbox": "node scripts/check-inbox.cjs",
     "test:leads": "node --test scripts/leads-storage.test.cjs",
-    "test:leadpilot": "node --test scripts/leadpilot.test.cjs scripts/leadpilot-schedule.test.cjs && node scripts/check-leadpilot.cjs"
+    "test:leadpilot": "node --test scripts/leadpilot.test.cjs scripts/leadpilot-schedule.test.cjs && node scripts/check-leadpilot.cjs",
+    "test:life": "node --test scripts/life-domain.test.cjs scripts/life-security.test.cjs scripts/life-assistant.test.cjs scripts/life-radar.test.cjs"
   },
   "dependencies": {
     "next": "16.1.6",
