@@ -28,12 +28,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const language = (await headers()).get("x-site-locale");
+  const requestHeaders = await headers();
+  const language = requestHeaders.get("x-site-locale");
+  const isLife = requestHeaders.get("x-bendalabs-private-life") === "1";
   const locale = language === "en" || language === "cs" ? language : "sk";
   return (
     <html lang={locale}>
-      <body data-google-ads-conversion-send-to={process.env.GOOGLE_ADS_CONVERSION_SEND_TO ?? ""}>
-        <Script
+      <body data-google-ads-conversion-send-to={isLife ? undefined : process.env.GOOGLE_ADS_CONVERSION_SEND_TO ?? ""}>
+        {!isLife && <><Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-18119067266"
         />
@@ -48,7 +50,7 @@ export default async function RootLayout({
             `,
           }}
         />
-        <SiteStructuredData locale={locale} />
+        <SiteStructuredData locale={locale} /></>}
         {children}
       </body>
     </html>
