@@ -116,6 +116,25 @@ test('all browser writes require a same-origin request, including login', async 
   }
   assert.doesNotThrow(() => api.assertLifeSameOrigin(loginRequest()));
 });
+test('Life referrer policy preserves native form POST origins without weakening origin checks', () => {
+  const proxy = moduleAt('src/proxy.ts', {}, {
+    'next/server': { NextResponse: { next: () => ({ headers: new Headers() }) } },
+    '@/lib/bendalabs/localization': { localeFromPath: () => 'sk' },
+  });
+  const { api } = auth();
+  for (const path of ['/life', '/life/login', '/life/logout']) {
+    const response = proxy.proxy({ headers: new Headers(), nextUrl: new URL(`https://bendalabs.sk${path}`) });
+    // Fetch Standard §3.2: no-referrer turns native form POST Origin into null;
+    // same-origin preserves it locally and still hides referrers cross-origin.
+    assert.equal(response.headers.get('Referrer-Policy'), 'same-origin');
+    assert.doesNotThrow(() => api.assertLifeSameOrigin(new Request(`https://bendalabs.sk${path}`, {
+      method: 'POST', headers: { origin: 'https://bendalabs.sk', 'sec-fetch-site': 'same-origin' },
+    })));
+  }
+  for (const origin of [null, 'null', 'https://attacker.test']) {
+    assert.throws(() => api.assertLifeSameOrigin(loginRequest(origin)), error => error.status === 403);
+  }
+});
 test('canonical browser origin survives a Vercel internal request URL without trusting hostile hosts', () => {
   const { api } = auth(undefined, null, { VERCEL: '1', VERCEL_URL: 'preview-benda.vercel.app' });
   const internal = headers => new Request('http://localhost:3000/life/api/state', { method: 'POST', headers });

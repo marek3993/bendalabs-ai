@@ -9,7 +9,10 @@ export function proxy(request: NextRequest) {
   if (isLife) {
     response.headers.set("Cache-Control", "private, no-store, max-age=0");
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-    response.headers.set("Referrer-Policy", "no-referrer");
+    // Native form POSTs use navigation mode: no-referrer makes browsers send
+    // Origin: null, which our login/logout origin checks must reject. Keep the
+    // origin for same-origin forms while withholding referrers from other sites.
+    response.headers.set("Referrer-Policy", "same-origin");
     response.headers.set("X-Frame-Options", "DENY");
     response.headers.set("X-Content-Type-Options", "nosniff");
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
