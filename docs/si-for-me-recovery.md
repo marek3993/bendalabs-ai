@@ -25,3 +25,7 @@ Next: inspect the current private state safely, complete and verify the missing 
 - **Release blocker:** batch 06 (`bendalabs_life_private.ai_claim`) was declined by the Supabase connector with `Migration was declined`, without a reason. At the user's request, Supabase permission was changed to and read back as Allow all actions, but the later migration attempt was still declined. This function remains absent. Do not bypass admission limits or claim live AI verification.
 - No production release or signed-in end-to-end check has been completed. Next authorized step is to resolve the declined batch 06, run verification block 06, stage/build with production environment, then validate owner login, save/reload, logout and one live AI call before promotion.
 
+### Authorized retry completed
+
+The owner explicitly approved retrying the declined operation. Batch 06 subsequently installed successfully. Live rollback verification passed for AI admission, concurrent-call denial, lease ownership/release, session expiry and the isolated 150-call daily quota. All helpers remain invoker functions, executable by service_role but not browser roles. The previous database release blocker is resolved. Long verification requests twice returned `Invalid or expired requestState`; equivalent smaller rollback checks succeeded. Owner login and a live provider call still need verification on the production deployment.
+
