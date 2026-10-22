@@ -14,3 +14,14 @@ Read-only runtime inspection on 2026-10-21 found:
 - The Vercel connection denies project detail/deployment access with HTTP 403 and requests team authorization. Recovery did not change production, database contents, or platform permissions.
 
 Next: inspect the current private state safely, complete and verify the missing database procedures, finish deployment through the authorized integration, and verify owner login, persistence, logout/revocation, private-route isolation and a signed-in user flow. Keep private seed data and credentials out of the public repository.
+
+## Continuation — 2026-10-22
+
+- Installed SQL batches 03 (state), 04 (login), 05 (sessions), 07 (AI release) and 08 (dispatcher). All are SECURITY INVOKER with execution limited to postgres/service_role. The five existing tables retain RLS and no browser-role grants.
+- The existing canonical row was confirmed empty at version 0 before initialization. Recovered private state passed the application schema and was initialized with expectedVersion=0; readback confirms canonical version 1. Private content remains outside Git.
+- Live rollback checks 01–05 in `scripts/life-db.verify.sql` passed: effective grants/RLS, service-role save/load, compare-and-swap conflicts, snapshots, session expiry/renewal/revocation, login throttling, and actual anon/authenticated denials. Canonical version 1 and zero sessions were confirmed afterward.
+- Re-ran 53/53 Life tests, targeted ESLint, TypeScript and production build successfully. Settings now expose the configured AI model and reasoning mode without credentials.
+- Vercel project/deployment/environment inspection works when the optional teamId is omitted. Correct project/account IDs were verified. Recovery preview is READY. Existing production remains on a302848; its production-only bridge configuration points to the active BendaLabs bridge. A new production build is needed before release; do not promote the existing preview as-is.
+- **Release blocker:** batch 06 (`bendalabs_life_private.ai_claim`) was declined by the Supabase connector with `Migration was declined`, without a reason. At the user's request, Supabase permission was changed to and read back as Allow all actions, but the later migration attempt was still declined. This function remains absent. Do not bypass admission limits or claim live AI verification.
+- No production release or signed-in end-to-end check has been completed. Next authorized step is to resolve the declined batch 06, run verification block 06, stage/build with production environment, then validate owner login, save/reload, logout and one live AI call before promotion.
+
