@@ -15,3 +15,5 @@ tsconfig.tsbuildinfo
 .edge-test/
 .vercel
 .env*.local
+supabase/.temp/
+private-workspace/
