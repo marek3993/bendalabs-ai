@@ -88,7 +88,8 @@ export function WorkspaceApp({
     [offset, setOffset] = useState(0),
     [hasMore, setHasMore] = useState(false),
     [refresh, setRefresh] = useState(0),
-    [favoriteOnly, setFavoriteOnly] = useState(false);
+    [favoriteOnly, setFavoriteOnly] = useState(false),
+    [showRevoked, setShowRevoked] = useState(false);
   const canWrite = project?.role !== "reader";
   useEffect(() => {
     api<Preferences>("get_preferences")
@@ -717,44 +718,55 @@ export function WorkspaceApp({
                   Každé pripojenie má vlastné oprávnenia a záznamy v histórii.
                   Odvolanie sa prejaví pri nasledujúcom prístupe.
                 </p>
-                {connections.map((c) => (
-                  <article className="ws-connection" key={c.id}>
-                    <div>
-                      <strong>{c.name}</strong>
-                      <p>
-                        {c.scope.includes("write")
-                          ? "Čítanie a zápis"
-                          : "Iba čítanie"}{" "}
-                        ·{" "}
-                        {c.project_ids
-                          .map(
-                            (id) =>
-                              projects.find((p) => p.id === id)?.name ||
-                              "Projekt",
-                          )
-                          .join(", ")}
-                      </p>
-                      <small>{date(c.created_at)}</small>
-                    </div>
-                    <button
-                      className="secondary"
-                      disabled={Boolean(c.revoked_at)}
-                      onClick={async () => {
-                        try {
-                          await api("revoke_connection", { id: c.id });
-                          setRefresh((r) => r + 1);
-                        } catch (e) {
-                          setError(message(e));
-                        }
-                      }}
-                    >
-                      {c.revoked_at ? "Odvolané" : "Odvolať prístup"}
-                    </button>
-                  </article>
-                ))}
-                {!connections.length && !loading && (
-                  <p className="ws-empty">Zatiaľ žiadne pripojenie.</p>
-                )}
+                <label className="ws-check">
+                  <input
+                    type="checkbox"
+                    checked={showRevoked}
+                    onChange={(e) => setShowRevoked(e.target.checked)}
+                  />
+                  Zobraziť odvolané pripojenia
+                </label>
+                {connections
+                  .filter((c) => showRevoked || !c.revoked_at)
+                  .map((c) => (
+                    <article className="ws-connection" key={c.id}>
+                      <div>
+                        <strong>{c.name}</strong>
+                        <p>
+                          {c.scope.includes("write")
+                            ? "Čítanie a zápis"
+                            : "Iba čítanie"}{" "}
+                          ·{" "}
+                          {c.project_ids
+                            .map(
+                              (id) =>
+                                projects.find((p) => p.id === id)?.name ||
+                                "Projekt",
+                            )
+                            .join(", ")}
+                        </p>
+                        <small>{date(c.created_at)}</small>
+                      </div>
+                      <button
+                        className="secondary"
+                        disabled={Boolean(c.revoked_at)}
+                        onClick={async () => {
+                          try {
+                            await api("revoke_connection", { id: c.id });
+                            setRefresh((r) => r + 1);
+                          } catch (e) {
+                            setError(message(e));
+                          }
+                        }}
+                      >
+                        {c.revoked_at ? "Odvolané" : "Odvolať prístup"}
+                      </button>
+                    </article>
+                  ))}
+                {!connections.some((c) => showRevoked || !c.revoked_at) &&
+                  !loading && (
+                    <p className="ws-empty">Žiadne aktívne pripojenie.</p>
+                  )}
                 <h2>Členovia projektu</h2>
                 {members.map((m) => (
                   <p key={m.id}>

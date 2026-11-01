@@ -19,3 +19,5 @@ Odvolanie na serveri: Workspace → Nastavenia → AI pripojenia. Lokálne odhl�
 Server poskytuje Streamable HTTP a OAuth authorization code + PKCE. Podporuje meniaci sa port `http://127.0.0.1/callback` pri zachovaní registrovaného hostiteľa, cesty a query. Inzeruje issuer-bound odpoveď `iss`. DCR je zvolená podporovaná registračná cesta; CIMD server neinzeruje.
 
 Oficiálny zdroj overený 1. 11. 2026: [Codex MCP, OAuth a lokálne callbacky](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
+
+Pri súhlase je predvolené **Iba čítanie**. Ak má klient zapisovať dokumenty a úlohy, v poli **Povolené oprávnenia** výslovne vyber **Čítanie a zápis**. Výber nemení projektové členstvo ani nepovolí zápis čitateľovi.

@@ -32,8 +32,9 @@ globalThis.Deno = {
   },
   serve: () => {},
 };
-const { handler } =
-  await import("../supabase/functions/bendalabs-workspace/index.ts");
+const { handler } = await import(
+  "../supabase/functions/bendalabs-workspace/index.ts"
+);
 const query = async (sql, args = []) => (await db.query(sql, args)).rows;
 const server = createServer(async (req, res) => {
   try {
@@ -523,6 +524,23 @@ try {
         page,
       );
       assert.ok(browserGrant.access_token);
+      assert.equal(browserGrant.scope, "workspace:read");
+      assert.equal(
+        (
+          await api(
+            "create_document",
+            {
+              project: "test-arm",
+              data,
+              expected_revision: 0,
+              idempotency_key: "browser-read-only-check",
+            },
+            null,
+            browserGrant.access_token,
+          )
+        ).status,
+        403,
+      );
     }
     await context.close();
   }

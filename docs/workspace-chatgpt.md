@@ -12,3 +12,5 @@ Stav: **zatiaľ neoverené v skutočnom ChatGPT**. Integračný test dvoch nezá
 Prístup odvoláš v BendaLabs Workspace → Nastavenia → AI pripojenia → Odvolať. Samotné odstránenie pluginu z chatu nenahrádza serverové odvolanie.
 
 Aktuálny postup overený v oficiálnej dokumentácii 1. 11. 2026: [pripojenie a testovanie](https://developers.openai.com/plugins/deploy/connect-chatgpt), [OAuth autorizácia](https://developers.openai.com/plugins/build/auth). Staršie návody s prepínačom Developer mode nemusia zodpovedať dnešnému rozhraniu.
+
+Pri súhlase je predvolené **Iba čítanie**. Ak má klient zapisovať dokumenty a úlohy, v poli **Povolené oprávnenia** výslovne vyber **Čítanie a zápis**. Výber nemení projektové členstvo ani nepovolí zápis čitateľovi.

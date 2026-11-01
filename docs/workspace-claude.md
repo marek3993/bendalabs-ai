@@ -21,3 +21,5 @@ Potom spusti Claude Code, použi `/mcp` a dokonči OAuth. Pomenuj ho samostatne,
 Odvolanie: Workspace → Nastavenia → AI pripojenia. Každé pripojenie má vlastné ID; audit zaznamenáva používateľa aj pripojenie.
 
 Oficiálne zdroje overené 1. 11. 2026: [transport a podporované verzie](https://claude.com/docs/connectors/building), [autorizácia a callbacky](https://claude.com/docs/connectors/building/authentication), [test vlastného konektora](https://claude.com/docs/connectors/building/testing), [Claude Code MCP](https://code.claude.com/docs/en/mcp).
+
+Pri súhlase je predvolené **Iba čítanie**. Ak má klient zapisovať dokumenty a úlohy, v poli **Povolené oprávnenia** výslovne vyber **Čítanie a zápis**. Výber nemení projektové členstvo ani nepovolí zápis čitateľovi.
