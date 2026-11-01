@@ -14,6 +14,14 @@ export async function POST(req: Request) {
     const { params } = await authorization(Object.fromEntries(form));
     const code = token();
     const name = form.get("name")?.trim();
+    const grantedScope = form.get("granted_scope") || params.scope;
+    if (
+      !["workspace:read", "workspace:read workspace:write"].includes(
+        grantedScope,
+      ) ||
+      (grantedScope.includes("write") && !params.scope.includes("write"))
+    )
+      throw new WorkspaceError("invalid_input", 400);
     if (!name || name.length > 150)
       throw new WorkspaceError("invalid_input", 400);
     await rpc(
@@ -22,7 +30,7 @@ export async function POST(req: Request) {
         client_id: params.client_id,
         redirect_uri: params.redirect_uri,
         challenge: params.code_challenge,
-        scope: params.scope,
+        scope: grantedScope,
         resource: resource(),
         code_hash: hash(code),
         name,

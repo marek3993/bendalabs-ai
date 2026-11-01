@@ -21,7 +21,7 @@ Základ: produkčný commit `fbc1f4db75014704e44cc765f1ef01833e4fb144`, vetva `c
 - [x] Export/obnova testovacích dát
 - [x] Bezpečnostné a súbežné testy databázy a HTTP
 - [x] Regresie existujúcich aplikácií a build
-- [ ] Vercel staging a produkčný deployment
+- [x] Vercel staging a produkčný deployment; [záznam vydania](workspace-release.md)
 - [x] Samostatné návody ChatGPT, Claude, Codex
 
 Lokálne prešli: PostgreSQL/PGlite autorizácia a transakcie, skutočný Next → Edge handler → databáza, dva MCP SDK klienty, OAuth súhlas v prehliadači vrátane loopback callbacku, revízie/súbeh/idempotencia, súkromné prílohy, ZIP a obnova, editácia a tagy, obľúbené a uložené filtre, desktop/mobile, všetky `npm test`, Life (53), leads (7), LeadPilot jednotkové testy (14), integračný inbox a LeadPilot. Externé AI volania pri regresiách sú izolované testovacie náhrady. Žiadny fyzický robotický test neprebehol.

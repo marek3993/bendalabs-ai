@@ -59,26 +59,23 @@ export default async function Authorize({
           <legend>Povolené projekty</legend>
           {items.map((p) => (
             <label key={p.id} className="ws-check">
-              <input
-                type="checkbox"
-                name="projects"
-                value={p.id}
-                disabled={
-                  request.params.scope.includes("write") && p.role === "reader"
-                }
-              />
+              <input type="checkbox" name="projects" value={p.id} />
               {p.name}
+              {p.role === "reader" ? " — iba čítanie" : ""}
             </label>
           ))}
         </fieldset>
-        <p>
-          Oprávnenia:{" "}
-          <strong>
-            {request.params.scope.includes("write")
-              ? "Čítanie a zápis"
-              : "Iba čítanie"}
-          </strong>
-        </p>
+        <label>
+          Povolené oprávnenia
+          <select name="granted_scope" defaultValue="workspace:read">
+            <option value="workspace:read">Iba čítanie</option>
+            {request.params.scope.includes("write") && (
+              <option value="workspace:read workspace:write">
+                Čítanie a zápis
+              </option>
+            )}
+          </select>
+        </label>
         <button type="submit">Povoliť pripojenie</button>
         <a className="ws-button secondary" href="/workspace">
           Zrušiť
