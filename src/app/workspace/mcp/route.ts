@@ -36,7 +36,13 @@ export async function POST(req: Request) {
       throw new WorkspaceError("unauthorized", 401);
     const token = auth.slice(7);
     await rpc("whoami", {}, token);
-    const body = JSON.parse(await boundedBody(req));
+    let body: unknown;
+    try {
+      body = JSON.parse(await boundedBody(req));
+    } catch (e) {
+      if (e instanceof WorkspaceError) throw e;
+      throw new WorkspaceError("invalid_input", 400);
+    }
     const server = new McpServer(
       { name: "bendalabs-workspace", version: "1.0.0" },
       {

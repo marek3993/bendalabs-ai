@@ -22,7 +22,14 @@ export async function POST(req: Request) {
       limit: 60,
     });
     if (!rate.allowed) throw new WorkspaceError("rate_limited", 429);
-    const data = schema.safeParse(JSON.parse(await boundedBody(req, 16000)));
+    let input: unknown;
+    try {
+      input = JSON.parse(await boundedBody(req, 16000));
+    } catch (e) {
+      if (e instanceof WorkspaceError) throw e;
+      throw new WorkspaceError("invalid_input", 400);
+    }
+    const data = schema.safeParse(input);
     if (!data.success) throw new WorkspaceError("invalid_input", 400);
     const id = token();
     await rpc("register_client", {

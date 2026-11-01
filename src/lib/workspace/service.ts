@@ -52,6 +52,7 @@ export async function execute(
     return {
       ...result,
       items,
+      next_offset: Number(result.offset || 0) + items.length,
       detail_tool: "get_document",
       content_is_data: true,
     };
