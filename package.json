@@ -13,32 +13,42 @@
     "test:inbox": "node scripts/check-inbox.cjs",
     "test:leads": "node --test scripts/leads-storage.test.cjs",
     "test:leadpilot": "node --test scripts/leadpilot.test.cjs scripts/leadpilot-schedule.test.cjs && node scripts/check-leadpilot.cjs",
-    "test:life": "node --test scripts/life-domain.test.cjs scripts/life-security.test.cjs scripts/life-assistant.test.cjs scripts/life-radar.test.cjs"
+    "test:life": "node --test scripts/life-domain.test.cjs scripts/life-security.test.cjs scripts/life-assistant.test.cjs scripts/life-radar.test.cjs",
+    "test:workspace": "node --test scripts/workspace-db.test.mjs",
+    "test:workspace:e2e": "tsx scripts/workspace-e2e.mjs",
+    "workspace:import": "tsx scripts/workspace-import.mts",
+    "workspace:restore": "node scripts/workspace-restore.mjs"
   },
   "dependencies": {
-    "next": "16.1.6",
-    "openai": "^6.34.0",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "zod": "^4.1.12",
-    "lucide-react": "^1.31.0",
+    "@modelcontextprotocol/sdk": "1.32.2",
     "class-variance-authority": "0.7.1",
-    "radix-ui": "^1.6.7",
     "clsx": "2.1.1",
+    "fflate": "0.8.3",
+    "lucide-react": "^1.31.0",
+    "next": "16.4.3",
+    "openai": "^6.34.0",
+    "radix-ui": "^1.6.7",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "react-markdown": "10.1.0",
+    "recharts": "^3.8.0",
+    "remark-gfm": "4.0.1",
     "tailwind-merge": "3.6.0",
     "three": "^0.180.0",
-    "recharts": "^3.8.0"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.14",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.180.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.4.3",
     "playwright": "1.58.2",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "@types/three": "^0.180.0"
+    "tsx": "4.23.15",
+    "typescript": "^5"
   }
 }

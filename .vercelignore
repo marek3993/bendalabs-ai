@@ -16,3 +16,5 @@ tsconfig.tsbuildinfo
 EN-VERIFICATION.txt
 EN-DEPLOYMENT.txt
 UNIVERSITY-DEPLOYMENT.txt
+/private-workspace
+/supabase/.temp

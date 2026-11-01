@@ -5,9 +5,9 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: isIndexableDeployment
       ? [
-          { userAgent: "*", allow: "/", disallow: ["/api/", "/admin/", "/life"] },
+          { userAgent: "*", allow: "/", disallow: ["/api/", "/admin/", "/life", "/workspace"] },
           // Search discovery, separate from OpenAI model-training crawlers.
-          { userAgent: "OAI-SearchBot", allow: "/", disallow: ["/api/", "/admin/", "/life"] },
+          { userAgent: "OAI-SearchBot", allow: "/", disallow: ["/api/", "/admin/", "/life", "/workspace"] },
         ]
       : { userAgent: "*", disallow: "/" },
     ...(isIndexableDeployment ? { sitemap: absoluteUrl("/sitemap.xml") } : {}),

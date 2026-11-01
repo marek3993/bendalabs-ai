@@ -30,7 +30,7 @@ export default async function RootLayout({
 }>) {
   const requestHeaders = await headers();
   const language = requestHeaders.get("x-site-locale");
-  const isLife = requestHeaders.get("x-bendalabs-private-life") === "1";
+  const isLife = requestHeaders.get("x-bendalabs-private-life") === "1" || requestHeaders.get("x-bendalabs-private-workspace") === "1";
   const locale = language === "en" || language === "cs" ? language : "sk";
   return (
     <html lang={locale}>
